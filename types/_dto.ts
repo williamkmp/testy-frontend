@@ -20,3 +20,12 @@ export interface UFormApi {
     setErrors: (errors: FormError[], path?: string) => void
     errors: Ref<FormError[]>
 }
+
+export interface PagePreview {
+    id: string
+    title: string
+    isOpen: boolean
+    isChildrenFetched: boolean
+    children: PagePreview[]
+    imageSrc?: string
+}

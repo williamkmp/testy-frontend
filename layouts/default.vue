@@ -1,14 +1,12 @@
 <template>
     <div class="flex h-screen w-screen">
         <AppAside />
-        <div class="flex grow flex-col overflow-auto">
+        <section class="flex h-full grow flex-col">
             <AppHeader />
-            <div data-role="page-container" class="h-full w-full overflow-hidden">
-                <div data-role="page-scrollable" class="h-full w-full overflow-auto">
-                    <slot />
-                </div>
+            <div data-role="page-container" class="relative flex w-full grow items-start justify-start overflow-y-auto overflow-x-hidden">
+                <slot />
             </div>
-        </div>
+        </section>
         <UNotifications />
     </div>
 </template>

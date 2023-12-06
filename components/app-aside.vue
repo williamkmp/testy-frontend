@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import type { VerticalNavigationLink } from '@nuxt/ui/dist/runtime/types';
-
 const app = useAppStore();
+const tree = usePagesTreeStore();
 const auth = useAuthStore();
 
 const pressedKey = useMagicKeys();
@@ -86,9 +85,23 @@ whenever(ctrl_backslash, () => app.isMenuOpen = !app.isMenuOpen);
                     class="justify-start hover:bg-white"
                     size="xs"
                     block
-                    @click="navigateTo('/')"
                 />
             </UTooltip>
+        </section>
+
+        <section data-role="pages-tree-container" class="flex w-full grow flex-col gap-1 overflow-y-auto">
+            <header>
+                <span class="text-xs font-medium tracking-tight">workspace</span>
+            </header>
+            <div class="h-full w-full overflow-y-auto overflow-x-hidden">
+                <div class="flex flex-col">
+                    <div v-for="(page, index) in tree.pages" :key="page.id" class="w-full">
+                        <PageItem
+                            v-model="tree.pages[index]"
+                        />
+                    </div>
+                </div>
+            </div>
         </section>
     </aside>
 </template>
