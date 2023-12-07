@@ -25,7 +25,7 @@ async function toggleExpand() {
         page.value.isChildrenFetched = true;
         isFetchingChildren.value = true;
         if (props.level <= 1) {
-            const response = await sleep.for(3000, [
+            const response = await sleep.for(1000, [
                 {
                     id: `page-${app.getId()}`,
                     title: `Child 1 of ${page.value.title}`,
@@ -46,7 +46,7 @@ async function toggleExpand() {
             }
         }
         else {
-            await sleep.for(3000);
+            await sleep.for(1000);
         }
         isFetchingChildren.value = false;
     }
