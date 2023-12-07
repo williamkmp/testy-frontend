@@ -7,8 +7,10 @@ const props = defineProps({
 const page = defineModel<PagePreview>({ required: true });
 const sleep = useSleep();
 const app = useAppStore();
+
 // States
 const childRefs = ref<any[]>([]);
+const isFetchingChildren = ref(true);
 
 async function clickhandler() {
     // eslint-disable-next-line no-console
@@ -21,6 +23,7 @@ async function toggleExpand() {
         forceCloseChildren(page.value);
     if (!page.value.isChildrenFetched) {
         page.value.isChildrenFetched = true;
+        isFetchingChildren.value = true;
         if (props.level <= 1) {
             const response = await sleep.for(3000, [
                 {
@@ -45,6 +48,7 @@ async function toggleExpand() {
         else {
             await sleep.for(3000);
         }
+        isFetchingChildren.value = false;
     }
 }
 
@@ -72,7 +76,7 @@ const buttonIcon = computed(() => page.value.isOpen
         </button>
     </div>
     <div v-show="page.isOpen" class="w-full">
-        <secion v-if="page.children.length > 0 && page.isChildrenFetched" class="flex w-full flex-col">
+        <secion v-if="page.children.length > 0 && !isFetchingChildren" class="flex w-full flex-col">
             <div
                 v-for="(item, index) in page.children"
                 :key="item.id"
@@ -86,7 +90,7 @@ const buttonIcon = computed(() => page.value.isOpen
             </div>
         </secion>
         <section
-            v-else-if="page.isChildrenFetched"
+            v-else-if="page.children.length === 0 && !isFetchingChildren"
             :style="{ paddingLeft: `${props.level + 2}rem` }"
             class="my-1 select-none text-xs font-medium text-gray-400 dark:text-gray-400"
         >
