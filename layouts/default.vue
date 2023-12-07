@@ -18,6 +18,7 @@ useEventListener(resizeHandle, 'mousedown', (e) => {
         isResizing.value = true;
 });
 useEventListener(window, 'mouseup', () => isResizing.value = false);
+useEventListener(window, 'blur', () => isResizing.value = false);
 watch([isResizing, mouse.x], () => {
     if (isResizing.value && sidePanel.value.aside && app.isMenuOpen) {
         sidePanel.value.aside.style.transitionProperty = 'none';
