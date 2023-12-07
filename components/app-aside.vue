@@ -95,11 +95,11 @@ whenever(ctrl_backslash, () => app.isMenuOpen = !app.isMenuOpen);
             </header>
             <div class="h-full w-full overflow-y-auto overflow-x-hidden">
                 <div class="flex flex-col">
-                    <div v-for="(page, index) in tree.pages" :key="page.id" class="w-full">
+                    <template v-for="(page, index) in tree.pages" :key="page.id">
                         <PageItem
                             v-model="tree.pages[index]"
                         />
-                    </div>
+                    </template>
                 </div>
             </div>
         </section>

@@ -75,20 +75,19 @@ const buttonIcon = computed(() => page.value.isOpen
             <span class="truncate font-medium">{{ page.title }}</span>
         </button>
     </div>
-    <div v-show="page.isOpen" class="w-full">
-        <secion v-if="page.children.length > 0 && !isFetchingChildren" class="flex w-full flex-col">
-            <div
+    <div v-show="page.isOpen" class="flex w-full flex-col">
+        <template v-if="page.children.length > 0 && !isFetchingChildren">
+            <template
                 v-for="(item, index) in page.children"
                 :key="item.id"
-                class="w-full"
             >
                 <PageItem
                     :ref="childRefs[index]"
                     v-model="page.children[index]"
                     :level="props.level + 1"
                 />
-            </div>
-        </secion>
+            </template>
+        </template>
         <section
             v-else-if="page.children.length === 0 && !isFetchingChildren"
             :style="{ paddingLeft: `${props.level + 2}rem` }"
