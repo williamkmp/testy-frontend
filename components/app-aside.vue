@@ -3,25 +3,23 @@ const app = useAppStore();
 const tree = usePagesTreeStore();
 const auth = useAuthStore();
 
-const pressedKey = useMagicKeys();
-const ctrl_backslash = pressedKey['Ctrl+backslash'];
-// const ctrl_shift_p = pressedKey['Ctrl+Shift+K'];
-
-whenever(ctrl_backslash, () => app.isMenuOpen = !app.isMenuOpen);
+const aside = ref();
+defineExpose({ aside });
 </script>
 
 <template>
     <aside
+        ref="aside"
         data-role="aside-container"
-        class="h-full overflow-hidden transition-all duration-300"
+        class="h-full select-none overflow-hidden transition-all duration-300"
         :class="[
             app.isMenuOpen
-                ? 'min-w-[16rem] max-w-[16rem]'
+                ? 'min-w-[16rem] max-w-[25rem]'
                 : 'min-w-0 max-w-0',
         ]"
     >
         <div
-            class="flex h-full w-full min-w-[16rem] flex-col gap-4 overflow-hidden border-r border-gray-200 bg-gray-300/20 px-4 py-3 dark:border-gray-700"
+            class="flex h-full w-full min-w-[16rem] flex-col gap-4 overflow-hidden bg-gray-300/20 px-4 py-3"
         >
             <header
                 class="flex w-full select-none items-center justify-start"
