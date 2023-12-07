@@ -34,6 +34,7 @@ watch([isResizing, mouse.x], () => {
             sidePanel.value.aside.style.width = `${sidePanelWidth}px`;
         else
             sidePanel.value.aside.style.width = `${minimumPanelWidth}px`;
+        app.sideMenuSize = sidePanel.value.aside.style.width;
     }
     else {
         sidePanel.value.aside.style.transitionProperty = 'all';
@@ -49,12 +50,7 @@ watch([isResizing, mouse.x], () => {
         <section class="flex h-full grow flex-col">
             <AppHeader />
             <div data-role="page-container" class="relative flex w-full grow items-start justify-start overflow-y-auto overflow-x-hidden">
-                <!-- <slot /> -->
-                <div class="grid h-full w-full place-items-center">
-                    <div>
-                        <pre>isResizing:{{ isResizing }}</pre>
-                    </div>
-                </div>
+                <slot />
             </div>
         </section>
         <UNotifications />

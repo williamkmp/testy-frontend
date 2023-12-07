@@ -3,8 +3,13 @@ const app = useAppStore();
 const tree = usePagesTreeStore();
 const auth = useAuthStore();
 
-const aside = ref();
+const aside = ref<HTMLDivElement>();
 defineExpose({ aside });
+
+onMounted(() => {
+    if (app.sideMenuSize !== null && aside.value)
+        aside.value.style.width = app.sideMenuSize;
+});
 </script>
 
 <template>
