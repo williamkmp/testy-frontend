@@ -11,7 +11,7 @@ app.headerTitle = 'Setting';
 </script>
 
 <template>
-    <UContainer class="flex flex-col items-center">
+    <UContainer class="flex w-full flex-col items-center">
         <div class="my-8 flex w-full flex-col items-center gap-10">
             <AccountSettingSection />
             <GeneralSettingSection />
