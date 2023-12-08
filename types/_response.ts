@@ -14,5 +14,6 @@ export type TokenResponse = ServerResponseOkay<TokenDto>;
 export type UserResponse = ServerResponseOkay<UserDto>;
 
 export type ImageResponse = ServerResponseOkay<{
+    id: string
     src: string
 }>;

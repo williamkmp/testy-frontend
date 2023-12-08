@@ -37,7 +37,6 @@ async function doUpload() {
         const image = cropperRef.value.getResult().canvas as HTMLCanvasElement;
         const blob = await new Promise(resolve => image.toBlob(resolve));
         try {
-            // TODO: update logic
             const imageUploadResponse: ImageResponse = await privateApi.postForm(path.image, {
                 image: blob,
             });
@@ -48,7 +47,7 @@ async function doUpload() {
                     email: auth.user!.email,
                     tagName: auth.user!.tagName,
                     fullName: auth.user!.fullName,
-                    imageSrc: imageUploadResponse.data!.src,
+                    imageId: imageUploadResponse.data!.id,
                 },
             );
 
@@ -66,7 +65,14 @@ async function doUpload() {
 async function doDelete() {
     isSubmitting.value = true;
     try {
-        // TODO: update image src
+        await privateApi.put(
+            path.user,
+            {
+                email: auth.user!.email,
+                tagName: auth.user!.tagName,
+                fullName: auth.user!.fullName,
+            },
+        );
         auth.user!.imageSrc = undefined;
         notif.ok({ message: 'update_success' });
     }
