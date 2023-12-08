@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 const sideMenu = useSideMenuStore();
-const tree = usePagesTreeStore();
 const auth = useAuthStore();
 
 const aside = ref<HTMLDivElement>();
@@ -108,10 +107,8 @@ onMounted(() => {
                 </header>
                 <div class="h-full w-full overflow-y-auto overflow-x-hidden">
                     <div class="flex flex-col">
-                        <template v-for="(page, index) in tree.pages" :key="page.id">
-                            <PageItem
-                                v-model="tree.pages[index]"
-                            />
+                        <template v-for="(page, index) in sideMenu.pages" :key="page.id">
+                            <PageItem v-model="sideMenu.pages[index]" />
                         </template>
                     </div>
                 </div>
