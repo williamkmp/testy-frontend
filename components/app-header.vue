@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 const sideMenu = useSideMenuStore();
 const app = useAppStore();
+const shortcut = useShortcuts();
 </script>
 
 <template>
@@ -11,7 +12,7 @@ const app = useAppStore();
         <div class="flex items-center gap-4">
             <UTooltip
                 :text=" sideMenu.isOpen ? 'Close Menu' : 'Open menu' "
-                :shortcuts="['Ctrl', '\\']"
+                :shortcuts="[shortcut.metaSymbol.value, '\\']"
                 :popper="{ placement: 'right' }"
             >
                 <UButton

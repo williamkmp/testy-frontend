@@ -2,9 +2,12 @@
 const sideMenu = useSideMenuStore();
 
 // Feature: side menu open on press shortcut
-const pressedKey = useMagicKeys();
-const ctrl_backslash = pressedKey['Ctrl+backslash'];
-whenever(ctrl_backslash, () => sideMenu.isOpen = !sideMenu.isOpen);
+defineShortcuts({
+    'meta_\\': {
+        usingInput: true,
+        handler: () => sideMenu.isOpen = !sideMenu.isOpen,
+    },
+});
 
 // Feature: Side menu resize
 const resizeHandle = ref<HTMLDivElement>();
