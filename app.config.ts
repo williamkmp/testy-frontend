@@ -1,7 +1,7 @@
 export default defineAppConfig({
     ui: {
         primary: 'blue',
-        gray: 'slate',
+        gray: 'zinc',
 
         formGroup: {
             wrapper: 'w-full',
