@@ -1,12 +1,6 @@
 import { defineStore } from 'pinia';
-import { useStorage } from '@vueuse/core';
 
-const SIDE_MENU_SIZE_KEY = 'TESTY_APPLICATION_SIDEBAR_PERVIOUS_SIZE';
 export const useAppStore = defineStore('GlobalApp', () => {
-    // Application State
-    const isMenuOpen = ref(true);
-    const sideMenuSize = useStorage<string>(SIDE_MENU_SIZE_KEY, null);
-
     // Feature: Header title
     const headerTitle = ref<string>();
 
@@ -29,10 +23,8 @@ export const useAppStore = defineStore('GlobalApp', () => {
     }
 
     return {
-        isMenuOpen,
         isDark,
         getId,
         headerTitle,
-        sideMenuSize,
     };
 });

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const app = useAppStore();
+const sideMenu = useSideMenuStore();
 const tree = usePagesTreeStore();
 const auth = useAuthStore();
 
@@ -7,19 +7,25 @@ const aside = ref<HTMLDivElement>();
 defineExpose({ aside });
 
 onMounted(() => {
-    if (app.sideMenuSize !== null && aside.value)
-        aside.value.style.width = app.sideMenuSize;
+    if (!aside.value)
+        return;
+
+    if (sideMenu.size !== null)
+        aside.value.style.width = sideMenu.size;
+    else
+        aside.value.style.width = `${getComputedStyle(aside.value).minWidth}px`;
 });
 </script>
 
 <template>
+    <!-- aside must have a min and max width -->
     <aside
         ref="aside"
         data-role="aside-container"
         class="h-full select-none overflow-hidden transition-all duration-300"
         :class="[
-            app.isMenuOpen
-                ? 'min-w-[16rem] max-w-[25rem]'
+            sideMenu.isOpen
+                ? 'min-w-[16rem] max-w-[30rem]'
                 : 'min-w-0 max-w-0',
         ]"
     >
