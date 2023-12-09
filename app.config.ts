@@ -18,6 +18,11 @@ export default defineAppConfig({
             border: { base: 'border-gray-300  dark:border-gray-700' },
         },
 
+        skeleton: {
+            background: 'bg-gray-300 dark:bg-gray-700',
+            rounded: 'rounded',
+        },
+
         modal: {
             overlay: {
                 background: 'bg-gray-800/75',
