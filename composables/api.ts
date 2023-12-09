@@ -1,6 +1,5 @@
 import axios, { type AxiosError, type AxiosResponse, type CreateAxiosDefaults, HttpStatusCode, type InternalAxiosRequestConfig } from 'axios';
-import { z } from 'zod';
-import type { ServerResponseError, ServerResponseOkay } from '~/types';
+import type { ServerResponseData, ServerResponseError, ServerResponseOkay, ServerStandardResposne } from '~/types';
 
 type RetryableRequest = InternalAxiosRequestConfig & {
     _isRetry: boolean
@@ -38,9 +37,9 @@ export function useApi() {
     const publicApi = axios.create(axiosDefault);
     const privateApi = axios.create(axiosDefault);
 
-    function responseOrErr(obj?: AxiosResponse): ServerResponseOkay<any> | ServerResponseError {
+    function responseOrErr(obj?: AxiosResponse): ServerStandardResposne<any> {
         if (obj && obj.data) {
-            return obj.data as ServerResponseOkay<any>;
+            return obj.data as ServerResponseData<any> | ServerResponseOkay;
         }
         else {
             const noResponseError: ServerResponseError = {

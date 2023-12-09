@@ -1,7 +1,7 @@
-import type { ServerResponseOkay } from './_server';
-import type { TokenDto, UserDto } from './_dto';
+import type { PagePreviewDto, TokenDto, UserDto } from './_dto';
+import type { ServerResponseData } from './_server';
 
-export type LoginResponse = ServerResponseOkay<
+export type LoginResponse = ServerResponseData<
     UserDto
     &
     {
@@ -9,11 +9,13 @@ export type LoginResponse = ServerResponseOkay<
     }
 >;
 
-export type TokenResponse = ServerResponseOkay<TokenDto>;
+export type TokenResponse = ServerResponseData<TokenDto>;
 
-export type UserResponse = ServerResponseOkay<UserDto>;
+export type UserResponse = ServerResponseData<UserDto>;
 
-export type ImageResponse = ServerResponseOkay<{
+export type ImageResponse = ServerResponseData<{
     id: string
     src: string
 }>;
+
+export type PagePreviewResponse = ServerResponseData<Array<PagePreviewDto>>;

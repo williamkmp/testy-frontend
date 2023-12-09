@@ -21,11 +21,17 @@ export interface UFormApi {
     errors: Ref<FormError[]>
 }
 
-export interface PagePreview {
+export interface MenuItem {
     id: string
     title: string
     isOpen: boolean
     isChildrenFetched: boolean
-    children: PagePreview[]
+    children: MenuItem[]
     imageSrc?: string
+}
+
+export interface PagePreviewDto {
+    id: string
+    title: string
+    children?: PagePreviewDto[]
 }

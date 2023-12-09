@@ -1,7 +1,12 @@
-export interface ServerResponseOkay<T> {
+export interface ServerResponseOkay {
+    status: number
+    message: string
+}
+
+export interface ServerResponseData<T> {
     status: number
     message?: string
-    data?: T
+    data: T
 }
 
 export interface ServerResponseError {
@@ -12,4 +17,4 @@ export interface ServerResponseError {
     }
 }
 
-export type ServerStandardResposne<Data> = ServerResponseOkay<Data> | ServerResponseError;
+export type ServerStandardResposne<Data> = ServerResponseOkay | ServerResponseError | ServerResponseData<Data>;
