@@ -3,9 +3,15 @@ const sideMenu = useSideMenuStore();
 const auth = useAuthStore();
 
 const aside = ref<HTMLDivElement>();
+const isFetchingMenuItem = ref(true);
 defineExpose({ aside });
 
-onMounted(() => {
+onMounted(async () => {
+    initSize();
+    await initMenuItemData();
+});
+
+function initSize() {
     if (!aside.value)
         return;
 
@@ -13,7 +19,13 @@ onMounted(() => {
         aside.value.style.width = sideMenu.size;
     else
         aside.value.style.width = `${getComputedStyle(aside.value).minWidth}px`;
-});
+}
+
+async function initMenuItemData() {
+    isFetchingMenuItem.value = true;
+    sideMenu.menuItems = await sideMenu.fetchPages();
+    isFetchingMenuItem.value = false;
+}
 </script>
 
 <template>
@@ -24,12 +36,12 @@ onMounted(() => {
         class="h-full select-none overflow-hidden transition-all duration-300"
         :class="[
             sideMenu.isOpen
-                ? 'min-w-[16rem] max-w-[30rem]'
+                ? 'min-w-[14rem] max-w-[30rem]'
                 : 'min-w-0 max-w-0',
         ]"
     >
         <div
-            class="flex h-full w-full min-w-[16rem] flex-col gap-4 overflow-hidden bg-gray-300/20 px-4 py-3"
+            class="flex h-full w-full min-w-[14rem] flex-col gap-4 overflow-hidden bg-gray-300/20 px-4 py-3"
         >
             <header
                 class="flex w-full select-none items-center justify-start"
@@ -106,9 +118,20 @@ onMounted(() => {
                     <span class="text-xs font-medium tracking-tight">workspace</span>
                 </header>
                 <div class="h-full w-full overflow-y-auto overflow-x-hidden">
-                    <div class="flex flex-col">
-                        <template v-for="(page, index) in sideMenu.pages" :key="page.id">
-                            <PageItem v-model="sideMenu.pages[index]" />
+                    <div
+                        v-if="isFetchingMenuItem"
+                        class="flex flex-col gap-2"
+                    >
+                        <USkeleton class="h-5 w-full" />
+                        <USkeleton class="h-5 w-full" />
+                        <USkeleton class="h-5 w-full" />
+                    </div>
+                    <div
+                        v-else
+                        class="flex flex-col"
+                    >
+                        <template v-for="(item, index) in sideMenu.menuItems" :key="item.id">
+                            <PageItem v-model="sideMenu.menuItems[index]" />
                         </template>
                     </div>
                 </div>
