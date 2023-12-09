@@ -12,6 +12,9 @@
         "format": "eslint . --fix"
     },
     "dependencies": {
+        "@tiptap/pm": "^2.1.13",
+        "@tiptap/starter-kit": "^2.1.13",
+        "@tiptap/vue-3": "^2.1.13",
         "axios": "^1.6.2",
         "vue-advanced-cropper": "^2.8.8",
         "vuedraggable": "^2.24.3",
