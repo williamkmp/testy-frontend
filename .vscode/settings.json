@@ -10,8 +10,8 @@
     "editor.formatOnSave": false,
     // Auto fix
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
-        "source.organizeImports": true
+        "source.fixAll.eslint": "always",
+        "source.organizeImports": "never"
     },
     // Silent the stylistic rules in you IDE, but still auto fix them
     "eslint.rules.customizations": [
@@ -82,7 +82,8 @@
                 ],
                 "peek": [
                     "eslint.config.js",
-                    "tailwind.config.ts"
+                    "tailwind.config.ts",
+                    ".vscode/"
                 ]
             }
         ]
@@ -93,7 +94,6 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        ".vscode/": true,
         "node_modules/": true,
         ".nuxt/": true,
         ".gitignore": true,
