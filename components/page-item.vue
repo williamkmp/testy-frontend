@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-import type { PagePreview } from '~/types';
+import type { MenuItem } from '~/types';
 
 const props = defineProps({
     level: { type: Number, default: 0 },
 });
-const page = defineModel<PagePreview>({ required: true });
+const page = defineModel<MenuItem>({ required: true });
+
+// Dependencies
+const sideMenu = useSideMenuStore();
 const sleep = useSleep();
-const app = useAppStore();
 
 // States
 const childRefs = ref<any[]>([]);
@@ -15,6 +17,7 @@ const isFetchingChildren = ref(true);
 async function clickhandler() {
     // eslint-disable-next-line no-console
     console.log(`clicked ${page.value.title}`);
+    return await navigateTo(encodeURI(`/page/${page.value.id}`));
 }
 
 async function toggleExpand() {
@@ -24,35 +27,17 @@ async function toggleExpand() {
     if (!page.value.isChildrenFetched) {
         page.value.isChildrenFetched = true;
         isFetchingChildren.value = true;
-        if (props.level <= 1) {
-            const response = await sleep.for(1000, [
-                {
-                    id: `page-${app.getId()}`,
-                    title: `Child 1 of ${page.value.title}`,
-                },
-                {
-                    id: `page-${app.getId()}`,
-                    title: `Child 2 of ${page.value.title}`,
-                },
-            ]);
-            for (const data of response!) {
-                page.value.children.push({
-                    id: data.id,
-                    title: data.title,
-                    children: [],
-                    isChildrenFetched: false,
-                    isOpen: false,
-                });
-            }
-        }
-        else {
+
+        if (props.level <= 1)
+            page.value.children = await sideMenu.fetchPages(page.value.id);
+        else
             await sleep.for(1000);
-        }
+
         isFetchingChildren.value = false;
     }
 }
 
-function forceCloseChildren(page: PagePreview) {
+function forceCloseChildren(page: MenuItem) {
     for (const item of page.children) {
         item.isOpen = false;
         forceCloseChildren(item);
@@ -90,10 +75,13 @@ const buttonIcon = computed(() => page.value.isOpen
         </template>
         <section
             v-else-if="page.children.length === 0 && !isFetchingChildren"
-            :style="{ paddingLeft: `${props.level + 2}rem` }"
+            :style="{ paddingLeft: `${props.level + 1.25}rem` }"
             class="my-1 select-none text-xs font-medium text-gray-400 dark:text-gray-400"
         >
             <span>No Pages</span>
         </section>
+        <div v-else class="w-full" :style="{ paddingLeft: `${props.level + 1.25}rem` }">
+            <USkeleton class="h-5 w-full" />
+        </div>
     </div>
 </template>
