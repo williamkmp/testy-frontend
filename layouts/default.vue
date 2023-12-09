@@ -24,7 +24,8 @@ useEventListener(resizeHandle, 'mousedown', (e) => {
 });
 
 watch([isResizing, mouse.x], () => {
-    if (isResizing.value && sideMenuPanel.value.aside && sideMenu.isOpen) {
+    // Is Resizing
+    if (isResizing.value && sideMenuPanel.value?.aside != null && sideMenu.isOpen) {
         sideMenuPanel.value.aside.style.transitionProperty = 'none';
         document.getElementsByTagName('body').item(0)!.style.cursor = 'col-resize';
 
@@ -40,7 +41,8 @@ watch([isResizing, mouse.x], () => {
             sideMenuPanel.value.aside.style.width = `${minimumPanelWidth}px`;
         sideMenu.size = sideMenuPanel.value.aside.style.width;
     }
-    else {
+    // Is Not Resizing
+    else if (!isResizing.value && sideMenuPanel.value?.aside != null) {
         sideMenuPanel.value.aside.style.transitionProperty = 'all';
         document.getElementsByTagName('body').item(0)!.style.cursor = 'default';
     }
@@ -60,7 +62,7 @@ watch([isResizing, mouse.x], () => {
 
         <section class="flex h-full grow flex-col">
             <AppHeader />
-            <div data-role="page-container" class="relative flex w-full grow items-start justify-start overflow-y-auto overflow-x-hidden">
+            <div data-role="page-container" class="relative flex grow items-start justify-start overflow-y-auto overflow-x-hidden">
                 <slot />
             </div>
         </section>
