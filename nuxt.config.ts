@@ -19,7 +19,7 @@ export default defineNuxtConfig({
 
     // application configuration
     colorMode: { preference: 'system', fallback: 'light', classSuffix: '' },
-    spaLoadingTemplate: '/pages/loading.html',
+    spaLoadingTemplate: true,
     css: [
         '@/assets/app.css',
         'vue-advanced-cropper/dist/style.css',
