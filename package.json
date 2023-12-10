@@ -17,7 +17,7 @@
         "@tiptap/vue-3": "^2.1.13",
         "axios": "^1.6.2",
         "vue-advanced-cropper": "^2.8.8",
-        "vuedraggable": "^2.24.3",
+        "vuedraggable": "^4.1.0",
         "zod": "^3.22.4"
     },
     "devDependencies": {
