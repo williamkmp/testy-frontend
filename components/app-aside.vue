@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+// Dependencies
+const shortcut = useShortcuts();
 const sideMenu = useSideMenuStore();
 const auth = useAuthStore();
 
@@ -11,6 +13,7 @@ onMounted(async () => {
     await initMenuItemData();
 });
 
+// Actions
 function initSize() {
     if (!aside.value)
         return;
@@ -61,7 +64,7 @@ async function initMenuItemData() {
             <section class="flex w-full flex-col">
                 <UTooltip
                     text="Jump and open page"
-                    :shortcuts="['Ctrl', 'Shift', 'K']"
+                    :shortcuts="[shortcut.metaSymbol.value, 'Shift', 'P']"
                     :popper="{ placement: 'right' }"
                 >
                     <UButton

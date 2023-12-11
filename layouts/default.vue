@@ -1,11 +1,19 @@
 <script setup lang="ts">
 const sideMenu = useSideMenuStore();
+const searchModal = useSearchModalStore();
 
 // Feature: side menu open on press shortcut
 defineShortcuts({
     'meta_\\': {
         usingInput: true,
         handler: () => sideMenu.isOpen = !sideMenu.isOpen,
+    },
+});
+
+defineShortcuts({
+    meta_shift_p: {
+        usingInput: true,
+        handler: () => searchModal.isOpen = true,
     },
 });
 
@@ -68,4 +76,5 @@ watch([isResizing, mouse.x], () => {
         </section>
     </div>
     <UNotifications />
+    <AppSearchModal />
 </template>
