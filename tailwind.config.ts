@@ -11,7 +11,7 @@ export default <Partial<Config>> {
 
     theme: {
         fontFamily: {
-            sans: ['"Inter"', 'sans-serif'],
+            sans: ['"Roboto"', 'sans-serif'],
         },
     },
     // eslint-disable-next-line ts/no-require-imports
