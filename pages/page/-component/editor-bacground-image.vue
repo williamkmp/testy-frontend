@@ -3,50 +3,39 @@ import { useEditorHeaderStore } from '../-store/editor-header';
 
 const editorHeader = useEditorHeaderStore();
 
+// States & Refs
 const imageRef = ref<HTMLImageElement>();
 const containerRef = ref<HTMLDivElement>();
 const mouse = useMouse();
 const isHover = ref(false);
 const isRepositioning = ref(false);
 const isDragging = ref(false);
-const initialMouseY = ref<number>();
 
-useEventListener(containerRef, 'mousedown', () => {
+// Event Listeners
+useEventListener(containerRef, 'mousedown', enableRepositionDragging);
+useEventListener(window, 'blur', disableRepositionDragging);
+useEventListener(window, 'mouseup', disableRepositionDragging);
+
+function enableRepositionDragging(e: Event) {
+    e.preventDefault();
     if (isRepositioning.value && !isDragging.value)
         isDragging.value = true;
-});
-useEventListener(containerRef, 'mousemove', (e) => {
-    e.preventDefault();
-});
-useEventListener(containerRef, 'mouseleave', () => {
-    if (isRepositioning.value && isDragging.value)
-        isDragging.value = false;
-});
-useEventListener(containerRef, 'mouseup', () => {
-    if (isRepositioning.value && isDragging.value)
-        isDragging.value = false;
-});
+}
 
-watch(mouse.y, () => {
-    if (isDragging.value && isRepositioning.value && imageRef.value && initialMouseY.value) {
-        const delta = initialMouseY.value - mouse.y.value;
+function disableRepositionDragging(e: Event) {
+    e.preventDefault();
+    if (isRepositioning.value && isDragging.value)
+        isDragging.value = false;
+}
+
+watch(mouse.y, (newValue, oldValue) => {
+    if (isDragging.value && isRepositioning.value && imageRef.value) {
+        const delta = oldValue - newValue;
         let newPosition = editorHeader.coverImagePosition;
         newPosition = (delta >= 0)
             ? newPosition += 1
             : newPosition -= 1;
-
         editorHeader.coverImagePosition = clampNumber(0, newPosition, 100);
-    }
-});
-
-watch(isDragging, () => {
-    if (isDragging.value) {
-        if (initialMouseY.value === undefined)
-            initialMouseY.value = mouse.y.value;
-    }
-    else {
-        if (initialMouseY.value !== undefined)
-            initialMouseY.value = undefined;
     }
 });
 
@@ -60,6 +49,7 @@ watch(isRepositioning, () => {
     }
 });
 
+// Actions
 function saveReposition() {
     isRepositioning.value = false;
 }
