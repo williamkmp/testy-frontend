@@ -7,11 +7,9 @@ import { useEditorHeaderStore } from './-store/editor-header';
 // Dependency
 const routeParam = useRoute().params as { id: string };
 const app = useAppStore();
-const sleep = useSleep();
 const editorHeader = useEditorHeaderStore();
 
 const { data, pending } = await useLazyAsyncData(`document`, async () => {
-    await sleep.for(1000);
     const imageSrc = 'https://images.unsplash.com/photo-1564069114553-7215e1ff1890?q=80&w=3864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
     const title = 'Page Title';
     editorHeader.title = title;

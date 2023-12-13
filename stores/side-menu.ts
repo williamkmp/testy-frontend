@@ -22,7 +22,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
         let response: PagePreviewResponse;
 
         if (id) {
-            response = await _sleep.for<PagePreviewResponse>(3000, {
+            response = await _sleep.for<PagePreviewResponse>(0, {
                 status: HttpStatusCode.Ok,
                 data: [
                     {
@@ -37,7 +37,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
             }) as PagePreviewResponse;
         }
         else {
-            response = await _sleep.for<PagePreviewResponse>(3000, {
+            response = await _sleep.for<PagePreviewResponse>(0, {
                 status: HttpStatusCode.Ok,
                 data: [
                     {
