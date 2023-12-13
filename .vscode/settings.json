@@ -78,13 +78,13 @@
                     ".vscode/",
                     "eslint.config.js",
                     "tailwind.config.ts",
-                    "public/"
-                ],
-                "peek": [
-                    "eslint.config.js",
+                    "public/",
                     "tailwind.config.ts",
+                    "eslint.config.js",
+                    ".vscode/",
                     ".vscode/"
-                ]
+                ],
+                "peek": []
             }
         ]
     },
@@ -94,11 +94,14 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
+        ".vscode/": true,
         "node_modules/": true,
         ".nuxt/": true,
         ".gitignore": true,
         "tsconfig.json": true,
         "package-lock.json": true,
+        "eslint.config.js": true,
+        "tailwind.config.ts": true,
         "public/": true
     },
 
