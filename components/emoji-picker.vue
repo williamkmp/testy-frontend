@@ -58,7 +58,7 @@ function chooseRandom() {
                 />
             </UTooltip>
         </header>
-        <main class="flex h-min max-h-full w-full flex-wrap content-start items-start justify-evenly gap-1 overflow-y-auto overflow-x-hidden">
+        <main class="flex h-min max-h-full w-full flex-wrap content-start items-start justify-normal gap-1 overflow-y-auto overflow-x-hidden">
             <div
                 v-for="emoji in emojis"
                 :key="emoji.key"

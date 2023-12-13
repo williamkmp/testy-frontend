@@ -58,7 +58,7 @@ function removeEmoji() {
                 <template #panel="">
                     <div
                         ref="emojiPickerRef"
-                        class="h-80 w-[25rem] p-2"
+                        class="h-80 w-[24rem] px-2 py-3"
                     >
                         <EmojiPicker
                             @choose="pickEmoji"
