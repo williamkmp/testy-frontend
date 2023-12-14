@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { useEditorHeaderStore } from '../-store/editor-header';
+import { usePageDataStore } from '../-store/page-data';
 
+// Dependency
+const pageData = usePageDataStore();
 const editorHeader = useEditorHeaderStore();
 
 // States & Refs
@@ -31,11 +34,11 @@ function disableRepositionDragging(e: Event) {
 watch(mouse.y, (newValue, oldValue) => {
     if (isDragging.value && isRepositioning.value && imageRef.value) {
         const delta = oldValue - newValue;
-        let newPosition = editorHeader.coverImagePosition;
+        let newPosition = pageData.imagePosition;
         newPosition = (delta >= 0)
             ? newPosition += 1
             : newPosition -= 1;
-        editorHeader.coverImagePosition = clampNumber(0, newPosition, 100);
+        pageData.imagePosition = clampNumber(0, newPosition, 100);
     }
 });
 
@@ -59,13 +62,13 @@ function saveReposition() {
     <header ref="containerRef" class="mb-2 flex min-h-[5rem] w-full flex-col overflow-hidden">
         <template v-if="editorHeader.hasCoverImage">
             <div class="relative flex h-60 w-full justify-center overflow-hidden bg-gray-200 dark:bg-gray-700" @mouseenter="isHover = true" @mouseleave="isHover = false">
-                <img ref="imageRef" :src="editorHeader.coverImageSrc" alt="Backgound Image" class="w-full object-cover" :style="{ objectPosition: `center ${editorHeader.coverImagePosition}%` }">
+                <img ref="imageRef" :src="pageData.imageSrc" alt="Backgound Image" class="w-full object-cover" :style="{ objectPosition: `center ${pageData.imagePosition}%` }">
                 <div class="pointer-events-none absolute flex h-full w-full max-w-3xl items-center justify-center transition-opacity" :class="[(isRepositioning || isHover) ? 'opacity-100' : 'opacity-0']">
                     <div class="pointer-events-auto absolute right-0 top-0 mt-2">
                         <template v-if="!isRepositioning">
                             <UButtonGroup size="xs" orientation="horizontal">
                                 <UButton label="Change" color="gray" variant="solid" />
-                                <UButton label="Remove" color="gray" variant="solid" @click="editorHeader.coverImageSrc = undefined" />
+                                <UButton label="Remove" color="gray" variant="solid" @click="pageData.imageSrc = undefined" />
                                 <UButton label="Reposition" color="gray" variant="solid" @click="isRepositioning = true" />
                             </UButtonGroup>
                         </template>

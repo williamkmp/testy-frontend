@@ -1,15 +1,17 @@
 <script lang="ts" setup>
 import { useEditorHeaderStore } from '../-store/editor-header';
+import { usePageDataStore } from '../-store/page-data';
 
-const model = defineModel({ type: String, required: true });
-const isEmojiPickerOpen = ref(false);
+// Dependencies
+const pageData = usePageDataStore();
 const editorHeader = useEditorHeaderStore();
-const isHover = ref(false);
-const isFocus = ref(false);
 
 // States & Refs
 const fileInput = ref<HTMLInputElement>();
 const emojiPickerRef = ref<HTMLDivElement>();
+const isEmojiPickerOpen = ref(false);
+const isHover = ref(false);
+const isFocus = ref(false);
 
 // Style
 const btnClass = 'opacity-40 hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-gray-100 font-normal py-1 px-1.5';
@@ -21,18 +23,18 @@ onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 function uploadImage() {
     const imageInput = fileInput.value as HTMLInputElement;
     if (imageInput && imageInput.files && imageInput.files[0] !== null) {
-        editorHeader.coverImageSrc = URL.createObjectURL(imageInput.files[0]);
-        editorHeader.coverImagePosition = 0;
+        pageData.imageSrc = URL.createObjectURL(imageInput.files[0]);
+        pageData.imagePosition = 50;
     }
 }
 
 function pickEmoji(emojiKey: string) {
-    editorHeader.iconKey = emojiKey;
+    pageData.iconKey = emojiKey;
     isEmojiPickerOpen.value = false;
 }
 
 function removeEmoji() {
-    editorHeader.iconKey = undefined;
+    pageData.iconKey = undefined;
     isEmojiPickerOpen.value = false;
 }
 </script>
@@ -52,7 +54,7 @@ function removeEmoji() {
                         class="flex h-20 w-20 items-center justify-center rounded bg-transparent p-3 transition-all hover:cursor-pointer hover:bg-gray-400/20"
                         @click="isEmojiPickerOpen = true"
                     >
-                        <EmojiIcon :emoji-name="editorHeader.iconKey" />
+                        <EmojiIcon :emoji-name="pageData.iconKey" />
                     </div>
                 </template>
                 <template #panel>
@@ -88,7 +90,7 @@ function removeEmoji() {
             />
         </div>
         <UTextarea
-            v-model="model"
+            v-model="pageData.title"
             :rows="1"
             placeholder="Untitled"
             autoresize

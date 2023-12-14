@@ -1,34 +1,29 @@
 <script setup lang="ts">
-import draggable from 'vuedraggable';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
-import { useEditorHeaderStore } from './-store/editor-header';
+import { usePageDataStore } from './-store/page-data';
+import type { PageDataResponse } from '~/types';
 
 // Dependency
-const routeParam = useRoute().params as { id: string };
 const app = useAppStore();
-const editorHeader = useEditorHeaderStore();
+const { privateApi, path } = useApi();
+const routeParam = useRoute().params as { id: string };
+const pageData = usePageDataStore();
 
-const { data, pending } = await useLazyAsyncData(`document`, async () => {
-    const imageSrc = 'https://images.unsplash.com/photo-1564069114553-7215e1ff1890?q=80&w=3864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-    const title = 'Page Title';
-    editorHeader.title = title;
-    editorHeader.coverImageSrc = imageSrc;
-    app.headerTitle = editorHeader.title;
-
-    return {
-        title,
-        imageSrc,
-    };
+const { pending } = await useLazyAsyncData(`document`, async () => {
+    const response: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
+    pageData.id = response.data.id;
+    pageData.title = response.data.title;
+    pageData.imageSrc = response.data.imageSrc;
+    pageData.iconKey = response.data.iconKey;
+    pageData.authority = response.data.authority;
+    pageData.imagePosition = response.data.imagePosition;
 });
 
-interface PageBlock {
-    id: string
-    type: 'paragraph' | 'heading1' | 'heading2' | 'heading3' | 'divider' | 'bullet'
-    content: string
-};
-
-const pageBlocks = ref<PageBlock[]>([]);
+watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
+    app.headerTitle = pageData.title;
+    app.emojiKey = pageData.iconKey;
+});
 </script>
 
 <template>
@@ -53,13 +48,9 @@ const pageBlocks = ref<PageBlock[]>([]);
 
             <!-- Editor -->
             <UContainer class="w-full max-w-3xl">
-                <EditorHeader v-model="data!.title" />
+                <EditorHeader />
                 <main class="mb-5 w-full">
-                    <draggable v-model="pageBlocks" item-key="id">
-                        <template #item="{ element }">
-                            <div> {{ element.content }} </div>
-                        </template>
-                    </draggable>
+                    <!-- TODO: implement editor -->
                 </main>
             </UContainer>
         </template>

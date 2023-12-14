@@ -1,26 +1,27 @@
 import { defineStore } from 'pinia';
+import { usePageDataStore } from './page-data';
 
-export const useEditorHeaderStore = defineStore('EditorPageEditorHeader', () => {
-    const title = ref<string>();
-    const iconKey = ref<string>();
-    const coverImageSrc = ref<string>();
-    const coverImagePosition = ref<number>(0);
-    const hasCoverImage = computed(() => coverImageSrc.value !== undefined);
-    const hasIcon = computed(() => iconKey.value !== undefined);
+/**
+ * Derived coomponent store from page-data.ts
+ */
+export const useEditorHeaderStore = defineStore('EditorHeader', () => {
+    // Dependency
+    const pageData = usePageDataStore();
 
+    // States
+    const hasCoverImage = computed(() => pageData.imageSrc !== undefined);
+    const hasIcon = computed(() => pageData.iconKey !== undefined);
+
+    // Actions
     function showEditorIcon() {
         const emojiKeys = Object.keys(EMOJI);
         const randomEmojiKeys = emojiKeys[emojiKeys.length * Math.random() << 0];
-        iconKey.value = randomEmojiKeys;
+        pageData.iconKey = randomEmojiKeys;
     }
 
     return {
-        iconKey,
         hasIcon,
         showEditorIcon,
-        title,
-        coverImageSrc,
         hasCoverImage,
-        coverImagePosition,
     };
 });
