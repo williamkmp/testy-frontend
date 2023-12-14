@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 // Dependencies
+const searchModal = useSearchModalStore();
 const shortcut = useShortcuts();
 const sideMenu = useSideMenuStore();
 const auth = useAuthStore();
@@ -75,6 +76,7 @@ async function initMenuItemData() {
                         class="justify-start hover:bg-white"
                         size="xs"
                         block
+                        @click="searchModal.isOpen = true"
                     />
                 </UTooltip>
 
