@@ -1,5 +1,10 @@
 import type { FormError } from '@nuxt/ui/dist/runtime/types';
 
+export interface ImageDto {
+    id: string
+    src: string
+}
+
 export interface UserDto {
     id: string
     fullName: string
@@ -25,13 +30,13 @@ export interface MenuItem {
     id: string
     title: string
     isOpen: boolean
+    iconKey?: string
     isChildrenFetched: boolean
     children: MenuItem[]
-    imageSrc?: string
 }
 
 export interface PagePreviewDto {
     id: string
     title: string
-    children?: PagePreviewDto[]
+    iconKey?: string
 }

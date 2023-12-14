@@ -20,6 +20,10 @@ const path = {
     // image
     image: encodeURI('/image'),
 
+    // page
+    page: encodeURI('/page'),
+    pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
+    pageChildren: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/children`),
 };
 
 export function useApi() {
