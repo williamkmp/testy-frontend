@@ -73,8 +73,8 @@ async function initMenuItemData() {
                         label="Search"
                         icon="i-heroicons-magnifying-glass"
                         variant="ghost"
-                        class="justify-start hover:bg-white"
-                        size="xs"
+                        class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
+                        size="sm"
                         block
                         @click="searchModal.isOpen = true"
                     />
@@ -85,8 +85,8 @@ async function initMenuItemData() {
                     label="Updates & Notification"
                     icon="i-heroicons-clock"
                     variant="ghost"
-                    class="justify-start hover:bg-white"
-                    size="xs"
+                    class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
+                    size="sm"
                     block
                 />
 
@@ -95,8 +95,8 @@ async function initMenuItemData() {
                     label="Setting"
                     icon="i-heroicons-cog-6-tooth"
                     variant="ghost"
-                    class="justify-start hover:bg-white"
-                    size="xs"
+                    class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
+                    size="sm"
                     block
                     @click="navigateTo('/setting')"
                 />
@@ -111,8 +111,8 @@ async function initMenuItemData() {
                         label="Add Page"
                         icon="i-heroicons-plus-circle"
                         variant="ghost"
-                        class="justify-start hover:bg-white"
-                        size="xs"
+                        class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
+                        size="sm"
                         block
                     />
                 </UTooltip>
@@ -120,7 +120,7 @@ async function initMenuItemData() {
 
             <section data-role="pages-tree-container" class="flex w-full grow flex-col gap-1 overflow-y-auto">
                 <header>
-                    <span class="text-xs font-medium tracking-tight">workspace</span>
+                    <span class="text-xs font-medium  text-gray-600/60 dark:text-gray-400">workspace</span>
                 </header>
                 <div class="h-full w-full overflow-y-auto overflow-x-hidden">
                     <div
@@ -133,10 +133,19 @@ async function initMenuItemData() {
                     </div>
                     <div
                         v-else
-                        class="flex flex-col"
+                        class="flex flex-col gap-0.5"
                     >
-                        <template v-for="(item, index) in sideMenu.menuItems" :key="item.id">
-                            <PageItem v-model="sideMenu.menuItems[index]" />
+                        <template v-if="sideMenu.menuItems.length > 0">
+                            <template v-for="(item, index) in sideMenu.menuItems" :key="item.id">
+                                <PageItem v-model="sideMenu.menuItems[index]" />
+                            </template>
+                        </template>
+                        <template v-else>
+                            <section
+                                class="my-1 select-none pl-[1.25rem] text-xs font-medium text-gray-400 dark:text-gray-400"
+                            >
+                                <span>No Pages</span>
+                            </section>
                         </template>
                     </div>
                 </div>
