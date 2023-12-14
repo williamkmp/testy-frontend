@@ -55,7 +55,7 @@ function removeEmoji() {
                         <EmojiIcon :emoji-name="editorHeader.iconKey" />
                     </div>
                 </template>
-                <template #panel="">
+                <template #panel>
                     <div
                         ref="emojiPickerRef"
                         class="h-80 w-[24rem] px-2 py-3"

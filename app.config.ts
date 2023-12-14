@@ -23,6 +23,14 @@ export default defineAppConfig({
             rounded: 'rounded',
         },
 
+        button: {
+            color: {
+                gray: {
+                    solid: 'dark:hover:bg-gray-700',
+                },
+            },
+        },
+
         modal: {
             overlay: {
                 background: 'bg-gray-800/75',
