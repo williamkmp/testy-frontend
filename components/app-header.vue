@@ -24,9 +24,14 @@ const shortcut = useShortcuts();
                 />
             </UTooltip>
 
-            <h2 class="font-semibold">
-                {{ app.headerTitle }}
-            </h2>
+            <div class="flex h-full items-center justify-start gap-2">
+                <div v-if="app.emojiKey !== undefined" class="h-4 w-4">
+                    <EmojiIcon :emoji-name="app.emojiKey" />
+                </div>
+                <h2 class="font-semibold">
+                    {{ app.headerTitle }}
+                </h2>
+            </div>
         </div>
 
         <!-- right control -->

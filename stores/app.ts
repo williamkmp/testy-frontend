@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 export const useAppStore = defineStore('GlobalApp', () => {
     // Feature: Header title
     const headerTitle = ref<string>();
+    const emojiKey = ref<string>();
 
     // Feature: Dark Mode
     const colorMode = useColorMode();
@@ -26,5 +27,6 @@ export const useAppStore = defineStore('GlobalApp', () => {
         isDark,
         getId,
         headerTitle,
+        emojiKey,
     };
 });
