@@ -43,11 +43,6 @@ function forceCloseChildren(page: MenuItem) {
         forceCloseChildren(item);
     }
 }
-
-const buttonIcon = computed(() => page.value.isOpen
-    ? 'i-heroicons-chevron-down'
-    : 'i-heroicons-chevron-right',
-);
 </script>
 
 <template>
@@ -55,7 +50,7 @@ const buttonIcon = computed(() => page.value.isOpen
         class="flex w-full shrink-0 select-none items-center justify-start rounded-md px-2.5 py-0.5 text-sm font-medium tracking-wide text-gray-600/60 hover:bg-white hover:text-gray-700 focus:outline-none focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-75 dark:text-gray-400 dark:hover:bg-gray-950/30 dark:hover:text-white"
         :style="{ paddingLeft: `${props.level}rem` }"
     >
-        <UButton :icon="buttonIcon" variant="ghost" color="gray" class="opacity-70" size="2xs" @click="toggleExpand" />
+        <UButton icon="i-ep-arrow-right-bold" variant="ghost" color="gray" class="opacity-60 transition-transform" :class="[page.isOpen ? 'rotate-90' : 'rotate-0']" size="2xs" @click="toggleExpand" />
         <button class="flex h-full w-full items-center justify-start gap-2 pr-5" @click="clickhandler">
             <div class="grid h-4 w-4 shrink-0 place-items-center">
                 <EmojiIcon v-if="page.iconKey !== undefined" :emoji-name="page.iconKey" minified />
@@ -79,8 +74,8 @@ const buttonIcon = computed(() => page.value.isOpen
         </template>
         <section
             v-else-if="page.children.length === 0 && !isFetchingChildren"
-            :style="{ paddingLeft: `${props.level + 1.25}rem` }"
-            class="my-1 select-none text-xs text-gray-400 dark:text-gray-400"
+            :style="{ paddingLeft: `${props.level + 1}rem` }"
+            class="my-1 select-none text-xs font-medium text-gray-400 dark:text-gray-400"
         >
             <span>No Pages</span>
         </section>
