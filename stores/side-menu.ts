@@ -29,11 +29,27 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
         }));
     }
 
+    function addPage(page: {
+        id: string
+        title: string
+        iconKey: string
+    }) {
+        menuItems.value.push({
+            id: page.id,
+            title: page.title,
+            isChildrenFetched: false,
+            iconKey: page.iconKey,
+            isOpen: false,
+            children: [],
+        });
+    }
+
     return {
         isFetching,
         isOpen,
         size,
         menuItems,
         fetchPages,
+        addPage,
     };
 });
