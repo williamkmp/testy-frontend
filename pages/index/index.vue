@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const app = useAppStore();
+app.headerTitle = undefined;
+app.emojiKey = undefined;
 </script>
 
 <template>

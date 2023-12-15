@@ -8,6 +8,7 @@ import GeneralSettingSection from './-component/general-setting-section.vue';
 
 const app = useAppStore();
 app.headerTitle = 'Setting';
+app.emojiKey = undefined;
 </script>
 
 <template>
