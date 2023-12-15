@@ -15,8 +15,8 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
     // Actions
     function showEditorIcon() {
         const emojiKeys = Object.keys(EMOJI);
-        const randomEmojiKeys = emojiKeys[emojiKeys.length * Math.random() << 0];
-        pageData.iconKey = randomEmojiKeys;
+        const randomEmojiKey = emojiKeys[emojiKeys.length * Math.random() << 0];
+        pageData.iconKey = randomEmojiKey;
     }
 
     return {
