@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 // Dependencies
 const searchModal = useSearchModalStore();
+const createPageModal = useCreatePageModalStore();
 const shortcut = useShortcuts();
 const sideMenu = useSideMenuStore();
 const auth = useAuthStore();
@@ -104,7 +105,7 @@ async function initMenuItemData() {
                 <UTooltip
                     text="Add Page"
                     :popper="{ placement: 'right' }"
-                    :shortcuts="['Ctrl', 'Shift', 'A']"
+                    :shortcuts="[shortcut.metaSymbol.value, 'P']"
                 >
                     <UButton
                         color="gray"
@@ -114,6 +115,7 @@ async function initMenuItemData() {
                         class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
                         size="sm"
                         block
+                        @click="createPageModal.isOpen = true"
                     />
                 </UTooltip>
             </section>
