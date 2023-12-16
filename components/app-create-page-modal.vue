@@ -7,6 +7,7 @@ const { privateApi, path } = useApi();
 const notif = useNotification();
 const createPageModal = useCreatePageModalStore();
 const sideMenu = useSideMenuStore();
+const authStore = useAuthStore();
 
 // Refs
 const imageContainerRef = ref<HTMLDivElement>();
@@ -97,11 +98,13 @@ async function submitPage() {
         let imageResponse: ImageResponse | undefined;
         if (pageData.value.imageSrc && pageData.value.image) {
             imageResponse = await privateApi.postForm(path.image, {
-                image: await resizeImage(pageData.value.image, 1000),
+                image: await resizeImage(pageData.value.image, 3500),
             });
         }
         const pageResponse: PageDataResponse = await privateApi.post(path.page, {
-            title: pageData.value.title,
+            title: (pageData.value.title !== undefined && pageData.value.title.trim() !== undefined)
+                ? pageData.value.title
+                : 'Untitled',
             iconKey: pageData.value.iconKey,
             imageId: (imageResponse !== undefined)
                 ? imageResponse.data.id
@@ -160,6 +163,10 @@ function removeEmoji() {
 
 function addEmail() {
     if (inviteEmailText.value !== undefined && inviteEmailText.value.trim() !== '') {
+        // Email is the same as user
+        if (inviteEmailText.value === authStore.user!.email)
+            return;
+        // Email is already in invite list
         if (inviteList.value.some(invite => invite.email === inviteEmailText.value!.trim()))
             return;
         inviteList.value.push({
@@ -192,7 +199,7 @@ const btnClass = 'opacity-40 hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-
             width: 'w-full sm:max-w-2xl max-w-2xl',
             padding: 'sm:p-8 p-8',
         }"
-        :prevent-close="isDragging"
+        :prevent-close="isDragging || isSubmittingPage"
         @close="resetModal"
     >
         <!-- container -->
