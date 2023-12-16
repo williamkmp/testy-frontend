@@ -95,7 +95,7 @@ export function useApi() {
 
             // Retry unauthorized request for the first time
             if (
-                response.status === HTTP_STATUS.UNAUTHORIZED
+                response.status === HttpStatusCode.Unauthorized
                 && !originalRequest._isRetry
             ) {
                 originalRequest._isRetry = true;
