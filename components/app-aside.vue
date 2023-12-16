@@ -5,6 +5,7 @@ const createPageModal = useCreatePageModalStore();
 const shortcut = useShortcuts();
 const sideMenu = useSideMenuStore();
 const auth = useAuthStore();
+const { path } = useApi();
 
 const aside = ref<HTMLDivElement>();
 const isFetchingMenuItem = ref(true);
@@ -53,7 +54,7 @@ async function initMenuItemData() {
             >
                 <div class="flex h-full w-full items-center gap-2">
                     <UAvatar
-                        :src="auth.user!.imageSrc"
+                        :src="path.getImage(auth.user!.imageId)"
                         :alt="auth.user!.fullName.toUpperCase()"
                         size="sm"
                     />

@@ -21,10 +21,10 @@ onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 
 // Actions
 function uploadImage() {
+    // TODO: impement change image
     const imageInput = fileInput.value as HTMLInputElement;
     if (imageInput && imageInput.files && imageInput.files[0] !== null) {
-        pageData.imageSrc = URL.createObjectURL(imageInput.files[0]);
-        pageData.imagePosition = 50;
+        //
     }
 }
 

@@ -11,7 +11,7 @@ export interface UserDto {
     fullName: string
     tagName: string
     email: string
-    imageSrc?: string
+    imageId?: string
 }
 
 export interface TokenDto {
@@ -47,6 +47,6 @@ export interface PageDataDto {
     title: string
     authority: Authority
     iconKey: string
-    imageSrc: string
+    imageId: string
     imagePosition: number
 }

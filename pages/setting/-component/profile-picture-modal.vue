@@ -51,7 +51,7 @@ async function doUpload() {
                 },
             );
 
-            auth.user!.imageSrc = userUpdateResponse.data?.imageSrc;
+            auth.user!.imageId = userUpdateResponse.data?.imageId;
             notif.ok({ message: 'upload_success' });
         }
         catch (err: any) {
@@ -73,7 +73,7 @@ async function doDelete() {
                 fullName: auth.user!.fullName,
             },
         );
-        auth.user!.imageSrc = undefined;
+        auth.user!.imageId = undefined;
         notif.ok({ message: 'update_success' });
     }
     catch (err: any) {
@@ -125,7 +125,7 @@ function closeModal() {
                         class="flex w-full flex-col items-center justify-center gap-8"
                     >
                         <UAvatar
-                            :src="auth.user?.imageSrc"
+                            :src="path.getImage(auth.user!.imageId)"
                             :alt="auth.user?.fullName.toUpperCase()"
                             size="3xl"
                         />

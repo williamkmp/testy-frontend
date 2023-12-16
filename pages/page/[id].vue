@@ -14,7 +14,7 @@ const { pending } = await useLazyAsyncData(`document`, async () => {
     const response: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
     pageData.id = response.data.id;
     pageData.title = response.data.title;
-    pageData.imageSrc = response.data.imageSrc;
+    pageData.imageId = response.data.imageId;
     pageData.iconKey = response.data.iconKey;
     pageData.authority = response.data.authority;
     pageData.imagePosition = response.data.imagePosition;

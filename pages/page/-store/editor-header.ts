@@ -7,9 +7,11 @@ import { usePageDataStore } from './page-data';
 export const useEditorHeaderStore = defineStore('EditorHeader', () => {
     // Dependency
     const pageData = usePageDataStore();
+    const { path } = useApi();
 
     // States
-    const hasCoverImage = computed(() => pageData.imageSrc !== undefined);
+    const hasCoverImage = computed(() => pageData.imageId !== undefined);
+    const imageSrc = computed(() => path.getImage(pageData.imageId));
     const hasIcon = computed(() => pageData.iconKey !== undefined);
 
     // Actions
@@ -21,6 +23,7 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
 
     return {
         hasIcon,
+        imageSrc,
         showEditorIcon,
         hasCoverImage,
     };

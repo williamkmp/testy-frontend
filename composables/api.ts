@@ -5,41 +5,43 @@ type RetryableRequest = InternalAxiosRequestConfig & {
     _isRetry: boolean
 };
 
-const path = {
-    // auth
-    authLogin: encodeURI('/auth/login'),
-    authRegister: encodeURI('/auth/register'),
-    authToken: encodeURI('/auth/token'),
-
-    // user
-    user: encodeURI('/user'),
-    userUserId: (p: { userId: string }) => encodeURI(`/user/${p.userId}`),
-    userMe: encodeURI('/user/me'),
-    userPassword: encodeURI('/user/password'),
-
-    // image
-    image: encodeURI('/image'),
-
-    // page
-    page: encodeURI('/page'),
-    pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
-    pageChildren: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/children`),
-};
-
 export function useApi() {
     // Dependency
     const config = useRuntimeConfig();
     const auth = useAuthStore();
 
     // datas
+    const baseUrl = config.public.API_BASE_URL || 'http://localhost:5000/';
     const axiosDefault: CreateAxiosDefaults = {
-        baseURL: config.public.API_BASE_URL || 'http://localhost:5000/',
+        baseURL: baseUrl,
         headers: {
             Accept: 'application/json',
         },
     };
     const publicApi = axios.create(axiosDefault);
     const privateApi = axios.create(axiosDefault);
+
+    const path = {
+        // auth
+        authLogin: encodeURI('/auth/login'),
+        authRegister: encodeURI('/auth/register'),
+        authToken: encodeURI('/auth/token'),
+
+        // user
+        user: encodeURI('/user'),
+        userUserId: (p: { userId: string }) => encodeURI(`/user/${p.userId}`),
+        userMe: encodeURI('/user/me'),
+        userPassword: encodeURI('/user/password'),
+
+        // image
+        image: encodeURI('/image'),
+        getImage: (id?: string) => encodeURI(`${baseUrl}image/${id || '-1'}`),
+
+        // page
+        page: encodeURI('/page'),
+        pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
+        pageChildren: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/children`),
+    };
 
     function responseOrErr(obj?: AxiosResponse): ServerStandardResposne<any> {
         if (obj && obj.data) {

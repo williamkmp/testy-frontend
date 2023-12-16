@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('GlobalAuth', () => {
                     email: userResponse.data!.email,
                     tagName: userResponse.data!.tagName,
                     fullName: userResponse.data!.fullName,
-                    imageSrc: userResponse.data!.imageSrc,
+                    imageId: userResponse.data!.imageId,
                 };
             }
         }

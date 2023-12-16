@@ -37,7 +37,7 @@ const loginForm = useFormDeclaration({
             email: response.data!.email,
             tagName: response.data!.tagName,
             fullName: response.data!.fullName,
-            imageSrc: response.data!.imageSrc,
+            imageId: response.data!.imageId,
         };
         await navigateTo('/');
         notif.ok({ message: 'Login Success' });

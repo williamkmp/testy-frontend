@@ -47,15 +47,15 @@ const profileForm = useFormDeclaration({
                 email: form.data.email,
                 tagName: form.data.tagName,
                 fullName: form.data.fullName,
-                imageSrc: auth.user?.imageSrc,
+                imageId: auth.user?.imageId,
             },
         );
         if (auth.user) {
-            auth.user.id = response.data!.id;
-            auth.user.email = response.data!.email;
-            auth.user.tagName = response.data!.tagName;
-            auth.user.fullName = response.data!.fullName;
-            auth.user.imageSrc = response.data!.imageSrc;
+            auth.user.id = response.data.id;
+            auth.user.email = response.data.email;
+            auth.user.tagName = response.data.tagName;
+            auth.user.fullName = response.data.fullName;
+            auth.user.imageId = response.data.imageId;
         }
         notif.ok({ message: 'update_success' });
     },
@@ -75,7 +75,7 @@ const profileForm = useFormDeclaration({
             >
                 <!-- Change Picture -->
                 <UAvatar
-                    :src="auth.user?.imageSrc"
+                    :src="path.getImage(auth.user!.imageId)"
                     :alt="auth.user?.fullName.toUpperCase()"
                     size="2xl"
                 />
