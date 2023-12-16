@@ -13,6 +13,11 @@ const sleep = useSleep();
 // States
 const childRefs = ref<any[]>([]);
 const isFetchingChildren = ref(true);
+const pageTitle = computed(() => {
+    if (page.value.title === undefined || page.value.title.trim() === '')
+        return 'Untitled';
+    return page.value.title;
+});
 
 async function clickhandler() {
     // eslint-disable-next-line no-console
@@ -56,7 +61,7 @@ function forceCloseChildren(page: MenuItem) {
                 <EmojiIcon v-if="page.iconKey !== undefined" :emoji-name="page.iconKey" minified />
                 <UIcon v-else name="i-heroicons-document" />
             </div>
-            <span class="truncate">{{ page.title }}</span>
+            <span class="truncate">{{ pageTitle }}</span>
         </button>
     </div>
     <div v-show="page.isOpen" class="flex w-full flex-col gap-0.5">

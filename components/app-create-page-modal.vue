@@ -102,9 +102,7 @@ async function submitPage() {
             });
         }
         const pageResponse: PageDataResponse = await privateApi.post(path.page, {
-            title: (pageData.value.title !== undefined && pageData.value.title.trim() !== undefined)
-                ? pageData.value.title
-                : 'Untitled',
+            title: pageData.value.title,
             iconKey: pageData.value.iconKey,
             imageId: (imageResponse !== undefined)
                 ? imageResponse.data.id
