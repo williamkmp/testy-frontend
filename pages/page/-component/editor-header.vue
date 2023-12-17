@@ -42,7 +42,7 @@ function removeEmoji() {
 <template>
     <div
         class="mb-4 flex w-full flex-col gap-2"
-        :class="{ '-translate-y-10': editorHeader.hasIcon && editorHeader.hasCoverImage }"
+        :class="{ '-translate-y-12': editorHeader.hasIcon && editorHeader.hasCoverImage }"
         @mouseenter="isHover = true" @mouseleave="isHover = false"
     >
         <input ref="fileInput" type="file" name="backgroundImage" class="hidden" @change="uploadImage">
