@@ -12,12 +12,12 @@ const pageData = usePageDataStore();
 
 const { pending } = await useLazyAsyncData(`document`, async () => {
     const response: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
-    pageData.id = response.data.id;
     pageData.title = response.data.title;
     pageData.imageId = response.data.imageId;
     pageData.iconKey = response.data.iconKey;
     pageData.authority = response.data.authority;
     pageData.imagePosition = response.data.imagePosition;
+    pageData.id = response.data.id;
 });
 
 watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
