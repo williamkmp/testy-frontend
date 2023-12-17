@@ -13,6 +13,7 @@ const mouse = useMouse();
 const isHover = ref(false);
 const isRepositioning = ref(false);
 const isDragging = ref(false);
+const newImagePosition = ref(pageData.imagePosition);
 
 // Event Listeners
 useEventListener(containerRef, 'mousedown', enableRepositionDragging);
@@ -34,16 +35,17 @@ function disableRepositionDragging(e: Event) {
 watch(mouse.y, (newValue, oldValue) => {
     if (isDragging.value && isRepositioning.value && imageRef.value) {
         const delta = oldValue - newValue;
-        let newPosition = pageData.imagePosition;
+        let newPosition = newImagePosition.value;
         newPosition = (delta >= 0)
             ? newPosition += 1
             : newPosition -= 1;
-        pageData.imagePosition = clampNumber(0, newPosition, 100);
+        newImagePosition.value = clampNumber(0, newPosition, 100);
     }
 });
 
 watch(isRepositioning, () => {
     if (isRepositioning.value) {
+        newImagePosition.value = pageData.imagePosition;
         containerRef.value!.style.cursor = 'ns-resize';
     }
     else {
@@ -53,33 +55,62 @@ watch(isRepositioning, () => {
 });
 
 // Actions
-function saveReposition() {
+async function saveReposition() {
     isRepositioning.value = false;
+    pageData.imagePosition = newImagePosition.value;
 }
 </script>
 
 <template>
     <header ref="containerRef" class="mb-2 flex min-h-[5rem] w-full flex-col overflow-hidden">
         <template v-if="editorHeader.hasCoverImage">
-            <div class="relative flex h-60 w-full justify-center overflow-hidden bg-gray-200 dark:bg-gray-700" @mouseenter="isHover = true" @mouseleave="isHover = false">
-                <img ref="imageRef" :src="editorHeader.imageSrc" alt="Backgound Image" class="w-full object-cover" :style="{ objectPosition: `center ${pageData.imagePosition}%` }">
-                <div class="pointer-events-none absolute flex h-full w-full max-w-3xl items-center justify-center transition-opacity" :class="[(isRepositioning || isHover) ? 'opacity-100' : 'opacity-0']">
-                    <div class="pointer-events-auto absolute right-0 top-0 mt-2">
-                        <template v-if="!isRepositioning">
-                            <UButtonGroup size="xs" orientation="horizontal">
-                                <UButton label="Change" color="gray" variant="solid" />
-                                <UButton label="Remove" color="gray" variant="solid" @click="pageData.imageId = undefined" />
-                                <UButton label="Reposition" color="gray" variant="solid" @click="isRepositioning = true" />
-                            </UButtonGroup>
-                        </template>
-                        <template v-else>
-                            <UButton label="Save" color="gray" variant="solid" size="xs" @click="saveReposition" />
-                        </template>
-                    </div>
+            <div
+                class="relative flex h-60 w-full justify-center overflow-hidden bg-gray-200 dark:bg-gray-700"
+                @mouseenter="isHover = true" @mouseleave="isHover = false"
+            >
+                <img
+                    ref="imageRef"
+                    :src="editorHeader.imageSrc"
+                    alt="Backgound Image"
+                    class="w-full object-cover"
+                    :style="{ objectPosition: `center ${isRepositioning ? newImagePosition : pageData.imagePosition}%` }"
+                >
+                <div
+                    class="pointer-events-none absolute flex h-full w-full items-center justify-center transition"
+                    :class="[
+                        editorHeader.isUploadingImage ? 'bg-black/50' : 'bg-transparent',
+                    ]"
+                >
+                    <div
+                        class="relative flex h-full w-full max-w-3xl items-center justify-center"
+                        :class="[(isRepositioning || isHover) ? 'opacity-100' : 'opacity-0']"
+                    >
+                        <div class="pointer-events-auto absolute right-0 top-0 mt-2">
+                            <template v-if="!isRepositioning && !editorHeader.isUploadingImage">
+                                <UButtonGroup size="xs" orientation="horizontal">
+                                    <UButton label="Change" color="gray" variant="solid" @click="editorHeader.fileDialog.open" />
+                                    <UButton label="Remove" color="gray" variant="solid" @click="pageData.imageId = undefined" />
+                                    <UButton label="Reposition" color="gray" variant="solid" @click="isRepositioning = true" />
+                                </UButtonGroup>
+                            </template>
+                            <template v-else-if="isRepositioning">
+                                <UButtonGroup size="xs" orientation="horizontal">
+                                    <UButton label="Save" color="gray" variant="solid" @click="saveReposition" />
+                                    <UButton label="Cancel" color="gray" variant="solid" @click="isRepositioning = false" />
+                                </UButtonGroup>
+                            </template>
+                        </div>
 
-                    <span v-if="isRepositioning" class="rounded-md bg-black px-3 py-1 text-xs font-normal text-white opacity-70">
-                        Drag image to reposition
-                    </span>
+                        <span v-if="isRepositioning" class="rounded-md bg-black px-3 py-1 text-xs font-normal text-white opacity-70">
+                            Drag image to reposition
+                        </span>
+                    </div>
+                    <template v-if="editorHeader.isUploadingImage">
+                        <div class="flex items-center gap-2 text-white ">
+                            <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
+                            <span class="text-xs font-normal">Uploading Image</span>
+                        </div>
+                    </template>
                 </div>
             </div>
         </template>
