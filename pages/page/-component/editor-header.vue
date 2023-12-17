@@ -7,7 +7,6 @@ const pageData = usePageDataStore();
 const editorHeader = useEditorHeaderStore();
 
 // States & Refs
-const fileInput = ref<HTMLInputElement>();
 const emojiPickerRef = ref<HTMLDivElement>();
 const isEmojiPickerOpen = ref(false);
 const isHover = ref(false);
@@ -20,20 +19,12 @@ const btnClass = 'opacity-40 hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-
 onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 
 // Actions
-function uploadImage() {
-    // TODO: impement change image
-    const imageInput = fileInput.value as HTMLInputElement;
-    if (imageInput && imageInput.files && imageInput.files[0] !== null) {
-        //
-    }
-}
-
-function pickEmoji(emojiKey: string) {
+async function pickEmoji(emojiKey: string) {
     pageData.iconKey = emojiKey;
     isEmojiPickerOpen.value = false;
 }
 
-function removeEmoji() {
+async function removeEmoji() {
     pageData.iconKey = undefined;
     isEmojiPickerOpen.value = false;
 }
@@ -45,7 +36,6 @@ function removeEmoji() {
         :class="{ '-translate-y-12': editorHeader.hasIcon && editorHeader.hasCoverImage }"
         @mouseenter="isHover = true" @mouseleave="isHover = false"
     >
-        <input ref="fileInput" type="file" name="backgroundImage" class="hidden" @change="uploadImage">
         <template v-if="editorHeader.hasIcon">
             <UPopover
                 :open="isEmojiPickerOpen"
@@ -75,7 +65,11 @@ function removeEmoji() {
             </UPopover>
         </template>
 
-        <div v-if="!editorHeader.hasCoverImage || !editorHeader.hasIcon " class="flex items-center justify-start gap-1.5" :class="[(isHover || isFocus) ? 'opacity-100' : 'opacity-0']">
+        <div
+            v-if="!editorHeader.hasCoverImage || !editorHeader.hasIcon "
+            class="flex items-center justify-start gap-1.5"
+            :class="[(isHover || isFocus) ? 'opacity-100' : 'opacity-0']"
+        >
             <UButton
                 v-if="!editorHeader.hasIcon"
                 label="Add Icon"
@@ -90,7 +84,7 @@ function removeEmoji() {
                 icon="i-heroicons-photo"
                 variant="ghost" color="zinc" size="md"
                 :ui="{ variant: { ghost: btnClass } }"
-                @click="fileInput?.click()"
+                @click="editorHeader.fileDialog.open"
             />
         </div>
         <UTextarea
