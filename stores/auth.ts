@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('GlobalAuth', () => {
     async function refreshAuth() {
         try {
             const tokenResponse: TokenResponse = await publicApi.post(path.authToken, {
-                refreshToken: refreshToken.value,
+                refreshToken: refreshToken.value || 'invalid_token',
             });
             accessToken.value = tokenResponse.data!.accessToken;
             refreshToken.value = tokenResponse.data!.refreshToken;
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('GlobalAuth', () => {
             const response = e as ServerResponseError;
             if (response.status && response.message)
                 notif.warn({ message: response.message });
-            logout();
+            await logout();
         }
     }
 
@@ -46,6 +46,7 @@ export const useAuthStore = defineStore('GlobalAuth', () => {
         accessToken.value = undefined;
         user.value = undefined;
         router.push('/login');
+        return await navigateTo('/login');
     }
 
     return {

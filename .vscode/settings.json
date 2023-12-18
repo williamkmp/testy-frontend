@@ -84,7 +84,9 @@
                     ".vscode/",
                     ".vscode/"
                 ],
-                "peek": []
+                "peek": [
+                    ".vscode/"
+                ]
             }
         ]
     },
@@ -94,7 +96,6 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        ".vscode/": true,
         "node_modules/": true,
         ".nuxt/": true,
         ".gitignore": true,
@@ -115,6 +116,9 @@
         [
             "/\\*ui\\*/\\s*{([^;]*)}",
             ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"
+        ],
+        [
+            "class:\\s*?[\"'`]([^\"'`]*).*?,"
         ]
     ],
     "editor.quickSuggestions": {

@@ -125,7 +125,7 @@ function closeModal() {
                         class="flex w-full flex-col items-center justify-center gap-8"
                     >
                         <UAvatar
-                            :src="path.getImage(auth.user!.imageId)"
+                            :src="path.getImage(auth.user?.imageId)"
                             :alt="auth.user?.fullName.toUpperCase()"
                             size="3xl"
                         />

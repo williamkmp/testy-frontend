@@ -75,7 +75,7 @@ const profileForm = useFormDeclaration({
             >
                 <!-- Change Picture -->
                 <UAvatar
-                    :src="path.getImage(auth.user!.imageId)"
+                    :src="path.getImage(auth.user?.imageId)"
                     :alt="auth.user?.fullName.toUpperCase()"
                     size="2xl"
                 />

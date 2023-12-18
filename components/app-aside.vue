@@ -54,8 +54,8 @@ async function initMenuItemData() {
             >
                 <div class="flex h-full w-full items-center gap-2">
                     <UAvatar
-                        :src="path.getImage(auth.user!.imageId)"
-                        :alt="auth.user!.fullName.toUpperCase()"
+                        :src="path.getImage(auth.user?.imageId)"
+                        :alt="auth.user?.fullName.toUpperCase()"
                         size="sm"
                     />
                     <p class="truncate text-sm font-semibold">
