@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import Draggable from 'vuedraggable';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
 import { usePageDataStore } from './-store/page-data';
+import { useEditorBodyStore } from './-store/editor-body';
 import type { PageDataResponse } from '~/types';
 
 // Dependency
@@ -9,8 +11,10 @@ const app = useAppStore();
 const { privateApi, path } = useApi();
 const routeParam = useRoute().params as { id: string };
 const pageData = usePageDataStore();
+const editorBody = useEditorBodyStore();
 
 const { pending } = await useLazyAsyncData(`document`, async () => {
+    editorBody.reset();
     const response: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
     pageData.title = response.data.title;
     pageData.imageId = response.data.imageId;
@@ -47,10 +51,26 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
             <EditorBackgroundImage />
 
             <!-- Editor -->
-            <UContainer class="w-full max-w-3xl">
+            <UContainer class="w-full max-w-4xl">
                 <EditorHeader />
-                <main class="mb-5 w-full">
-                    <!-- TODO: implement editor -->
+                <main class="mb-5 w-full ">
+                    <template v-if="editorBody.blockList && editorBody.blockList.length > 0">
+                        <Draggable v-model="editorBody.blockList" item-key="id" :handle="`.${editorBody.DRAGGABLE_CLASS}`">
+                            <template #item="{ element, index }">
+                                <BlockParagraph :index="index" :editor="element.editor" />
+                            </template>
+                        </Draggable>
+                    </template>
+                    <template v-else>
+                        <UButton
+                            label="Add Block"
+                            icon="i-heroicons-plus"
+                            color="primary"
+                            variant="soft"
+                            block size="xs"
+                            @click="editorBody.insertBlockAt(0)"
+                        />
+                    </template>
                 </main>
             </UContainer>
         </template>

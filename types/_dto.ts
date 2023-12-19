@@ -27,6 +27,14 @@ export interface UFormApi {
     errors: Ref<FormError[]>
 }
 
+export type BlockType = 'paragraph' | 'image' | 'bullet-list' | 'block-quote' | 'heading-1' | 'heading-2' | 'heading-3' | 'divider';
+
+export interface Block {
+    id: string
+    type: BlockType
+    editor: any
+}
+
 export interface MenuItem {
     id: string
     title: string

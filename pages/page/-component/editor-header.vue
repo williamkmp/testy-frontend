@@ -32,8 +32,7 @@ async function removeEmoji() {
 
 <template>
     <div
-        class="mb-4 flex w-full flex-col gap-2"
-        :class="{ '-translate-y-12': editorHeader.hasIcon && editorHeader.hasCoverImage }"
+        class="mb-4 ml-11 flex w-full flex-col gap-2"
         @mouseenter="isHover = true" @mouseleave="isHover = false"
     >
         <template v-if="editorHeader.hasIcon">
