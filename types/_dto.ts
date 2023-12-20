@@ -32,7 +32,8 @@ export type BlockType = 'paragraph' | 'image' | 'bullet-list' | 'block-quote' | 
 export interface Block {
     id: string
     type: BlockType
-    editor: any
+    editor?: any
+    fileId?: string
 }
 
 export interface MenuItem {

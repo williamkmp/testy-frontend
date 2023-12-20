@@ -8,8 +8,7 @@ import Highlight from '@tiptap/extension-highlight';
 import TextStyle from '@tiptap/extension-text-style';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
-import PlaceHolder from '@tiptap/extension-placeholder';
-import type { Block, BlockType } from '~/types';
+import type { Block } from '~/types';
 
 export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     // Dependencies
@@ -19,32 +18,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     const DRAGGABLE_CLASS = 'draggable';
     const focusedBlock = ref(0);
     const blockList = ref<Array<Block>>([]);
-
-    function createEditor(_type: BlockType): Editor {
-        const editor = new Editor({
-            extensions: [
-                Document,
-                Paragraph.configure({
-                    HTMLAttributes: { class: 'py-0.5' },
-                }),
-                Text,
-                PlaceHolder.configure({
-                    includeChildren: true,
-                    showOnlyCurrent: true,
-                    placeholder: 'Type something...',
-                }),
-                Underline,
-                Bold,
-                Italic,
-                Highlight,
-                TextStyle,
-            ],
-            editorProps: {
-                attributes: { class: 'focus:outline-none w-full h-full' },
-            },
-        });
-        return editor;
-    }
+    const _datas = computed(() => blockList.value.map(block => block.editor ? (block.editor as Editor).getText() : '-none-'));
 
     function reset() {
         for (const block of blockList.value) {
@@ -61,35 +35,54 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
                 ? [content]
                 : undefined,
         };
-        const newBlock = createEditor('paragraph');
-        newBlock.commands.setContent(editorContent);
         blockList.value.splice(index + 1, 0, {
             id: `block-${_app.getId()}`,
             type: 'paragraph',
-            editor: newBlock,
+            editor: createEditor(editorContent),
         });
-        newBlock.commands.focus('start');
+    }
+
+    function createEditor(content?: any): Editor {
+        const newEditor = new Editor({
+            content,
+            extensions: [
+                Document,
+                Paragraph,
+                Text,
+                Underline,
+                Bold,
+                Italic,
+            ],
+        });
+        return newEditor;
     }
 
     function deleteBlockAt(index: number) {
-        const tobeRemoved = blockList.value[index];
+        const removedBlock = blockList.value[index];
         const previousBlock = blockList.value[index - 1];
-        const currentEditor = tobeRemoved.editor as Editor;
-        const previousEditor = previousBlock.editor as Editor;
-        const currentContent = currentEditor.getJSON();
-        if (previousBlock === undefined)
+        if (!previousBlock || !removedBlock)
             return;
 
-        if (tobeRemoved === undefined)
-            return;
         blockList.value.splice(index, 1);
-        if (!currentEditor.isEmpty) {
-            previousEditor.commands.insertContentAt(
+        const currentEditor = removedBlock.editor as Editor;
+        const previousEditor = previousBlock.editor as Editor;
+
+        if (removedBlock.editor && previousBlock.editor && !currentEditor.isEmpty) {
+            previousBlock.editor.commands.insertContentAt(
                 previousEditor.getText().length + 1,
-                currentContent,
+                removedBlock.editor.getJSON(),
             );
+
+            const previousTextLen = (previousBlock.editor as Editor).getText().length;
+            const removedTextLen = (removedBlock.editor as Editor).getText().length;
+            const caretPosition = previousTextLen - removedTextLen + 1;
+            previousEditor
+                .chain()
+                .focus()
+                .setTextSelection(caretPosition)
+                .joinBackward()
+                .run();
         }
-        previousEditor.chain().focus().setTextSelection(previousEditor.getText().length - currentEditor.getText().length + 1).joinBackward().run();
     }
 
     return {
@@ -99,5 +92,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         deleteBlockAt,
         focusedBlock,
         reset,
+        _datas,
     };
 });

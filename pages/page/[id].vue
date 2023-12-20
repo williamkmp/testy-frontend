@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { BubbleMenu } from '@tiptap/vue-3';
 import Draggable from 'vuedraggable';
+import type { Editor } from '@tiptap/vue-3';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
 import { usePageDataStore } from './-store/page-data';
@@ -56,8 +58,8 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
                 <main class="mb-5 w-full ">
                     <template v-if="editorBody.blockList && editorBody.blockList.length > 0">
                         <Draggable v-model="editorBody.blockList" item-key="id" :handle="`.${editorBody.DRAGGABLE_CLASS}`">
-                            <template #item="{ element, index }">
-                                <BlockParagraph :index="index" :editor="element.editor" />
+                            <template #item="{ index, element }">
+                                <Block :index="index" :block="element" />
                             </template>
                         </Draggable>
                     </template>
