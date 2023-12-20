@@ -55,7 +55,7 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
             <!-- Editor -->
             <UContainer class="w-full max-w-4xl">
                 <EditorHeader />
-                <main class="mb-5 w-full ">
+                <main class="mb-20 w-full ">
                     <template v-if="editorBody.blockList && editorBody.blockList.length > 0">
                         <Draggable v-model="editorBody.blockList" item-key="id" :handle="`.${editorBody.DRAGGABLE_CLASS}`">
                             <template #item="{ index, element }">
