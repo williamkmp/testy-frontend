@@ -68,23 +68,39 @@ onUnmounted(() => {
 
 <template>
     <div class="group flex items-start justify-start gap-1">
+        <!-- NOTE: for vuedraggable to work there can only be one root node -->
         <div
             data-role="control"
-            class="flex items-center justify-center gap-0.5 transition duration-100 group-hover:opacity-100"
-            :class="[props.index === editorBody.focusedBlock ? 'opacity-100' : 'opacity-0']"
+            class="flex items-center justify-center gap-0.5 opacity-0 transition duration-100 group-hover:opacity-100"
         >
-            <UTooltip text="Click to add below" :popper="{ placement: 'left' }" :open-delay="300">
-                <div class="rounded px-1 py-0.5 hover:bg-gray-200 dark:hover:bg-gray-100/10">
-                    <UIcon class="text-gray-500" name="i-ic-round-plus" @click="() => editorBody.insertBlockAt(props.index)" />
-                </div>
-            </UTooltip>
+            <!-- menu & drag handle -->
+            <UPopover :popper="{ placement: 'left' }">
+                <template #default>
+                    <div class="rounded p-0.5 hover:bg-gray-200/50 dark:hover:bg-gray-100/10">
+                        <UIcon class="text-gray-500" name="i-heroicons-cog-6-tooth-solid" />
+                    </div>
+                </template>
+                <template #panel>
+                    <div class="p-1">
+                        <UButtonGroup orientation="vertical" size="xs">
+                            <UButton icon="i-heroicons-trash" label="Delete" color="gray" variant="ghost" />
+                            <UButton icon="i-heroicons-arrow-path-rounded-square" label="Turn into" color="gray" variant="ghost" />
+                            <UButton icon="i-heroicons-document-plus" label="Add below" color="gray" variant="ghost" />
+                        </UButtonGroup>
+                    </div>
+                </template>
+            </UPopover>
+
+            <!-- drag handle -->
             <div
-                class="rounded p-0.5 hover:bg-gray-200/50 dark:hover:bg-gray-100/10"
                 :class="[editorBody.DRAGGABLE_CLASS]"
+                class="rounded px-1 py-0.5 hover:cursor-grab hover:bg-gray-200 dark:hover:bg-gray-100/10"
             >
                 <UIcon class="text-gray-500" name="i-ic-round-drag-indicator" />
             </div>
         </div>
+
+        <!-- block body -->
         <div class="w-full py-0.5">
             <BubbleMenu
                 v-if="editor"
