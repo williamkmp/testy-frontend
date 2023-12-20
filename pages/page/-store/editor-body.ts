@@ -68,10 +68,17 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         const previousEditor = previousBlock.editor as Editor;
 
         if (removedBlock.editor && previousBlock.editor && !currentEditor.isEmpty) {
-            previousBlock.editor.commands.insertContentAt(
-                previousEditor.getText().length + 1,
-                removedBlock.editor.getJSON(),
-            );
+            if (previousEditor.isEmpty) {
+                previousEditor.commands.setContent(
+                    currentEditor.getJSON(),
+                );
+            }
+            else {
+                previousEditor.commands.insertContentAt(
+                    previousEditor.getText().length + 1,
+                    currentEditor.getJSON().content || [],
+                );
+            }
 
             const previousTextLen = (previousBlock.editor as Editor).getText().length;
             const removedTextLen = (removedBlock.editor as Editor).getText().length;
@@ -82,6 +89,10 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
                 .setTextSelection(caretPosition)
                 .joinBackward()
                 .run();
+        }
+        else {
+            if (previousEditor)
+                previousEditor.commands.focus('end');
         }
     }
 

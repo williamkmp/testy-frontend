@@ -26,9 +26,9 @@ function handleEnter(e: Event) {
 }
 
 function handleDelete() {
-    if (editor.value) {
-        const tiptap = editor.value as Editor;
-        if (tiptap.view.state.selection.$anchor.pos === 1)
+    if (editor.value !== undefined) {
+        const caretPosition = editor.value.view.state.selection.$anchor.pos;
+        if (caretPosition <= 1)
             editorBody.deleteBlockAt(props.index);
     }
 }
@@ -70,7 +70,7 @@ onUnmounted(() => {
     <div class="group flex items-start justify-start gap-1">
         <div data-role="control" class="flex items-center justify-center gap-0.5 opacity-0 transition duration-100 group-hover:opacity-100">
             <div class="rounded px-1 py-0.5 hover:bg-gray-200 dark:hover:bg-gray-100/10">
-                <UIcon class="text-gray-500" name="i-ic-round-plus" />
+                <UIcon class="text-gray-500" name="i-ic-round-plus" @click="() => editorBody.insertBlockAt(props.index)" />
             </div>
             <div
                 class="rounded p-0.5 hover:bg-gray-200/50 dark:hover:bg-gray-100/10"
