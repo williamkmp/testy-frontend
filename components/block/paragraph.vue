@@ -68,10 +68,16 @@ onUnmounted(() => {
 
 <template>
     <div class="group flex items-start justify-start gap-1">
-        <div data-role="control" class="flex items-center justify-center gap-0.5 opacity-0 transition duration-100 group-hover:opacity-100">
-            <div class="rounded px-1 py-0.5 hover:bg-gray-200 dark:hover:bg-gray-100/10">
-                <UIcon class="text-gray-500" name="i-ic-round-plus" @click="() => editorBody.insertBlockAt(props.index)" />
-            </div>
+        <div
+            data-role="control"
+            class="flex items-center justify-center gap-0.5 transition duration-100 group-hover:opacity-100"
+            :class="[props.index === editorBody.focusedBlock ? 'opacity-100' : 'opacity-0']"
+        >
+            <UTooltip text="Click to add below" :popper="{ placement: 'left' }" :open-delay="300">
+                <div class="rounded px-1 py-0.5 hover:bg-gray-200 dark:hover:bg-gray-100/10">
+                    <UIcon class="text-gray-500" name="i-ic-round-plus" @click="() => editorBody.insertBlockAt(props.index)" />
+                </div>
+            </UTooltip>
             <div
                 class="rounded p-0.5 hover:bg-gray-200/50 dark:hover:bg-gray-100/10"
                 :class="[editorBody.DRAGGABLE_CLASS]"
