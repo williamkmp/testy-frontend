@@ -62,7 +62,7 @@ async function saveReposition() {
 </script>
 
 <template>
-    <header ref="containerRef" class="mb-2 flex min-h-[5rem] w-full flex-col overflow-hidden">
+    <header ref="containerRef" class="mb-2 flex min-h-[5rem] w-full shrink-0 flex-col overflow-hidden">
         <template v-if="editorHeader.hasCoverImage">
             <div
                 class="relative flex h-60 w-full justify-center overflow-hidden bg-gray-200 dark:bg-gray-700"
