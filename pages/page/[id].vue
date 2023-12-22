@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { BubbleMenu } from '@tiptap/vue-3';
 import Draggable from 'vuedraggable';
-import type { Editor } from '@tiptap/vue-3';
+import Block from './-component/block/index.vue';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
 import { usePageDataStore } from './-store/page-data';

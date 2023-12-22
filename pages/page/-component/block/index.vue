@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Paragraph from './paragraph.vue';
 import type { Block } from '~/types';
 
 const props = defineProps<{ block: Block, index: number }>();
@@ -6,6 +7,6 @@ const props = defineProps<{ block: Block, index: number }>();
 
 <template>
     <template v-if="props.block.type === 'paragraph'">
-        <BlockParagraph :index="props.index" />
+        <Paragraph :index="props.index" />
     </template>
 </template>
