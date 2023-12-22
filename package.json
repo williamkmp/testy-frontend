@@ -27,6 +27,8 @@
         "@tiptap/pm": "^2.1.13",
         "@tiptap/vue-3": "^2.1.13",
         "axios": "^1.6.2",
+        "sockjs-client": "^1.6.1",
+        "stompjs": "^2.3.3",
         "vue-advanced-cropper": "^2.8.8",
         "vuedraggable": "^4.1.0",
         "zod": "^3.22.4"
