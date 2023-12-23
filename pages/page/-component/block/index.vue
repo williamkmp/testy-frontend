@@ -6,7 +6,7 @@ const props = defineProps<{ block: Block, index: number }>();
 </script>
 
 <template>
-    <template v-if="props.block.type === 'paragraph'">
+    <template v-if="props.block.type === 'PARAGRAPH'">
         <Paragraph :index="props.index" />
     </template>
 </template>
