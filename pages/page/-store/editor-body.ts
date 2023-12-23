@@ -4,11 +4,9 @@ import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import Bold from '@tiptap/extension-bold';
 import Italic from '@tiptap/extension-italic';
-import Highlight from '@tiptap/extension-highlight';
-import TextStyle from '@tiptap/extension-text-style';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
-import type { Block } from '~/types';
+import type { Block, BlockType } from '~/types';
 
 export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     // Dependencies
@@ -18,7 +16,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     const DRAGGABLE_CLASS = 'draggable';
     const focusedBlock = ref(0);
     const blockList = ref<Array<Block>>([]);
-    const _datas = computed(() => blockList.value.map(block => block.editor ? (block.editor as Editor).getText() : '-none-'));
 
     function reset() {
         for (const block of blockList.value) {
@@ -37,7 +34,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         };
         blockList.value.splice(index + 1, 0, {
             id: `block-${_app.getId()}`,
-            type: 'paragraph',
+            type: 'PARAGRAPH',
             editor: createEditor(editorContent),
         });
     }
@@ -64,10 +61,10 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
             return;
 
         blockList.value.splice(index, 1);
-        const currentEditor = removedBlock.editor as Editor;
-        const previousEditor = previousBlock.editor as Editor;
+        const currentEditor = removedBlock?.editor as Editor | undefined;
+        const previousEditor = previousBlock?.editor as Editor | undefined;
 
-        if (removedBlock.editor && previousBlock.editor && !currentEditor.isEmpty) {
+        if (currentEditor && previousEditor && !currentEditor.isEmpty) {
             if (previousEditor.isEmpty) {
                 previousEditor.commands.setContent(
                     currentEditor.getJSON(),
@@ -96,6 +93,13 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         }
     }
 
+    function turnInto(index: number, type: BlockType) {
+        const block = blockList.value[index];
+        if (!block)
+            return;
+        block.type = type;
+    }
+
     return {
         DRAGGABLE_CLASS,
         blockList,
@@ -103,6 +107,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         deleteBlockAt,
         focusedBlock,
         reset,
-        _datas,
+        turnInto,
     };
 });
