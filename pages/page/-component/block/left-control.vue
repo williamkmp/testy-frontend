@@ -97,6 +97,7 @@ const options = [
                             :icon="menu.icon"
                             color="gray"
                             variant="ghost"
+                            @click="menu.click"
                         />
                     </UButtonGroup>
                 </div>
