@@ -7,8 +7,8 @@ import Italic from '@tiptap/extension-italic';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import { useEditorBodyStore } from '../../-store/editor-body';
-import BlockControl from './rignt-control.vue';
-import type { Block } from '~/types';
+import BlockControl from './left-control.vue';
+import type { Block, BlockType } from '~/types';
 
 const props = defineProps<{ index: number }>();
 const editorBody = useEditorBodyStore();
@@ -50,7 +50,6 @@ function handleDelete() {
 onBeforeMount(() => {
     // eslint-disable-next-line no-console
     console.log(`mounted - paragraph ${props.index}`);
-    editorBody.blockList[props.index].type = 'PARAGRAPH';
     const block = editorBody.blockList[props.index];
     if (block.type === 'PARAGRAPH') {
         const existingEditor = block.editor as Editor;
@@ -93,6 +92,8 @@ onUnmounted(() => {
         <BlockControl
             :is-focused="isFocused"
             @click-menu="editorBody.focusedBlock = props.index"
+            @add="editorBody.insertBlockAt(props.index)"
+            @change="(blockType: BlockType) => editorBody.turnInto(props.index, blockType)"
         />
         <!-- block body -->
         <div class="w-full py-0.5">
