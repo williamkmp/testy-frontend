@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import Paragraph from './paragraph.vue';
+import Heading from './heading.vue';
 import type { Block } from '~/types';
 
-const props = defineProps<{ block: Block, index: number }>();
+defineProps<{ block: Block, index: number }>();
 </script>
 
 <template>
-    <template v-if="props.block.type === 'PARAGRAPH'">
-        <Paragraph :index="props.index" />
+    <template v-if="block.type === 'PARAGRAPH'">
+        <Paragraph :index="index" />
+    </template>
+    <template v-else-if="['HEADING_1', 'HEADING_2', 'HEADING_3'].includes(block.type)">
+        <Heading :index="index" />
     </template>
 </template>
