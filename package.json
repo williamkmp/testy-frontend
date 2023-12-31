@@ -30,7 +30,7 @@
         "sockjs-client": "^1.6.1",
         "stompjs": "^2.3.3",
         "vue-advanced-cropper": "^2.8.8",
-        "vuedraggable": "^4.1.0",
+        "vue-slicksort": "^2.0.5",
         "zod": "^3.22.4"
     },
     "devDependencies": {
