@@ -14,8 +14,16 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
 
     // States
     const DRAGGABLE_CLASS = 'draggable';
-    const focusedBlock = ref(0);
+    const focusedBlockIndex = ref(-1);
+    const draggingBlockIndex = ref(-1);
     const blockList = ref<Array<Block>>([]);
+    const _contents = computed(() => blockList.value.map(block => block.editor
+        ? ({
+                isActive: !(block.editor as Editor).isDestroyed,
+                isEditable: !(block.editor as Editor).isEditable,
+                content: (block.editor as Editor).getHTML(),
+            })
+        : '- none -'));
 
     function reset() {
         for (const block of blockList.value) {
@@ -95,7 +103,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
 
     function turnInto(index: number, type: BlockType) {
         const block = blockList.value[index];
-        if (!block)
+        if (!block || block.type === type)
             return;
         block.type = type;
     }
@@ -105,8 +113,10 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         blockList,
         insertBlockAt,
         deleteBlockAt,
-        focusedBlock,
+        focusedBlockIndex,
+        draggingBlockIndex,
         reset,
         turnInto,
+        _contents,
     };
 });
