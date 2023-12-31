@@ -6,28 +6,19 @@ import Bold from '@tiptap/extension-bold';
 import Italic from '@tiptap/extension-italic';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
-import { useEditorBodyStore } from '../../-store/editor-body';
 import BlockControl from './left-control.vue';
 import type { Block, BlockType } from '~/types';
 
-const props = defineProps<{ index: number }>();
-const editorBody = useEditorBodyStore();
-const editor = computed({
-    get: () => {
-        const block = editorBody.blockList.at(props.index) as Block;
-        if (block.type === 'PARAGRAPH')
-            return block.editor as Editor;
-        else
-            return undefined;
-    },
-    set: (newValue) => {
-        const block = editorBody.blockList.at(props.index) as Block;
-        if (block.type === 'PARAGRAPH')
-            block.editor = newValue;
-    },
-});
-
-const isFocused = computed(() => editorBody.focusedBlock === props.index);
+const props = defineProps<{ isFocused: boolean }>();
+const emit = defineEmits<{
+    enter: [content?: any]
+    turn: [type: BlockType]
+    delete: []
+    focus: []
+    blur: []
+}>();
+const block = defineModel<Block>({ required: true });
+const editor = computed(() => block.value.editor as Editor);
 
 function handleEnter(e: Event) {
     e.preventDefault();
@@ -35,7 +26,7 @@ function handleEnter(e: Event) {
         const curentContent = editor.value.getJSON();
         const newBlockContent = curentContent?.content?.pop();
         editor.value.commands.setContent(curentContent);
-        editorBody.insertBlockAt(props.index, newBlockContent);
+        emit('enter', newBlockContent);
     }
 }
 
@@ -43,57 +34,49 @@ function handleDelete() {
     if (editor.value !== undefined) {
         const caretPosition = editor.value.view.state.selection.$anchor.pos;
         if (caretPosition <= 1)
-            editorBody.deleteBlockAt(props.index);
+            emit('delete');
     }
 }
 
 onBeforeMount(() => {
-    // eslint-disable-next-line no-console
-    console.log(`mounted - paragraph ${props.index}`);
-    const block = editorBody.blockList[props.index];
-    if (block.type === 'PARAGRAPH') {
-        const existingEditor = block.editor as Editor;
-        block.editor = new Editor({
-            content: existingEditor?.getJSON(),
-            extensions: [
-                Document,
-                Paragraph,
-                Text,
-                Underline,
-                Bold,
-                Italic,
-            ],
-            editorProps: {
-                attributes: { class: 'focus:outline-none w-full h-full' },
-            },
-            onBlur: () => editorBody.focusedBlock = -1,
-            onTransaction: (tr) => {
-                if (editor.value && editor.value.isFocused)
-                    editorBody.focusedBlock = props.index;
-                if (tr.transaction.docChanged) {
-                    // TODO: impelement transaction handling
-                }
-            },
-        });
-        block.editor.commands.focus('start');
-    }
+    const existingContent = editor.value?.getJSON();
+    block.value.editor = new Editor({
+        content: existingContent,
+        extensions: [
+            Document,
+            Paragraph,
+            Text,
+            Underline,
+            Bold,
+            Italic,
+        ],
+        editorProps: {
+            attributes: { class: 'focus:outline-none w-full h-full' },
+        },
+        onBlur: () => emit('blur'),
+        onTransaction: (tr) => {
+            if (editor.value && editor.value.isFocused)
+                emit('focus');
+            if (tr.transaction.docChanged) {
+                // TODO: impelement transaction handling
+            }
+        },
+    });
+    editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {
-    // eslint-disable-next-line no-console
-    console.log(`unmount - paragraph ${props.index}`);
     editor.value?.destroy();
 });
 </script>
 
 <template>
     <div class="group flex items-start justify-start gap-1">
-        <!-- NOTE: for vuedraggable to work there can only be one root node -->
         <BlockControl
-            :is-focused="isFocused"
-            @click-menu="editorBody.focusedBlock = props.index"
-            @add="editorBody.insertBlockAt(props.index)"
-            @change="(blockType: BlockType) => editorBody.turnInto(props.index, blockType)"
+            :is-focused="props.isFocused"
+            @click-menu="$emit('focus')"
+            @add="$emit('enter')"
+            @change="(blockType: BlockType) => emit('turn', blockType)"
         />
         <!-- block body -->
         <div class="w-full py-0.5">
@@ -125,7 +108,6 @@ onUnmounted(() => {
                 class="w-full max-w-full hover:cursor-text"
                 @keydown.enter="handleEnter"
                 @keyup.delete="handleDelete"
-                @focus="() => console.log(`focus at index: ${$props.index}`)"
             />
         </div>
     </div>
