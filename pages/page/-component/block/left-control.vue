@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DragHandle } from 'vue-slicksort';
 import { useEditorBodyStore } from '../../-store/editor-body';
 import type { BlockType } from '~/types';
 
@@ -105,11 +106,13 @@ const options = [
         </UPopover>
 
         <!-- drag handle -->
-        <div
-            :class="[editorBody.DRAGGABLE_CLASS]"
-            class="rounded px-1 py-0.5 hover:cursor-grab hover:bg-gray-200 dark:hover:bg-gray-100/10"
-        >
-            <UIcon class="text-gray-500" name="i-ic-round-drag-indicator" />
-        </div>
+        <DragHandle>
+            <div
+                :class="[editorBody.DRAGGABLE_CLASS]"
+                class="rounded px-1 py-0.5 hover:cursor-grab hover:bg-gray-200 dark:hover:bg-gray-100/10"
+            >
+                <UIcon class="text-gray-500" name="i-ic-round-drag-indicator" />
+            </div>
+        </DragHandle>
     </div>
 </template>
