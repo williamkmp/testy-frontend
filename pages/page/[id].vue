@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Draggable from 'vuedraggable';
-import Block from './-component/block/index.vue';
+import EditorBody from './-component/editor-body.vue';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
 import { usePageDataStore } from './-store/page-data';
@@ -54,25 +53,7 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
             <!-- Editor -->
             <UContainer class="w-full max-w-4xl">
                 <EditorHeader />
-                <main class="mb-20 w-full ">
-                    <template v-if="editorBody.blockList && editorBody.blockList.length > 0">
-                        <Draggable v-model="editorBody.blockList" item-key="id" :handle="`.${editorBody.DRAGGABLE_CLASS}`">
-                            <template #item="{ index, element }">
-                                <Block :index="index" :block="element" />
-                            </template>
-                        </Draggable>
-                    </template>
-                    <template v-else>
-                        <UButton
-                            label="Add Block"
-                            icon="i-heroicons-plus"
-                            color="primary"
-                            variant="soft"
-                            block size="xs"
-                            @click="editorBody.insertBlockAt(0)"
-                        />
-                    </template>
-                </main>
+                <EditorBody />
             </UContainer>
         </template>
     </div>
