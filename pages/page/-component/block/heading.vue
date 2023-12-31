@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import { BubbleMenu, Editor, EditorContent } from '@tiptap/vue-3';
+import { Editor, EditorContent } from '@tiptap/vue-3';
 import Text from '@tiptap/extension-text';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
-import { useEditorBodyStore } from '../../-store/editor-body';
 import BlockControl from './left-control.vue';
 import type { Block, BlockType } from '~/types';
 
-const props = defineProps<{ index: number }>();
-const editorBody = useEditorBodyStore();
-const headingLevel = ref(1);
-const editor = computed({
-    get: () => {
-        const block = editorBody.blockList.at(props.index) as Block;
-        if (block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3')
-            return block.editor as Editor;
-        else
-            return undefined;
-    },
-    set: (newValue) => {
-        const block = editorBody.blockList.at(props.index) as Block;
-        if (block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3')
-            block.editor = newValue;
-    },
+const props = defineProps<{ isFocused: boolean, isDragging: boolean }>();
+const emit = defineEmits<{
+    enter: [content?: any]
+    turn: [type: BlockType]
+    delete: []
+    focus: []
+    blur: []
+}>();
+const block = defineModel<Block>({ required: true });
+const editor = computed(() => block.value.editor as Editor);
+const headingLevel = computed(() => {
+    if (block.value.type === 'HEADING_1')
+        return 1;
+    if (block.value.type === 'HEADING_2')
+        return 2;
+    if (block.value.type === 'HEADING_3')
+        return 3;
+    return 1;
 });
-
-const isFocused = computed(() => editorBody.focusedBlock === props.index);
 
 function handleEnter(e: Event) {
     e.preventDefault();
@@ -33,7 +32,7 @@ function handleEnter(e: Event) {
         const curentContent = editor.value.getJSON();
         const newBlockContent = curentContent?.content?.pop();
         editor.value.commands.setContent(curentContent);
-        editorBody.insertBlockAt(props.index, newBlockContent);
+        emit('enter', newBlockContent);
     }
 }
 
@@ -41,48 +40,35 @@ function handleDelete() {
     if (editor.value !== undefined) {
         const caretPosition = editor.value.view.state.selection.$anchor.pos;
         if (caretPosition <= 1)
-            editorBody.deleteBlockAt(props.index);
+            emit('delete');
     }
 }
 
 onBeforeMount(() => {
-    // eslint-disable-next-line no-console
-    console.log(`mounted - heading ${props.index}`);
-    const block = editorBody.blockList[props.index];
-    if (block.type === 'HEADING_1')
-        headingLevel.value = 1;
-    else if (block.type === 'HEADING_2')
-        headingLevel.value = 2;
-    else if (block.type === 'HEADING_3')
-        headingLevel.value = 3;
-    if (block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3') {
-        const existingEditor = block.editor as Editor;
-        block.editor = new Editor({
-            content: `<p>${existingEditor.getText()}</p>`,
-            extensions: [
-                Document,
-                Paragraph,
-                Text,
-            ],
-            editorProps: {
-                attributes: { class: 'focus:outline-none w-full h-full' },
-            },
-            onBlur: () => editorBody.focusedBlock = -1,
-            onTransaction: (tr) => {
-                if (editor.value && editor.value.isFocused)
-                    editorBody.focusedBlock = props.index;
-                if (tr.transaction.docChanged) {
-                    // TODO: impelement transaction handling
-                }
-            },
-        });
-        block.editor.commands.focus('start');
-    }
+    const existingContent = editor.value?.getJSON();
+    block.value.editor = new Editor({
+        content: existingContent,
+        extensions: [
+            Document,
+            Paragraph,
+            Text,
+        ],
+        editorProps: {
+            attributes: { class: 'focus:outline-none w-full h-full' },
+        },
+        onBlur: () => emit('blur'),
+        onTransaction: (tr) => {
+            if (editor.value && editor.value.isFocused)
+                emit('focus');
+            if (tr.transaction.docChanged) {
+                // TODO: impelement transaction handling
+            }
+        },
+    });
+    editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {
-    // eslint-disable-next-line no-console
-    console.log(`unmount - heading ${props.index}`);
     editor.value?.destroy();
 });
 </script>
@@ -91,17 +77,16 @@ onUnmounted(() => {
     <div
         class="group flex items-start justify-start gap-1"
         :class="{
-            'mt-8': headingLevel === 1,
-            'mt-5': headingLevel === 2,
-            'mt-4': headingLevel === 3,
+            'mt-8': headingLevel === 1 && !isDragging,
+            'mt-5': headingLevel === 2 && !isDragging,
+            'mt-4': headingLevel === 3 && !isDragging,
         }"
     >
-        <!-- NOTE: for vuedraggable to work there can only be one root node -->
         <BlockControl
-            :is-focused="isFocused"
-            @click-menu="editorBody.focusedBlock = props.index"
-            @add="editorBody.insertBlockAt(props.index)"
-            @change="(blockType: BlockType) => editorBody.turnInto(props.index, blockType)"
+            :is-focused="props.isFocused"
+            @click-menu="$emit('focus')"
+            @add="$emit('enter')"
+            @change="(blockType: BlockType) => emit('turn', blockType)"
         />
         <!-- block body -->
         <div
@@ -118,7 +103,6 @@ onUnmounted(() => {
                 class="w-full max-w-full hover:cursor-text"
                 @keydown.enter="handleEnter"
                 @keyup.delete="handleDelete"
-                @focus="() => console.log(`focus at index: ${$props.index}`)"
             />
         </div>
     </div>
