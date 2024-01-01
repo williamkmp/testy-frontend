@@ -90,7 +90,7 @@ onUnmounted(() => {
         />
         <!-- block body -->
         <div
-            class="w-full py-0.5 font-bold"
+            class="w-full py-1 font-medium"
             :class="{
                 'text-3xl': headingLevel === 1,
                 'text-2xl': headingLevel === 2,

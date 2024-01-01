@@ -79,7 +79,7 @@ onUnmounted(() => {
             @change="(blockType: BlockType) => emit('turn', blockType)"
         />
         <!-- block body -->
-        <div class="w-full py-0.5">
+        <div class="w-full py-1">
             <BubbleMenu
                 v-if="editor"
                 :editor="editor"
