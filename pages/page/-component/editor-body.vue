@@ -3,6 +3,8 @@
 import { SlickItem, SlickList } from 'vue-slicksort';
 import { useEditorBodyStore } from '../-store/editor-body';
 import Paragraph from './block/paragraph.vue';
+import BlockQuotes from './block/blockquotes.vue';
+import List from './block/list.vue';
 import Heading from './block/heading.vue';
 
 const editorBody = useEditorBodyStore();
@@ -37,6 +39,29 @@ function onDragEnd() {
                         <Paragraph
                             v-model="editorBody.blockList[index]"
                             :is-focused="index === focusedBlock"
+                            @focus="focusedBlock = index"
+                            @blur="focusedBlock = -1"
+                            @enter="(content) => editorBody.insertBlockAt(index, content)"
+                            @delete="() => editorBody.deleteBlockAt(index)"
+                            @turn="(type) => editorBody.turnInto(index, type)"
+                        />
+                    </template>
+                    <template v-else-if="block.type === 'BLOCK_QUOTES'">
+                        <BlockQuotes
+                            v-model="editorBody.blockList[index]"
+                            :is-focused="index === focusedBlock"
+                            @focus="focusedBlock = index"
+                            @blur="focusedBlock = -1"
+                            @enter="(content) => editorBody.insertBlockAt(index, content)"
+                            @delete="() => editorBody.deleteBlockAt(index)"
+                            @turn="(type) => editorBody.turnInto(index, type)"
+                        />
+                    </template>
+                    <template v-else-if="['NUMBERED_LIST', 'BULLET_LIST'].includes(block.type)">
+                        <List
+                            v-model="editorBody.blockList[index]"
+                            :is-focused="index === focusedBlock"
+                            :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
