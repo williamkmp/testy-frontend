@@ -45,8 +45,13 @@ const options = [
     },
     {
         icon: 'i-material-symbols-format-list-bulleted-rounded',
-        label: 'List',
+        label: 'Bullet List',
         click: () => emit('change', 'BULLET_LIST'),
+    },
+    {
+        icon: 'i-ic-round-123',
+        label: 'Numbered List',
+        click: () => emit('change', 'NUMBERED_LIST'),
     },
     {
         icon: 'i-material-symbols-format-quote-rounded',
