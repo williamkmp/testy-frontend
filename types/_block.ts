@@ -1,5 +1,3 @@
-import type { Editor } from '@tiptap/vue-3';
-
 export const BLOCK_TYPE = {
     HEADING_1: 'HEADING_1',
     HEADING_2: 'HEADING_2',
@@ -7,6 +5,7 @@ export const BLOCK_TYPE = {
     BLOCK_QUOTES: 'BLOCK_QUOTES',
     CALLOUT: 'CALLOUT',
     BULLET_LIST: 'BULLET_LIST',
+    NUMBERED_LIST: 'NUMBERED_LIST',
     PARAGRAPH: 'PARAGRAPH',
     DIVIDER: 'DIVIDER',
     FILE: 'FILE',
@@ -19,6 +18,7 @@ export type BlockType = ValuesAsKeys<typeof BLOCK_TYPE>;
 export interface Block {
     type: BlockType
     id: string
+    numbering?: number
     width?: number
     refrenceId?: string
     color?: string
