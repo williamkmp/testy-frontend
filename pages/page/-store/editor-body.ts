@@ -40,9 +40,16 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
                 ? [content]
                 : undefined,
         };
+        const currentBlockType = blockList.value.at(index)?.type || 'PARAGRAPH';
+        let newBlockType: BlockType = 'PARAGRAPH';
+        if (
+            currentBlockType === 'NUMBERED_LIST'
+            || currentBlockType === 'BULLET_LIST'
+        )
+            newBlockType = currentBlockType;
         blockList.value.splice(index + 1, 0, {
             id: `block-${_app.getId()}`,
-            type: 'PARAGRAPH',
+            type: newBlockType,
             editor: createEditor(editorContent),
         });
     }
