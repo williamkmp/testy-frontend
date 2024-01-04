@@ -28,7 +28,9 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
         pageData.iconKey = randomEmojiKey;
     }
 
-    fileDialog.onChange(async (files: FileList) => {
+    fileDialog.onChange(async (files: FileList | null) => {
+        if (files === null)
+            return;
         isUploadingImage.value = true;
         const blob = files[0];
         if (blob) {
