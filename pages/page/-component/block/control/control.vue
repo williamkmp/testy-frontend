@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DragHandle } from 'vue-slicksort';
-import { useEditorBodyStore } from '../../-store/editor-body';
+import { useEditorBodyStore } from '../../../-store/editor-body';
 import type { BlockType } from '~/types';
 
 const props = defineProps<{ isFocused: boolean }>();
