@@ -1,11 +1,7 @@
 import { defineStore } from 'pinia';
-import { Editor } from '@tiptap/vue-3';
-import Text from '@tiptap/extension-text';
-import Underline from '@tiptap/extension-underline';
-import Bold from '@tiptap/extension-bold';
-import Italic from '@tiptap/extension-italic';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
+import { v4 as uuid } from 'uuid';
+import type { Editor, JSONContent } from '@tiptap/vue-3';
+import { createPlaceHolderEditor } from '../-utils/editor-utils';
 import type { Block, BlockType } from '~/types';
 
 export const useEditorBodyStore = defineStore('PageEditorBody', () => {
@@ -15,7 +11,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     // States
     const DRAGGABLE_CLASS = 'draggable';
     const focusedBlockIndex = ref(-1);
-    const draggingBlockIndex = ref(-1);
     const blockList = ref<Array<Block>>([]);
     const _contents = computed(() => blockList.value.map(block => block.editor
         ? ({
@@ -33,40 +28,22 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         blockList.value = [];
     }
 
-    function insertBlockAt(index: number, content?: any) {
-        const editorContent = {
-            type: 'doc',
-            content: content !== undefined
-                ? [content]
-                : undefined,
-        };
+    function insertBlockAt(index: number, content?: JSONContent) {
+        const newBlockEditor = createPlaceHolderEditor(content);
         const currentBlockType = blockList.value.at(index)?.type || 'PARAGRAPH';
-        let newBlockType: BlockType = 'PARAGRAPH';
-        if (
-            currentBlockType === 'NUMBERED_LIST'
-            || currentBlockType === 'BULLET_LIST'
-        )
-            newBlockType = currentBlockType;
-        blockList.value.splice(index + 1, 0, {
-            id: `block-${_app.getId()}`,
-            type: newBlockType,
-            editor: createEditor(editorContent),
-        });
-    }
+        const newBlockType: BlockType = (currentBlockType === 'NUMBERED_LIST' || currentBlockType === 'BULLET_LIST')
+            ? currentBlockType
+            : 'PARAGRAPH';
 
-    function createEditor(content?: any): Editor {
-        const newEditor = new Editor({
-            content,
-            extensions: [
-                Document,
-                Paragraph,
-                Text,
-                Underline,
-                Bold,
-                Italic,
-            ],
-        });
-        return newEditor;
+        blockList.value.splice(
+            index + 1,
+            0,
+            {
+                id: uuid(),
+                type: newBlockType,
+                editor: newBlockEditor as any,
+            },
+        );
     }
 
     function deleteBlockAt(index: number) {
@@ -121,7 +98,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         insertBlockAt,
         deleteBlockAt,
         focusedBlockIndex,
-        draggingBlockIndex,
         reset,
         turnInto,
         _contents,
