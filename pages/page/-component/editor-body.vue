@@ -12,17 +12,6 @@ const focusedBlock = computed({
     get: () => editorBody.focusedBlockIndex,
     set: value => editorBody.focusedBlockIndex = value,
 });
-const draggingBlock = computed({
-    get: () => editorBody.draggingBlockIndex,
-    set: value => editorBody.draggingBlockIndex = value,
-});
-
-function onDragStart({ index }: { index: number }) {
-    draggingBlock.value = index;
-}
-function onDragEnd() {
-    draggingBlock.value = -1;
-}
 </script>
 
 <template>
@@ -31,14 +20,13 @@ function onDragEnd() {
             <SlickList
                 v-model:list="editorBody.blockList"
                 use-drag-handle
-                @sort-start="onDragStart"
-                @sort-end="onDragEnd"
             >
                 <SlickItem v-for="(block, index) in editorBody.blockList" :key="block.id" :index="index">
                     <template v-if="block.type === 'PARAGRAPH'">
                         <Paragraph
                             v-model="editorBody.blockList[index]"
                             :is-focused="index === focusedBlock"
+                            :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
@@ -50,6 +38,7 @@ function onDragEnd() {
                         <BlockQuotes
                             v-model="editorBody.blockList[index]"
                             :is-focused="index === focusedBlock"
+                            :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
@@ -57,7 +46,7 @@ function onDragEnd() {
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
                     </template>
-                    <template v-else-if="['NUMBERED_LIST', 'BULLET_LIST'].includes(block.type)">
+                    <template v-else-if="block.type === 'NUMBERED_LIST' || block.type === 'BULLET_LIST' ">
                         <List
                             v-model="editorBody.blockList[index]"
                             :is-focused="index === focusedBlock"
@@ -69,11 +58,11 @@ function onDragEnd() {
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
                     </template>
-                    <template v-else-if="['HEADING_1', 'HEADING_2', 'HEADING_3'].includes(block.type)">
+                    <template v-else-if="block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3'">
                         <Heading
                             v-model="editorBody.blockList[index]"
                             :is-focused="index === focusedBlock"
-                            :is-dragging="draggingBlock === index"
+                            :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"

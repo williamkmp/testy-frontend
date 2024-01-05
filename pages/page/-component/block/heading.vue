@@ -1,85 +1,73 @@
 <script setup lang="ts">
-import { Editor, EditorContent } from '@tiptap/vue-3';
-import Text from '@tiptap/extension-text';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import BlockControl from './left-control.vue';
-import type { Block, BlockType } from '~/types';
+import type { Editor } from '@tiptap/vue-3';
+import { EditorContent } from '@tiptap/vue-3';
+import { createEditor, getEditorYdoc } from '../../-utils/editor-utils';
+import BlockControl from './control/control.vue';
+import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
 
-const props = defineProps<{ isFocused: boolean, isDragging: boolean }>();
-const emit = defineEmits<{
-    enter: [content?: any]
-    turn: [type: BlockType]
-    delete: []
-    focus: []
-    blur: []
-}>();
-const block = defineModel<Block>({ required: true });
-const editor = computed(() => block.value.editor as Editor);
+// Component Definition
+const props = defineProps<BlockProps>();
+const emit = defineEmits<BlockEmit>();
+const block = defineModel<BlockModel>({ required: true });
+
+// States
+const editor = computed(() => block.value.editor as Editor | undefined);
+const ydoc = computed (() => getEditorYdoc(block.value.editor));
 const headingLevel = computed(() => {
-    if (block.value.type === 'HEADING_1')
-        return 1;
     if (block.value.type === 'HEADING_2')
         return 2;
-    if (block.value.type === 'HEADING_3')
+    else if (block.value.type === 'HEADING_3')
         return 3;
-    return 1;
+    else
+        return 1;
 });
 
-function handleEnter(e: Event) {
-    e.preventDefault();
-    if (editor.value) {
-        const curentContent = editor.value.getJSON();
-        const newBlockContent = curentContent?.content?.pop();
-        editor.value.commands.setContent(curentContent);
-        emit('enter', newBlockContent);
-    }
-}
-
-function handleDelete() {
-    if (editor.value !== undefined) {
-        const caretPosition = editor.value.view.state.selection.$anchor.pos;
-        if (caretPosition <= 1)
-            emit('delete');
-    }
-}
-
+// Hooks
 onBeforeMount(() => {
-    const existingContent = editor.value?.getJSON();
-    block.value.editor = new Editor({
-        content: existingContent,
-        extensions: [
-            Document,
-            Paragraph,
-            Text,
-        ],
-        editorProps: {
-            attributes: { class: 'focus:outline-none w-full h-full' },
-        },
-        onBlur: () => emit('blur'),
-        onTransaction: (tr) => {
-            if (editor.value && editor.value.isFocused)
-                emit('focus');
-            if (tr.transaction.docChanged) {
-                // TODO: impelement transaction handling
-            }
-        },
+    const previousContent = editor.value?.getJSON().content;
+    editor.value?.destroy();
+    block.value.editor = createEditor(previousContent);
+    ydoc.value?.on('update', (_update: Uint8Array) => {
+        // TODO: implemnet transaction handling
     });
+    editor.value?.on('blur', () => emit('blur'));
+    editor.value?.on('focus', () => emit('focus'));
+    editor.value?.commands.unsetMark('bold');
+    editor.value?.commands.unsetMark('underline');
+    editor.value?.commands.unsetMark('italic');
     editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {
     editor.value?.destroy();
 });
+
+// Actions
+function handleEnter() {
+    if (!editor.value)
+        return;
+    const curentContent = editor.value.getJSON();
+    const newBlockContent = curentContent?.content?.pop();
+    editor.value.commands.setContent(curentContent);
+    emit('enter', newBlockContent);
+}
+
+function handleDelete() {
+    if (!editor.value)
+        return;
+    const caretPosition = editor.value.view.state.selection.$anchor.pos;
+    if (caretPosition <= 1)
+        emit('delete');
+}
 </script>
 
 <template>
     <div
         class="group flex items-start justify-start gap-1"
         :class="{
-            'mt-8': headingLevel === 1 && !isDragging,
-            'mt-5': headingLevel === 2 && !isDragging,
-            'mt-4': headingLevel === 3 && !isDragging,
+            'mt-8': headingLevel === 1,
+            'mt-5': headingLevel === 2,
+            'mt-4': headingLevel === 3,
         }"
     >
         <BlockControl

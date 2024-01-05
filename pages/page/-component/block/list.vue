@@ -1,80 +1,59 @@
 <script setup lang="ts">
-import { BubbleMenu, Editor, EditorContent } from '@tiptap/vue-3';
-import Text from '@tiptap/extension-text';
-import Underline from '@tiptap/extension-underline';
-import Bold from '@tiptap/extension-bold';
-import Italic from '@tiptap/extension-italic';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
+import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
+import type { Editor } from '@tiptap/vue-3';
+import { createEditor, getEditorYdoc } from '../../-utils/editor-utils';
 import { useEditorBodyStore } from '../../-store/editor-body';
-import BlockControl from './left-control.vue';
-import type { Block, BlockType } from '~/types';
+import BlockControl from './control/control.vue';
+import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
 
-const props = defineProps<{ isFocused: boolean, index: number }>();
-const emit = defineEmits<{
-    enter: [content?: any]
-    turn: [type: BlockType]
-    delete: []
-    focus: []
-    blur: []
-}>();
+// Component Definition
+const props = defineProps<BlockProps>();
+const emit = defineEmits<BlockEmit>();
+const block = defineModel<BlockModel>({ required: true });
+
+// Dependencies
 const editorBody = useEditorBodyStore();
-const block = defineModel<Block>({ required: true });
-const editor = computed(() => block.value.editor as Editor);
+
+// States
+const editor = computed(() => block.value.editor as Editor | undefined);
+const ydoc = computed (() => getEditorYdoc(block.value.editor));
 const previousBlockNumbering = computed(() => editorBody.blockList[props.index - 1]?.numbering || 0);
-watchImmediate(previousBlockNumbering, () => {
-    block.value.numbering = previousBlockNumbering.value + 1;
-});
+watchImmediate([previousBlockNumbering, () => block.value.type], () => block.value.numbering = block.value.type === 'NUMBERED_LIST' ? previousBlockNumbering.value + 1 : 0);
 
-function handleEnter(e: Event) {
-    e.preventDefault();
-    if (editor.value) {
-        const curentContent = editor.value.getJSON();
-        const newBlockContent = curentContent?.content?.pop();
-        editor.value.commands.setContent(curentContent);
-        emit('enter', newBlockContent);
-    }
-}
-
-function handleDelete() {
-    if (editor.value !== undefined) {
-        const caretPosition = editor.value.view.state.selection.$anchor.pos;
-        if (caretPosition <= 1)
-            emit('delete');
-    }
-}
-
+// Hooks
 onBeforeMount(() => {
-    const existingContent = editor.value?.getJSON();
-    block.value.editor = new Editor({
-        content: existingContent,
-        extensions: [
-            Document,
-            Paragraph,
-            Text,
-            Underline,
-            Bold,
-            Italic,
-        ],
-        editorProps: {
-            attributes: { class: 'focus:outline-none w-full h-full' },
-        },
-        onBlur: () => emit('blur'),
-        onTransaction: (tr) => {
-            if (editor.value && editor.value.isFocused)
-                emit('focus');
-            if (tr.transaction.docChanged) {
-                // TODO: impelement transaction handling
-            }
-        },
+    const previousContent = editor.value?.getJSON().content;
+    editor.value?.destroy();
+    block.value.editor = createEditor(previousContent);
+    ydoc.value?.on('update', (_update: Uint8Array) => {
+        // TODO: implemnet transaction handling
     });
+    editor.value?.on('blur', () => emit('blur'));
+    editor.value?.on('focus', () => emit('focus'));
     editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {
-    block.value.numbering = undefined;
+    block.value.numbering = 0;
     editor.value?.destroy();
 });
+// Actions
+function handleEnter() {
+    if (!editor.value)
+        return;
+    const curentContent = editor.value.getJSON();
+    const newBlockContent = curentContent?.content?.pop();
+    editor.value.commands.setContent(curentContent);
+    emit('enter', newBlockContent);
+}
+
+function handleDelete() {
+    if (!editor.value)
+        return;
+    const caretPosition = editor.value.view.state.selection.$anchor.pos;
+    if (caretPosition <= 1)
+        emit('delete');
+}
 </script>
 
 <template>
@@ -111,10 +90,10 @@ onUnmounted(() => {
             </BubbleMenu>
             <div>
                 <template v-if="block.type === 'BULLET_LIST'">
-                    •
+                    <span class="text-xl">•</span>
                 </template>
                 <template v-else-if="block.type === 'NUMBERED_LIST'">
-                    {{ block.numbering }}.
+                    <span>{{ `${block.numbering}.` }}</span>
                 </template>
             </div>
             <EditorContent
