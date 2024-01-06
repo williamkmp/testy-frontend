@@ -59,11 +59,6 @@ const options = [
         click: () => emit('change', 'BLOCK_QUOTES'),
     },
     {
-        icon: 'i-material-symbols-rectangle-outline-rounded',
-        label: 'Callout',
-        click: () => emit('change', 'CALLOUT'),
-    },
-    {
         icon: 'i-material-symbols-folder',
         label: 'File',
         click: () => emit('change', 'FILE'),
