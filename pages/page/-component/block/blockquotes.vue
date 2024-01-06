@@ -15,8 +15,8 @@ const editor = computed(() => block.value.editor as Editor | undefined);
 const ydoc = computed (() => getEditorYdoc(block.value.editor));
 
 // Hooks
-onMounted(() => {
-    const previousContent = editor.value?.getJSON();
+onBeforeMount(() => {
+    const previousContent = editor.value?.getJSON().content;
     block.value.editor = createEditor(previousContent);
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
@@ -89,7 +89,7 @@ function handleDelete() {
                 :editor="editor"
                 class="w-full max-w-full hover:cursor-text"
                 @keydown.enter="handleEnter"
-                @keyup.delete="handleDelete"
+                @keydown.delete="handleDelete"
             />
         </div>
     </div>
