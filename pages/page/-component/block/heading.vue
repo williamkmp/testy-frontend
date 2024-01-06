@@ -43,7 +43,8 @@ onUnmounted(() => {
 });
 
 // Actions
-function handleEnter() {
+function handleEnter(e: Event) {
+    e.preventDefault();
     if (!editor.value)
         return;
     const curentContent = editor.value.getJSON();
@@ -90,7 +91,7 @@ function handleDelete() {
                 :editor="editor"
                 class="w-full max-w-full hover:cursor-text"
                 @keydown.enter="handleEnter"
-                @keyup.delete="handleDelete"
+                @keydown.delete="handleDelete"
             />
         </div>
     </div>

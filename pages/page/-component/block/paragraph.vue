@@ -90,7 +90,7 @@ function handleDelete() {
                 :editor="editor"
                 class="w-full max-w-full hover:cursor-text"
                 @keydown.enter="handleEnter"
-                @keyup.delete="handleDelete"
+                @keydown.delete="handleDelete"
             />
         </div>
     </div>
