@@ -1,24 +1,39 @@
 <script setup lang="ts">
+import type { EmojiDefinition } from '~/utils/emoji';
+
 const emit = defineEmits<{
     remove: []
     choose: [emojiKey: string]
 }>();
 
+const isLoading = ref(true);
+const emojiDefinitionList = ref<EmojiDefinition[]>([]);
+const emojiList = ref<EmojiDefinition[]>([]);
 const searchText = ref('');
 const debouncedText = refDebounced(searchText, 500);
-const emojis = ref<any>([]);
 
-watch(
-    debouncedText,
-    () => {
-        const emojiList = Object.entries(EMOJI).map(e => e[1]);
-        if (debouncedText.value.trim() === '')
-            emojis.value = emojiList;
-        else
-            emojis.value = emojiList.filter(emoji => emoji.keyword.includes(debouncedText.value));
-    },
-    { immediate: true },
+watchImmediate(
+    [debouncedText, emojiDefinitionList],
+    () => emojiList.value = (debouncedText.value.trim() === '')
+        ? emojiDefinitionList.value
+        : emojiDefinitionList.value.filter(emoji => emoji.keyword.includes(debouncedText.value.toLocaleLowerCase()))
+    ,
 );
+
+function initEmoji() {
+    return new Promise<void>((resolve) => {
+        isLoading.value = true;
+        setTimeout(() => {
+            emojiDefinitionList.value = Object.entries(EMOJI).map(entry => entry[1]);
+            isLoading.value = false;
+            resolve();
+        }, 300);
+    });
+}
+
+onMounted(async () => {
+    await initEmoji();
+});
 
 function chooseRandom() {
     const emojiKeys = Object.keys(EMOJI);
@@ -31,42 +46,39 @@ function chooseRandom() {
     <div class="flex h-full w-full flex-col gap-4">
         <header class="flex w-full items-center gap-2">
             <UInput
-                v-model="searchText"
-                class="w-full"
-                color="gray"
-                variant="outline"
-                size="xs"
-                placeholder="Fiter ..."
-                icon="i-heroicons-magnifying-glass"
+                v-model="searchText" placeholder="Fiter ..." size="xs" variant="outline" color="gray" class="w-full"
+                icon="i-heroicons-magnifying-glass" :disabled="isLoading"
             />
             <UTooltip text="Random">
                 <UButton
-                    icon="i-heroicons-puzzle-piece"
-                    color="gray"
-                    variant="solid"
-                    size="xs"
+                    icon="i-heroicons-puzzle-piece" color="gray" variant="solid" size="xs" :disabled="isLoading"
                     @click="chooseRandom"
                 />
             </UTooltip>
             <UTooltip text="Remove">
                 <UButton
-                    icon="i-heroicons-x-circle"
-                    color="red"
-                    variant="soft"
-                    size="xs"
+                    icon="i-heroicons-x-circle" color="red" variant="soft" size="xs" :disabled="isLoading"
                     @click="$emit('remove')"
                 />
             </UTooltip>
         </header>
-        <main class="flex h-min max-h-full w-full flex-wrap content-start items-start justify-normal gap-1 overflow-y-auto overflow-x-hidden">
-            <div
-                v-for="emoji in emojis"
-                :key="emoji.key"
-                class="h-9 w-9 rounded p-1 hover:bg-gray-900/10 dark:hover:bg-gray-200/10"
-                @click="$emit('choose', emoji.key)"
-            >
-                <EmojiIcon :emoji-name="emoji.key" minified />
-            </div>
+        <main class="h-full max-h-full w-full overflow-auto pr-1">
+            <template v-if="!isLoading">
+                <div class="grid w-full grid-cols-[repeat(auto-fill,minmax(36px,1fr))] gap-1">
+                    <div
+                        v-for="emoji in emojiList" :key="emoji.key"
+                        class="h-9 w-9 rounded p-1 hover:bg-gray-900/10 dark:hover:bg-gray-200/10"
+                        @click="$emit('choose', emoji.key)"
+                    >
+                        <EmojiIcon :emoji-name="emoji.key" minified />
+                    </div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="flex h-full w-full items-center justify-center">
+                    <UIcon name="i-heroicons-arrow-path" class="animate-spin text-gray-500" />
+                </div>
+            </template>
         </main>
     </div>
 </template>

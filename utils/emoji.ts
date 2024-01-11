@@ -18,7 +18,7 @@
  *
  */
 
-interface Emoji {
+export interface EmojiDefinition {
     key: string
     alt: string
     background: string
@@ -29,7 +29,7 @@ interface Emoji {
 }
 
 interface EmojiMap {
-    [k: string]: Emoji
+    [k: string]: EmojiDefinition
 }
 
 export const EMOJI: EmojiMap = {
