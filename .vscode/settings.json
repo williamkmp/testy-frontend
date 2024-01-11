@@ -61,49 +61,12 @@
         "jsonc",
         "yaml"
     ],
-    "hidefiles.configurationType": "local",
-    "hidefiles.globalConfig": {
-        "profiles": [
-            {
-                "name": "Default",
-                "detail": "",
-                "description": "Test",
-                "hidden": [
-                    ".vscode/",
-                    "node_modules/",
-                    ".nuxt/",
-                    ".gitignore",
-                    "tsconfig.json",
-                    "package-lock.json",
-                    ".vscode/",
-                    "eslint.config.js",
-                    "tailwind.config.ts",
-                    "public/",
-                    "tailwind.config.ts",
-                    "eslint.config.js",
-                    ".vscode/",
-                    ".vscode/"
-                ],
-                "peek": [
-                    ".vscode/"
-                ]
-            }
-        ]
-    },
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
         "**/CVS": true,
-        "**/.DS_Store": true,
-        "node_modules/": true,
-        ".nuxt/": true,
-        ".gitignore": true,
-        "tsconfig.json": true,
-        "package-lock.json": true,
-        "eslint.config.js": true,
-        "tailwind.config.ts": true,
-        "public/": true
+        "**/.DS_Store": true
     },
 
     // tailwindcss config
@@ -124,8 +87,6 @@
     "editor.quickSuggestions": {
         "strings": true
     },
-
-    "hidefiles.selectedProfile": "Default",
     "vue.complete.casing.tags": "pascal",
     "vue.splitEditors.icon": true,
     "editor.indentSize": "tabSize",
