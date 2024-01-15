@@ -38,9 +38,10 @@ export function useApi() {
         getImage: (id?: string) => encodeURI(`${baseUrl}image/${id || '-1'}`),
 
         // page
-        page: encodeURI('/page'),
+        pagePreview: encodeURI('/page/preview'),
         pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
-        pageChildren: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/children`),
+        pageCollectionPreview: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/collection/preview`),
+        collectionPagePreview: (p: { collectionId: string }) => encodeURI(`/block/collection/${p.collectionId}/page/preview`),
     };
 
     function responseOrErr(obj?: AxiosResponse): ServerStandardResposne<any> {
