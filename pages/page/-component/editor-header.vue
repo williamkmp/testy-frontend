@@ -78,7 +78,7 @@ async function removeEmoji() {
                 @click="editorHeader.showEditorIcon"
             />
             <UButton
-                v-if="!editorHeader.hasCoverImage"
+                v-if="!editorHeader.hasCoverImage && !editorHeader.isUploadingImage"
                 label="Add Cover"
                 icon="i-heroicons-photo"
                 variant="ghost" color="zinc" size="md"
