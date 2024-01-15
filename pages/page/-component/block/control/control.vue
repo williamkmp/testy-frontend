@@ -63,12 +63,11 @@ const options = [
         label: 'File',
         click: () => emit('change', 'FILE'),
     },
-    // TODO: implemnet collection option
-    // {
-    //     icon: 'i-material-symbols-stacks-rounded',
-    //     label: 'Collections',
-    //     click: () => emit('change', 'COLLECTION'),
-    // },
+    {
+        icon: 'i-material-symbols-stacks-rounded',
+        label: 'Collections',
+        click: () => emit('change', 'COLLECTION'),
+    },
 ];
 </script>
 
