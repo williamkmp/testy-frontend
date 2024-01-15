@@ -63,6 +63,11 @@
     ],
     "files.exclude": {
         "**/.git": true,
+        "**/.nuxt": true,
+        "**/node_modules": true,
+        "eslint.config.js": true,
+        "package-lock.json": true,
+        ".vscode": true,
         "**/.svn": true,
         "**/.hg": true,
         "**/CVS": true,
