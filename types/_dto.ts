@@ -27,8 +27,10 @@ export interface UFormApi {
     errors: Ref<FormError[]>
 }
 
+export type MenuItemType = 'COLLECTION' | 'PAGE';
 export interface MenuItem {
     id: string
+    type: MenuItemType
     title: string
     isOpen: boolean
     iconKey?: string
