@@ -1,6 +1,6 @@
 import { useStorage } from '@vueuse/core';
 import { defineStore } from 'pinia';
-import type { MenuItem, PagePreviewResponse } from '~/types';
+import type { MenuItem, MenuItemType, PagePreviewResponse } from '~/types';
 
 const SIDE_MENU_SIZE_KEY = 'TESTY_APPLICATION_SIDEBAR_PERVIOUS_SIZE';
 
@@ -14,14 +14,23 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
     const size = useStorage<string>(SIDE_MENU_SIZE_KEY, null);
     const menuItems = ref<MenuItem[]>([]);
 
-    async function fetchPages(id?: string): Promise<Array<MenuItem>> {
-        const response: PagePreviewResponse = id !== undefined
-            ? await privateApi.get(path.pageChildren({ pageId: id }))
-            : await privateApi.get(path.page);
+    async function fetchPreviewsOf(type: MenuItemType, id?: string): Promise<Array<MenuItem>> {
+        const response: PagePreviewResponse = id === undefined
+            ? await privateApi.get(path.pagePreview)
+            : type === 'PAGE'
+                ? await privateApi.get(path.pageCollectionPreview({ pageId: id }))
+                : await privateApi.get(path.collectionPagePreview({ collectionId: id }));
+
+        const childrenBlockType: MenuItemType = id === undefined
+            ? 'PAGE'
+            : type === 'PAGE'
+                ? 'COLLECTION'
+                : 'PAGE';
 
         return response!.data.map(pagePreview => ({
             id: pagePreview.id,
             title: pagePreview.title,
+            type: childrenBlockType,
             isChildrenFetched: false,
             iconKey: pagePreview.iconKey,
             isOpen: false,
@@ -40,6 +49,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
             isChildrenFetched: false,
             iconKey: page.iconKey,
             isOpen: false,
+            type: 'PAGE',
             children: [],
         });
     }
@@ -49,7 +59,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
         isOpen,
         size,
         menuItems,
-        fetchPages,
+        fetchPreviewsOf,
         addPage,
     };
 });

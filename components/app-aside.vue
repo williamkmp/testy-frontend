@@ -29,7 +29,7 @@ function initSize() {
 
 async function initMenuItemData() {
     isFetchingMenuItem.value = true;
-    sideMenu.menuItems = await sideMenu.fetchPages();
+    sideMenu.menuItems = await sideMenu.fetchPreviewsOf('PAGE');
     isFetchingMenuItem.value = false;
 }
 </script>
@@ -140,7 +140,7 @@ async function initMenuItemData() {
                     >
                         <template v-if="sideMenu.menuItems.length > 0">
                             <template v-for="(item, index) in sideMenu.menuItems" :key="item.id">
-                                <PageItem v-model="sideMenu.menuItems[index]" />
+                                <PreviewItem v-model="sideMenu.menuItems[index]" />
                             </template>
                         </template>
                         <template v-else>
