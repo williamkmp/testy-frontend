@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
 import type { Editor } from '@tiptap/vue-3';
-import { createEditor, getEditorYdoc } from '../../-utils/editor-utils';
+import { getEditorYdoc } from '../../-utils/editor-utils';
 import { useEditorBodyStore } from '../../-store/editor-body';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
@@ -22,15 +22,11 @@ watchImmediate([previousBlockNumbering, () => block.value.type], () => block.val
 
 // Hooks
 onBeforeMount(() => {
-    const previousContent = editor.value?.getJSON().content;
-    editor.value?.destroy();
-    block.value.editor = createEditor(previousContent);
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
     });
     editor.value?.on('blur', () => emit('blur'));
     editor.value?.on('focus', () => emit('focus'));
-    editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {

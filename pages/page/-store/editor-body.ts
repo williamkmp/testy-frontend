@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { v4 as uuid } from 'uuid';
 import type { Editor, JSONContent } from '@tiptap/vue-3';
-import { createPlaceHolderEditor } from '../-utils/editor-utils';
+import { createEditor } from '../-utils/editor-utils';
 import type { Block, BlockType } from '~/types';
 
 export const useEditorBodyStore = defineStore('PageEditorBody', () => {
@@ -29,7 +29,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     }
 
     function insertBlockAt(index: number, content?: JSONContent) {
-        const newBlockEditor = createPlaceHolderEditor(content);
+        const newBlockEditor = createEditor(content);
         const currentBlockType = blockList.value.at(index)?.type || 'PARAGRAPH';
         const newBlockType: BlockType = (currentBlockType === 'NUMBERED_LIST' || currentBlockType === 'BULLET_LIST')
             ? currentBlockType
@@ -46,13 +46,25 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         );
     }
 
-    function deleteBlockAt(index: number) {
+    function removeBlockAt(index: number) {
+        blockList.value.splice(index, 1);
+    }
+
+    function handleUserEnter(index: number, content?: JSONContent) {
+        insertBlockAt(index, content);
+        const createdBlock = blockList.value[index];
+        const createdBlockEditor = createdBlock.editor as Editor | undefined;
+        if (createdBlockEditor)
+            createdBlockEditor.commands.focus('start');
+    }
+
+    function handleUserDelete(index: number) {
         const removedBlock = blockList.value[index];
         const previousBlock = blockList.value[index - 1];
         if (!previousBlock || !removedBlock)
             return;
 
-        blockList.value.splice(index, 1);
+        removeBlockAt(index);
         const currentEditor = removedBlock?.editor as Editor | undefined;
         const previousEditor = previousBlock?.editor as Editor | undefined;
 
@@ -83,6 +95,9 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
             if (previousEditor)
                 previousEditor.commands.focus('end');
         }
+
+        if (currentEditor)
+            currentEditor.destroy();
     }
 
     function turnInto(index: number, type: BlockType) {
@@ -96,7 +111,8 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         DRAGGABLE_CLASS,
         blockList,
         insertBlockAt,
-        deleteBlockAt,
+        handleUserDelete,
+        handleUserEnter,
         focusedBlockIndex,
         reset,
         turnInto,

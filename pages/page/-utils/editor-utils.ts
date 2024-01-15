@@ -13,42 +13,10 @@ export function getEditorYdoc(editor: Editor): Doc | undefined {
     return collaborationPlugin?.options.document as Doc | undefined;
 }
 
-export function createPlaceHolderEditor(content?: JSONContent) {
-    const editorContent = {
-        type: 'doc',
-        content: content !== undefined
-            ? [content]
-            : undefined,
-    };
-
-    return new Editor({
-        content: editorContent,
-        editable: false,
-        editorProps: {
-            attributes: { class: 'focus:outline-none w-full h-full' },
-        },
-        extensions: [
-            Document,
-            Paragraph,
-            Text,
-            Underline,
-            Bold,
-            Italic,
-        ],
-    });
-}
-
 export function createEditor(content?: JSONContent): Editor {
     const ydoc = new Doc();
-    const editorContent = {
-        type: 'doc',
-        content: content !== undefined
-            ? [content]
-            : undefined,
-    };
-
     return new Editor({
-        content: editorContent,
+        content,
         editable: true,
         editorProps: {
             attributes: { class: 'focus:outline-none w-full h-full' },

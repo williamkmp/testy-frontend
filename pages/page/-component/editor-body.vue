@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import Draggable from 'vuedraggable';
 import { SlickItem, SlickList } from 'vue-slicksort';
 import { useEditorBodyStore } from '../-store/editor-body';
 import Paragraph from './block/paragraph.vue';
@@ -30,7 +29,7 @@ const focusedBlock = computed({
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
-                            @delete="() => editorBody.deleteBlockAt(index)"
+                            @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
                     </template>
@@ -42,7 +41,7 @@ const focusedBlock = computed({
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
-                            @delete="() => editorBody.deleteBlockAt(index)"
+                            @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
                     </template>
@@ -54,7 +53,7 @@ const focusedBlock = computed({
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
-                            @delete="() => editorBody.deleteBlockAt(index)"
+                            @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
                     </template>
@@ -66,7 +65,7 @@ const focusedBlock = computed({
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => editorBody.insertBlockAt(index, content)"
-                            @delete="() => editorBody.deleteBlockAt(index)"
+                            @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
                     </template>

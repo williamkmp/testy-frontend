@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
 import { EditorContent } from '@tiptap/vue-3';
-import { createEditor, getEditorYdoc } from '../../-utils/editor-utils';
+import { getEditorYdoc } from '../../-utils/editor-utils';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
 
@@ -24,9 +24,6 @@ const headingLevel = computed(() => {
 
 // Hooks
 onBeforeMount(() => {
-    const previousContent = editor.value?.getJSON().content;
-    editor.value?.destroy();
-    block.value.editor = createEditor(previousContent);
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
     });
@@ -35,7 +32,6 @@ onBeforeMount(() => {
     editor.value?.commands.unsetMark('bold');
     editor.value?.commands.unsetMark('underline');
     editor.value?.commands.unsetMark('italic');
-    editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {

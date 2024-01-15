@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
 import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
-import { createEditor, getEditorYdoc } from '../../-utils/editor-utils';
+import { getEditorYdoc } from '../../-utils/editor-utils';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
 
@@ -16,15 +16,11 @@ const ydoc = computed (() => getEditorYdoc(block.value.editor));
 
 // Hooks
 onBeforeMount(() => {
-    const previousContent = editor.value?.getJSON().content;
-    block.value.editor = createEditor(previousContent);
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
-        // console.log(`updating PARAGRAPH - ${props.index}`);
     });
     editor.value?.on('blur', () => emit('blur'));
     editor.value?.on('focus', () => emit('focus'));
-    editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {
