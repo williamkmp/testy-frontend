@@ -6,7 +6,6 @@ export const useAuthStore = defineStore('GlobalAuth', () => {
     // dependency
     const REFRESH_TOKEN_KEY = 'TESTY_REFRESHTOKEN_STORAGE_KEY';
     const { path, publicApi, privateApi } = useApi();
-    const router = useRouter();
     const notif = useNotification();
 
     // states
@@ -45,7 +44,6 @@ export const useAuthStore = defineStore('GlobalAuth', () => {
         refreshToken.value = null;
         accessToken.value = undefined;
         user.value = undefined;
-        router.push('/login');
         return await navigateTo('/login');
     }
 
