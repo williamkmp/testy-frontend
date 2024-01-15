@@ -9,6 +9,7 @@ export const BLOCK_TYPE = {
     DIVIDER: 'DIVIDER',
     FILE: 'FILE',
     IMAGE: 'IMAGE',
+    COLLECTION: 'COLLECTION',
 } as const;
 
 type ValuesAsKeys<T extends Record<any, PropertyKey>> = keyof T;
@@ -20,7 +21,5 @@ export interface Block {
     numbering?: number
     width?: number
     refrenceId?: string
-    color?: string
-    iconKey?: string
     editor?: any
 };
