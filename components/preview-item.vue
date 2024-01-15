@@ -52,7 +52,12 @@ function forceCloseChildren(page: MenuItem) {
 
 <template>
     <div
-        class="flex w-full shrink-0 select-none items-center justify-start rounded-md px-2.5 py-0.5 text-sm font-medium tracking-wide text-gray-600/60 hover:bg-white hover:text-gray-700 focus:outline-none focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-75 dark:text-gray-400 dark:hover:bg-gray-950/30 dark:hover:text-white"
+        class="flex w-full shrink-0 select-none items-center justify-start rounded-md px-2.5 py-0.5 text-sm font-medium tracking-wide text-gray-600/60 focus:outline-none focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-75 dark:text-gray-400 "
+        :class="[
+            menu.type === 'PAGE'
+                ? 'hover:bg-white hover:text-gray-700 dark:hover:bg-gray-950/30 dark:hover:text-white'
+                : 'cursor-default',
+        ]"
         :style="{ paddingLeft: `${props.level}rem` }"
     >
         <UButton icon="i-ep-arrow-right-bold" variant="ghost" color="gray" class="opacity-60 transition-transform" :class="[menu.isOpen ? 'rotate-90' : 'rotate-0']" size="2xs" @click="toggleExpand" />
