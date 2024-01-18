@@ -40,3 +40,21 @@ export function createEditor(content?: JSONContent): Editor {
         ],
     });
 }
+
+export function editorHTMLToJSON(html: string) {
+    const editor = new Editor({
+        content: html,
+        editable: false,
+        extensions: [
+            Document,
+            Paragraph,
+            Text,
+            Underline,
+            Bold,
+            Italic,
+        ],
+    });
+    const json = editor.getJSON().content?.at(0) as JSONContent;
+    editor.destroy();
+    return json;
+}
