@@ -59,6 +59,11 @@ const options = [
         click: () => emit('change', 'BLOCK_QUOTES'),
     },
     {
+        icon: 'i-ic-round-horizontal-rule',
+        label: 'Divider',
+        click: () => emit('change', 'DIVIDER'),
+    },
+    {
         icon: 'i-material-symbols-folder',
         label: 'File',
         click: () => emit('change', 'FILE'),
