@@ -52,10 +52,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
 
     function handleUserEnter(index: number, content?: JSONContent) {
         insertBlockAt(index, content);
-        const createdBlock = blockList.value[index];
-        const createdBlockEditor = createdBlock.editor as Editor | undefined;
-        if (createdBlockEditor)
-            createdBlockEditor.commands.focus('start');
+        focusedBlockIndex.value = index + 1;
     }
 
     function handleUserDelete(index: number) {

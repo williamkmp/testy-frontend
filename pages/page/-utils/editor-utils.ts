@@ -15,8 +15,14 @@ export function getEditorYdoc(editor: Editor): Doc | undefined {
 
 export function createEditor(content?: JSONContent): Editor {
     const ydoc = new Doc();
+    const editorContent = {
+        type: 'doc',
+        content: content !== undefined
+            ? [content]
+            : undefined,
+    };
     return new Editor({
-        content,
+        content: editorContent,
         editable: true,
         editorProps: {
             attributes: { class: 'focus:outline-none w-full h-full' },

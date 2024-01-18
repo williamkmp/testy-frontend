@@ -18,15 +18,12 @@ const ydoc = computed (() => getEditorYdoc(block.value.editor));
 onBeforeMount(() => {
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
+        console.log(`updating paragraph[${props.index}]`);
     });
     editor.value?.on('blur', () => emit('blur'));
     editor.value?.on('focus', () => emit('focus'));
-});
-
-onUnmounted(() => {
-    // eslint-disable-next-line no-console
-    console.log(`unmout paragraph - ${props.index}`);
-    editor.value?.destroy();
+    if (props.isFocused)
+        editor.value?.commands.focus('start');
 });
 
 // Actions

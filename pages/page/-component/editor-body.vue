@@ -28,7 +28,7 @@ const focusedBlock = computed({
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
-                            @enter="(content) => editorBody.insertBlockAt(index, content)"
+                            @enter="(content) => editorBody.handleUserEnter(index, content)"
                             @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
@@ -40,7 +40,7 @@ const focusedBlock = computed({
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
-                            @enter="(content) => editorBody.insertBlockAt(index, content)"
+                            @enter="(content) => editorBody.handleUserEnter(index, content)"
                             @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
@@ -52,7 +52,7 @@ const focusedBlock = computed({
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
-                            @enter="(content) => editorBody.insertBlockAt(index, content)"
+                            @enter="(content) => editorBody.handleUserEnter(index, content)"
                             @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
@@ -64,7 +64,7 @@ const focusedBlock = computed({
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
-                            @enter="(content) => editorBody.insertBlockAt(index, content)"
+                            @enter="(content) => editorBody.handleUserEnter(index, content)"
                             @delete="() => editorBody.handleUserDelete(index)"
                             @turn="(type) => editorBody.turnInto(index, type)"
                         />
@@ -79,7 +79,7 @@ const focusedBlock = computed({
                 color="primary"
                 variant="soft"
                 block size="xs"
-                @click="editorBody.insertBlockAt(0)"
+                @click="editorBody.handleUserEnter(-1)"
             />
         </template>
     </main>

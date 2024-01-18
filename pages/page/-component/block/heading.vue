@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
-import { EditorContent } from '@tiptap/vue-3';
+import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
 import { getEditorYdoc } from '../../-utils/editor-utils';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
@@ -26,16 +26,15 @@ const headingLevel = computed(() => {
 onBeforeMount(() => {
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
+        console.log(`updating heading[${props.index}]`);
     });
     editor.value?.on('blur', () => emit('blur'));
     editor.value?.on('focus', () => emit('focus'));
     editor.value?.commands.unsetMark('bold');
     editor.value?.commands.unsetMark('underline');
     editor.value?.commands.unsetMark('italic');
-});
-
-onUnmounted(() => {
-    editor.value?.destroy();
+    if (props.isFocused)
+        editor.value?.commands.focus('start');
 });
 
 // Actions
@@ -82,6 +81,28 @@ function handleDelete() {
                 'text-xl': headingLevel === 3,
             }"
         >
+            <BubbleMenu
+                v-if="editor"
+                :editor="editor"
+            >
+                <UButtonGroup orientation="horizontal" size="xs">
+                    <UButton
+                        icon="i-ic-round-format-bold"
+                        :color="editor.isActive('bold') ? 'black' : 'gray'"
+                        @click="editor.chain().focus().toggleBold().run()"
+                    />
+                    <UButton
+                        icon="i-ic-round-format-italic"
+                        :color="editor.isActive('italic') ? 'black' : 'gray'"
+                        @click="editor.chain().focus().toggleItalic().run()"
+                    />
+                    <UButton
+                        icon="i-ic-round-format-underlined"
+                        :color="editor.isActive('underline') ? 'black' : 'gray'"
+                        @click="editor.chain().focus().toggleUnderline().run()"
+                    />
+                </UButtonGroup>
+            </BubbleMenu>
             <EditorContent
                 v-if="editor !== undefined"
                 :editor="editor"

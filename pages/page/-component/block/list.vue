@@ -24,15 +24,18 @@ watchImmediate([previousBlockNumbering, () => block.value.type], () => block.val
 onBeforeMount(() => {
     ydoc.value?.on('update', (_update: Uint8Array) => {
         // TODO: implemnet transaction handling
+        console.log(`updating list[${props.index}]`);
     });
     editor.value?.on('blur', () => emit('blur'));
     editor.value?.on('focus', () => emit('focus'));
+    if (props.isFocused)
+        editor.value?.commands.focus('start');
 });
 
 onUnmounted(() => {
-    block.value.numbering = 0;
-    editor.value?.destroy();
+    block.value.numbering = undefined;
 });
+
 // Actions
 function handleEnter() {
     if (!editor.value)
