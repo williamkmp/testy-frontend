@@ -4,7 +4,8 @@ import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
 import { usePageDataStore } from './-store/page-data';
 import { useEditorBodyStore } from './-store/editor-body';
-import type { PageDataResponse } from '~/types';
+import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
+import type { PageBlockResponse, PageDataResponse } from '~/types';
 
 // Dependency
 const app = useAppStore();
@@ -15,13 +16,29 @@ const editorBody = useEditorBodyStore();
 
 const { pending } = await useLazyAsyncData(`document`, async () => {
     editorBody.reset();
-    const response: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
-    pageData.title = response.data.title;
-    pageData.imageId = response.data.imageId;
-    pageData.iconKey = response.data.iconKey;
-    pageData.authority = response.data.authority;
-    pageData.imagePosition = response.data.imagePosition;
-    pageData.id = response.data.id;
+    const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
+    const blockResponse: PageBlockResponse = await privateApi(path.pageBlocks({ pageId: routeParam.id }));
+
+    // Setting page data
+    pageData.title = pageResponse.data.title;
+    pageData.imageId = pageResponse.data.imageId;
+    pageData.iconKey = pageResponse.data.iconKey;
+    pageData.authority = pageResponse.data.authority;
+    pageData.imagePosition = pageResponse.data.imagePosition;
+    pageData.id = pageResponse.data.id;
+
+    // Mapping block data
+    const blockDataList = blockResponse.data;
+    editorBody.blockList = blockDataList.map(blockData => ({
+        id: blockData.id,
+        type: blockData.type,
+        editor: blockData.content !== undefined
+            ? createEditor(editorHTMLToJSON(blockData.content))
+            : undefined,
+        fileId: blockData.fileId,
+        iconKey: blockData.iconKey,
+        width: blockData.width,
+    }));
 });
 
 watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
