@@ -16,7 +16,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         ? ({
                 isActive: !(block.editor as Editor).isDestroyed,
                 isEditable: !(block.editor as Editor).isEditable,
-                content: (block.editor as Editor).getHTML(),
+                content: JSON.stringify((block.editor as Editor).getHTML()),
             })
         : '- none -'));
 
