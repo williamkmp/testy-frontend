@@ -41,6 +41,9 @@ export function useApi() {
         pagePreview: encodeURI('/page/preview'),
         pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
         pageCollectionPreview: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/collection/preview`),
+        pageBlocks: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/block`),
+
+        // block
         collectionPagePreview: (p: { collectionId: string }) => encodeURI(`/block/collection/${p.collectionId}/page/preview`),
     };
 
