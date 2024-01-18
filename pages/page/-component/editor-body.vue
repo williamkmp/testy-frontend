@@ -5,6 +5,7 @@ import Paragraph from './block/paragraph.vue';
 import BlockQuotes from './block/blockquotes.vue';
 import List from './block/list.vue';
 import Heading from './block/heading.vue';
+import Divider from './block/divider.vue';
 
 const editorBody = useEditorBodyStore();
 const focusedBlock = computed({
@@ -59,6 +60,18 @@ const focusedBlock = computed({
                     </template>
                     <template v-else-if="block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3'">
                         <Heading
+                            v-model="editorBody.blockList[index]"
+                            :is-focused="index === focusedBlock"
+                            :index="index"
+                            @focus="focusedBlock = index"
+                            @blur="focusedBlock = -1"
+                            @enter="(content) => editorBody.handleUserEnter(index, content)"
+                            @delete="() => editorBody.handleUserDelete(index)"
+                            @turn="(type) => editorBody.turnInto(index, type)"
+                        />
+                    </template>
+                    <template v-else-if="block.type === 'DIVIDER'">
+                        <Divider
                             v-model="editorBody.blockList[index]"
                             :is-focused="index === focusedBlock"
                             :index="index"
