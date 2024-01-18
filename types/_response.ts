@@ -1,4 +1,4 @@
-import type { ImageDto, PageDataDto, PagePreviewDto, TokenDto, UserDto } from './_dto';
+import type { BlockDto, ImageDto, PageDataDto, PagePreviewDto, TokenDto, UserDto } from './_dto';
 import type { ServerResponseData } from './_server';
 
 export type LoginResponse = ServerResponseData<
@@ -18,3 +18,5 @@ export type ImageResponse = ServerResponseData<ImageDto>;
 export type PagePreviewResponse = ServerResponseData<Array<PagePreviewDto>>;
 
 export type PageDataResponse = ServerResponseData<PageDataDto>;
+
+export type PageBlockResponse = ServerResponseData<Array<BlockDto>>;

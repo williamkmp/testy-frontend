@@ -1,5 +1,6 @@
 import type { FormError } from '@nuxt/ui/dist/runtime/types';
 import type { Authority } from './_authority';
+import type { BlockType } from './_block';
 
 export interface ImageDto {
     id: string
@@ -51,4 +52,13 @@ export interface PageDataDto {
     iconKey: string
     imageId: string
     imagePosition: number
+}
+
+export interface BlockDto {
+    id: string
+    type: BlockType
+    content?: string
+    width?: number
+    iconKey?: string
+    fileId: string
 }
