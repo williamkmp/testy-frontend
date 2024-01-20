@@ -60,6 +60,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             API_BASE_URL: 'http://localhost:5000/',
+            WS_BASE_URL: 'ws://localhost:5000/ws',
         },
     },
 });
