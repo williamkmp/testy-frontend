@@ -36,12 +36,12 @@ export function useStompClient() {
         });
     }
 
-    function subscribe(
+    async function subscribe(
         destiniation: string,
-        callback: (payload: unknown, header: Record<string, unknown>) => void,
-    ): void {
-        const connection = preMessageCheck(destiniation);
-        connection.subscribe(
+        callback: (payload: any, header: Record<string, any>) => void,
+    ) {
+        await connect();
+        connection.value!.subscribe(
             destiniation,
             payload => callback(JSON.parse(payload.body), payload.headers),
             {
@@ -51,9 +51,9 @@ export function useStompClient() {
         );
     }
 
-    function unsubscribe(destiniation: string): void {
-        const connection = preMessageCheck(destiniation);
-        connection.unsubscribe(
+    async function unsubscribe(destiniation: string) {
+        await connect();
+        connection.value!.unsubscribe(
             destiniation,
             {
                 sessionId: sessionId.value!,
@@ -62,9 +62,9 @@ export function useStompClient() {
         );
     }
 
-    function send(destiniation: string, payload: Record<string, any>) {
-        const connection = preMessageCheck(destiniation);
-        connection.publish({
+    async function send(destiniation: string, payload: Record<string, any>) {
+        await connect();
+        connection.value!.publish({
             destination: destiniation,
             body: JSON.stringify(payload),
             headers: {
@@ -74,15 +74,5 @@ export function useStompClient() {
         });
     }
 
-    function preMessageCheck(destination: string) {
-        if (!connection.value)
-            throw new Error(`[WS] have no existing connection: ${destination}`);
-        if (!sessionId.value)
-            throw new Error(`[WS] have no existing sessionId: ${destination}`);
-        if (!auth.user)
-            throw new Error(`[WS] have no existing user: ${destination}`);
-        return connection.value;
-    }
-
-    return { connect, subscribe, unsubscribe, send };
+    return { subscribe, unsubscribe, send };
 }
