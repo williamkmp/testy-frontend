@@ -62,3 +62,11 @@ export interface BlockDto {
     iconKey?: string
     fileId: string
 }
+
+export interface MenuMessagePayloadDto {
+    action: 'ADD' | 'UPDATE' | 'DELETE'
+    parentId?: string
+    id: string
+    name: string
+    iconKey?: string
+}

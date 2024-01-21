@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { MenuMessagePayloadDto } from '~/types';
+
 // Dependencies
 const searchModal = useSearchModalStore();
 const createPageModal = useCreatePageModalStore();
@@ -6,6 +8,7 @@ const shortcut = useShortcuts();
 const sideMenu = useSideMenuStore();
 const auth = useAuthStore();
 const { path } = useApi();
+const stomp = useStompClient();
 
 const aside = ref<HTMLDivElement>();
 const isFetchingMenuItem = ref(true);
@@ -14,6 +17,33 @@ defineExpose({ aside });
 onMounted(async () => {
     initSize();
     await initMenuItemData();
+    if (auth.user) {
+        await stomp.subscribe(`/topic/user/${auth.user.id}/preview`, (payload: MenuMessagePayloadDto) => {
+            if (payload.action === 'ADD') {
+                sideMenu.addPreview(
+                    {
+                        id: payload.id,
+                        name: payload.name,
+                        iconKey: payload.iconKey,
+                    },
+                    payload.parentId,
+                );
+            }
+            else if (payload.action === 'UPDATE') {
+                sideMenu.updatePreview({
+                    id: payload.id,
+                    name: payload.name,
+                    iconKey: payload.iconKey,
+                });
+            }
+            else if (payload.action === 'DELETE') {
+                sideMenu.deletePreview({
+                    parentId: payload.parentId,
+                    previewId: payload.id,
+                });
+            }
+        });
+    }
 });
 
 // Actions

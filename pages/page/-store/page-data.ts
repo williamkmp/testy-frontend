@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
-import { AUTHORITY, type Authority, type PageDataResponse } from '~/types';
+import { AUTHORITY, type Authority } from '~/types';
 
 export const usePageDataStore = defineStore('EditorPageData', () => {
     // Dependency
     const { path, privateApi } = useApi();
 
+    // States
     const id = ref<string>();
     const title = ref<string>();
     const imageId = ref<string>();
@@ -12,15 +13,22 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
     const imagePosition = ref<number>(0);
     const authority = ref<Authority>(AUTHORITY.VIEWERS);
 
-    watch([iconKey, imagePosition, imageId], async () => {
-        if (id.value) {
-            await privateApi.put(path.pagePageId({ pageId: id.value }), {
-                iconKey: iconKey.value,
-                imageId: imageId.value,
-                imagePosition: imagePosition.value,
-            });
-        }
-    });
+    watchDebounced(
+        [iconKey, imagePosition, imageId, title],
+        async () => {
+            if (id.value) {
+                await privateApi.put(path.pagePageId({ pageId: id.value }), {
+                    title: title.value,
+                    iconKey: iconKey.value,
+                    imageId: imageId.value,
+                    imagePosition: imagePosition.value,
+                });
+            }
+        },
+        {
+            debounce: 500,
+        },
+    );
 
     return {
         id,

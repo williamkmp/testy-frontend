@@ -38,28 +38,72 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
         }));
     }
 
-    function addPage(page: {
-        id: string
-        title: string
-        iconKey: string
-    }) {
-        menuItems.value.push({
-            id: page.id,
-            title: page.title,
+    function addPreview(
+        menu: { id: string, name: string, iconKey?: string },
+        parentId?: string,
+    ) {
+        const newMenu: MenuItem = {
+            id: menu.id,
+            title: menu.name,
             isChildrenFetched: false,
-            iconKey: page.iconKey,
+            iconKey: menu.iconKey,
             isOpen: false,
             type: 'PAGE',
             children: [],
-        });
+        };
+        if (!parentId) {
+            menuItems.value.push();
+            return;
+        }
+        const parentPreview = findMenuBydId(parentId, menuItems.value);
+        if (!parentPreview || !parentPreview.isChildrenFetched)
+            return;
+        newMenu.type = parentPreview.type === 'PAGE' ? 'COLLECTION' : 'PAGE';
+        parentPreview.children.push(newMenu);
     }
 
+    function findMenuBydId(id: string, menus: MenuItem[]): MenuItem | undefined {
+        for (const menu of menus) {
+            if (menu.id === id)
+                return menu;
+            if (menu.children) {
+                const foundMenu = findMenuBydId(id, menu.children);
+                if (foundMenu)
+                    return foundMenu;
+            }
+        }
+        return undefined;
+    }
+
+    function updatePreview(menu: { id: string, name: string, iconKey?: string }) {
+        const preview = findMenuBydId(menu.id, menuItems.value);
+        if (!preview)
+            return;
+        if (preview.title !== menu.name)
+            preview.title = menu.name;
+        if (preview.iconKey !== menu.iconKey)
+            preview.iconKey = menu.iconKey;
+    }
+
+    function deletePreview(param: { parentId?: string, previewId: string }) {
+        if (!param.parentId) {
+            menuItems.value = menuItems.value.filter(menu => menu.id !== param.previewId);
+        }
+        else {
+            const preview = findMenuBydId(param.parentId, menuItems.value);
+            if (!preview)
+                return;
+            preview.children = preview.children.filter(menu => menu.id !== param.previewId);
+        }
+    }
     return {
         isFetching,
         isOpen,
         size,
         menuItems,
         fetchPreviewsOf,
-        addPage,
+        addPreview,
+        updatePreview,
+        deletePreview,
     };
 });
