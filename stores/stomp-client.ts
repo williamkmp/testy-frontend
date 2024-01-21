@@ -1,4 +1,4 @@
-import { Client, type StompHeaders, type messageCallbackType } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
 
 let client: Client | undefined;
@@ -9,35 +9,39 @@ export function useStompClient() {
     const auth = useAuthStore();
 
     // States
-    const wsHandshakeUrl = config.public.WS_BASE_URL || 'ws://localhost:5000/ws';
-    const sessionId = ref<string>();
     const connection = ref<Client>();
+    const sessionId = ref<string>();
+    const wsHandshakeUrl = config.public.WS_BASE_URL || 'ws://localhost:5000/ws';
 
-    if (client === undefined) {
-        client = new Client({
-            brokerURL: wsHandshakeUrl,
-            // eslint-disable-next-line no-console
-            onConnect: () => console.log('[WebSocket]: Init client'),
-            // eslint-disable-next-line no-console
-            onStompError: frame => console.log('ws err: ', frame),
+    async function connect() {
+        return new Promise((resolve) => {
+            if (client === undefined) {
+                client = new Client({
+                    brokerURL: wsHandshakeUrl,
+                    onConnect: () => {
+                        // eslint-disable-next-line no-console
+                        console.log('[STOMP]: websocket connected');
+                        resolve(true);
+                    },
+                    // eslint-disable-next-line no-console
+                    onStompError: frame => console.log('[STOMP] err: ', frame),
+                });
+                client.activate();
+                connection.value = client;
+                sessionId.value = uuidv4();
+            }
+            else {
+                resolve(true);
+            }
         });
-        client.activate();
-        connection.value = client;
-        sessionId.value = uuidv4();
     }
 
     function subscribe<T>(
         destiniation: string,
         callback: (payload: T, header: Record<string, unknown>) => void,
     ): void {
-        if (!connection.value)
-            throw new Error(`[WS] have no existing connection: ${destiniation}`);
-        if (!sessionId.value)
-            throw new Error(`[WS] have no existing sessionId: ${destiniation}`);
-        if (!auth.user)
-            throw new Error(`[WS] have no existing user: ${destiniation}`);
-
-        connection.value.subscribe(
+        const connection = preMessageCheck(destiniation);
+        connection.subscribe(
             destiniation,
             payload => callback(JSON.parse(payload.body), payload.headers),
             {
@@ -48,14 +52,8 @@ export function useStompClient() {
     }
 
     function unsubscribe(destiniation: string): void {
-        if (!connection.value)
-            throw new Error(`[WS] have no existing connection: ${destiniation}`);
-        if (!sessionId.value)
-            throw new Error(`[WS] have no existing sessionId: ${destiniation}`);
-        if (!auth.user)
-            throw new Error(`[WS] have no existing user: ${destiniation}`);
-
-        connection.value.unsubscribe(
+        const connection = preMessageCheck(destiniation);
+        connection.unsubscribe(
             destiniation,
             {
                 sessionId: sessionId.value!,
@@ -65,14 +63,8 @@ export function useStompClient() {
     }
 
     function send(destiniation: string, payload: Record<string, any>) {
-        if (!connection.value)
-            throw new Error(`[WS] have no existing connection: ${destiniation}`);
-        if (!sessionId.value)
-            throw new Error(`[WS] have no existing sessionId: ${destiniation}`);
-        if (!auth.user)
-            throw new Error(`[WS] have no existing user: ${destiniation}`);
-
-        connection.value.publish({
+        const connection = preMessageCheck(destiniation);
+        connection.publish({
             destination: destiniation,
             body: JSON.stringify(payload),
             headers: {
@@ -82,5 +74,15 @@ export function useStompClient() {
         });
     }
 
-    return { subscribe, unsubscribe, send };
+    function preMessageCheck(destination: string) {
+        if (!connection.value)
+            throw new Error(`[WS] have no existing connection: ${destination}`);
+        if (!sessionId.value)
+            throw new Error(`[WS] have no existing sessionId: ${destination}`);
+        if (!auth.user)
+            throw new Error(`[WS] have no existing user: ${destination}`);
+        return connection.value;
+    }
+
+    return { connect, subscribe, unsubscribe, send };
 }
