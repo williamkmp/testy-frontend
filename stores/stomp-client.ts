@@ -36,9 +36,9 @@ export function useStompClient() {
         });
     }
 
-    function subscribe<T>(
+    function subscribe(
         destiniation: string,
-        callback: (payload: T, header: Record<string, unknown>) => void,
+        callback: (payload: unknown, header: Record<string, unknown>) => void,
     ): void {
         const connection = preMessageCheck(destiniation);
         connection.subscribe(
