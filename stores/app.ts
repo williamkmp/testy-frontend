@@ -16,16 +16,8 @@ export const useAppStore = defineStore('GlobalApp', () => {
         },
     });
 
-    // Feature: Element Id
-    const id = ref(0);
-    function getId() {
-        id.value = id.value + 1;
-        return id.value;
-    }
-
     return {
         isDark,
-        getId,
         headerTitle,
         emojiKey,
     };
