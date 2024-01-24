@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 let client: Client | undefined;
 
-export function useStompClient() {
+export const useStompClient = defineStore('StompClientAPI', () => {
     // Dependencies
     const config = useRuntimeConfig();
     const auth = useAuthStore();
@@ -18,13 +18,8 @@ export function useStompClient() {
             if (client === undefined) {
                 client = new Client({
                     brokerURL: wsHandshakeUrl,
-                    onConnect: () => {
-                        // eslint-disable-next-line no-console
-                        console.log('[STOMP]: websocket connected');
-                        resolve(true);
-                    },
-                    // eslint-disable-next-line no-console
-                    onStompError: frame => console.log('[STOMP] err: ', frame),
+                    onConnect: () => resolve(true),
+                    onStompError: frame => console.error('[STOMP] err: ', frame),
                 });
                 client.activate();
                 connection.value = client;
@@ -75,4 +70,4 @@ export function useStompClient() {
     }
 
     return { subscribe, unsubscribe, send };
-}
+});
