@@ -5,7 +5,8 @@ import { usePasswordModalStore } from '../-store/password-modal';
 // Dependencies
 const passwordModalStore = usePasswordModalStore();
 const { $v } = useMessage();
-const { privateApi, path } = useApi();
+const path = useApiPath();
+const privateApi = usePrivateApi();
 
 // Actions
 const passwordForm = useFormDeclaration({

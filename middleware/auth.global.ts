@@ -1,12 +1,13 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-    const auth = useAuthStore();
+    const auth = useAuth();
 
-    // Configuration
-    const excludeRoutes = ['/login', '/register'];
+    const excludedRoutes = {
+        '/login': true,
+        '/register': true,
+    };
 
     // public route guard
-    const routeIsPublic = excludeRoutes.includes(to.path);
-    if (routeIsPublic)
+    if (to.path in excludedRoutes)
         return;
 
     await auth.refreshAuth();

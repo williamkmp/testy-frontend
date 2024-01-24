@@ -3,11 +3,12 @@ import { AUTHORITY, type Authority, type ImageResponse, type PageDataResponse, t
 import resizeImage from '~/utils/resize-image';
 
 // Dependency
-const { privateApi, path } = useApi();
+const path = useApiPath();
+const privateApi = usePrivateApi();
 const notif = useNotification();
 const createPageModal = useCreatePageModalStore();
 const sideMenu = useSideMenuStore();
-const authStore = useAuthStore();
+const app = useAppStore();
 
 // Refs
 const imageContainerRef = ref<HTMLDivElement>();
@@ -48,7 +49,9 @@ const hasCoverImage = computed(() => {
 onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 
 // File Event Listener
-file.onChange((files: FileList) => {
+file.onChange((files: FileList | null) => {
+    if (files == null)
+        return;
     pageData.value.image = files[0];
     pageData.value.imageSrc = URL.createObjectURL(files[0]);
 });
@@ -114,9 +117,9 @@ async function submitPage() {
             })),
         });
 
-        sideMenu.addPage({
+        sideMenu.addPreview({
             id: pageResponse.data.id,
-            title: pageResponse.data.title,
+            name: pageResponse.data.title,
             iconKey: pageResponse.data.iconKey,
         });
 
@@ -162,7 +165,7 @@ function removeEmoji() {
 function addEmail() {
     if (inviteEmailText.value !== undefined && inviteEmailText.value.trim() !== '') {
         // Email is the same as user
-        if (inviteEmailText.value === authStore.user!.email)
+        if (inviteEmailText.value === app.user!.email)
             return;
         // Email is already in invite list
         if (inviteList.value.some(invite => invite.email === inviteEmailText.value!.trim()))

@@ -6,7 +6,8 @@ const SIDE_MENU_SIZE_KEY = 'TESTY_APPLICATION_SIDEBAR_PERVIOUS_SIZE';
 
 export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
     // Dependencies
-    const { path, privateApi } = useApi();
+    const path = useApiPath();
+    const privateApi = usePrivateApi();
 
     // States
     const isFetching = ref(true);

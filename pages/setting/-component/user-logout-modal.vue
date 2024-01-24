@@ -2,7 +2,7 @@
 import { useLogoutModalStore } from '../-store/logout-modal';
 
 const logoutModalStore = useLogoutModalStore();
-const auth = useAuthStore();
+const auth = useAuth();
 const notif = useNotification();
 
 async function doLogoutAction() {

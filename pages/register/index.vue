@@ -5,7 +5,8 @@ definePageMeta({ layout: 'authentication' });
 
 // Dependency
 const { $v } = useMessage();
-const { publicApi, path } = useApi();
+const path = useApiPath();
+const publicApi = usePublicApi();
 const notif = useNotification();
 
 const loginForm = useFormDeclaration({

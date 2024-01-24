@@ -3,7 +3,8 @@ import { AUTHORITY, type Authority } from '~/types';
 
 export const usePageDataStore = defineStore('EditorPageData', () => {
     // Dependency
-    const { path, privateApi } = useApi();
+    const path = useApiPath();
+    const privateApi = usePrivateApi();
 
     // States
     const id = ref<string>();

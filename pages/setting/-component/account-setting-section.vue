@@ -6,17 +6,18 @@ import type { UserResponse } from '~/types';
 
 // Dependencies
 const userPictureModal = useUserPictureModalStore();
-const auth = useAuthStore();
-const { privateApi, path } = useApi();
+const app = useAppStore();
+const path = useApiPath();
+const privateApi = usePrivateApi();
 const { $v } = useMessage();
 const notif = useNotification();
 
 // Actions
 const profileForm = useFormDeclaration({
     initial: {
-        email: auth.user?.email,
-        fullName: auth.user?.fullName,
-        tagName: auth.user?.tagName,
+        email: app.user?.email,
+        fullName: app.user?.fullName,
+        tagName: app.user?.tagName,
     },
 
     schema: z.object({
@@ -47,15 +48,15 @@ const profileForm = useFormDeclaration({
                 email: form.data.email,
                 tagName: form.data.tagName,
                 fullName: form.data.fullName,
-                imageId: auth.user?.imageId,
+                imageId: app.user?.imageId,
             },
         );
-        if (auth.user) {
-            auth.user.id = response.data.id;
-            auth.user.email = response.data.email;
-            auth.user.tagName = response.data.tagName;
-            auth.user.fullName = response.data.fullName;
-            auth.user.imageId = response.data.imageId;
+        if (app.user) {
+            app.user.id = response.data.id;
+            app.user.email = response.data.email;
+            app.user.tagName = response.data.tagName;
+            app.user.fullName = response.data.fullName;
+            app.user.imageId = response.data.imageId;
         }
         notif.ok({ message: 'update_success' });
     },
@@ -75,8 +76,8 @@ const profileForm = useFormDeclaration({
             >
                 <!-- Change Picture -->
                 <UAvatar
-                    :src="path.getImage(auth.user?.imageId)"
-                    :alt="auth.user?.fullName.toUpperCase()"
+                    :src="path.getImage(app.user?.imageId)"
+                    :alt="app.user?.fullName.toUpperCase()"
                     size="2xl"
                 />
                 <div class="flex h-full w-full items-end justify-end">

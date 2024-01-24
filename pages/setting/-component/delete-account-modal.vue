@@ -2,7 +2,7 @@
 import { useDeleteAccountModalStore } from '../-store/delete-account-modal';
 
 const deleteAccountModal = useDeleteAccountModalStore();
-const auth = useAuthStore();
+const auth = useAuth();
 const notif = useNotification();
 
 async function doDeleteAcoount() {

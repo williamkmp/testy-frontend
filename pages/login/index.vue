@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import type { LoginResponse } from '~/types';
 
 definePageMeta({ layout: 'authentication' });
 
 // Dependency
 const { $v } = useMessage();
-const { publicApi, path } = useApi();
-const auth = useAuthStore();
+const auth = useAuth();
 const notif = useNotification();
 
 const loginForm = useFormDeclaration({
@@ -23,22 +21,10 @@ const loginForm = useFormDeclaration({
             .max(100, $v('string_min:100')),
     }),
     onSubmit: async (form) => {
-        const response: LoginResponse = await publicApi.post(
-            path.authLogin,
-            {
-                email: form.data.email,
-                password: form.data.password,
-            },
-        );
-        auth.refreshToken = response.data!.token.refreshToken;
-        auth.accessToken = response.data!.token.accessToken;
-        auth.user = {
-            id: response.data!.id,
-            email: response.data!.email,
-            tagName: response.data!.tagName,
-            fullName: response.data!.fullName,
-            imageId: response.data!.imageId,
-        };
+        await auth.doLogin({
+            email: form.data.email,
+            password: form.data.password,
+        });
         await navigateTo('/');
         notif.ok({ message: 'Login Success' });
     },

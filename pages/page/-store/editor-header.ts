@@ -8,7 +8,8 @@ import type { ImageResponse } from '~/types';
 export const useEditorHeaderStore = defineStore('EditorHeader', () => {
     // Dependency
     const pageData = usePageDataStore();
-    const { path, privateApi } = useApi();
+    const path = useApiPath();
+    const privateApi = usePrivateApi();
 
     // States
     const hasCoverImage = computed(() => pageData.imageId !== undefined);

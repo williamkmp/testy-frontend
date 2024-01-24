@@ -9,7 +9,8 @@ import type { PageBlockResponse, PageDataResponse } from '~/types';
 
 // Dependency
 const app = useAppStore();
-const { privateApi, path } = useApi();
+const path = useApiPath();
+const privateApi = usePrivateApi();
 const routeParam = useRoute().params as { id: string };
 const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();

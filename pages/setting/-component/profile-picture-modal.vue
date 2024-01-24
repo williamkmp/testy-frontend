@@ -5,8 +5,9 @@ import type { ImageResponse, UserResponse } from '~/types';
 
 // Dependencies
 const userPictureModal = useUserPictureModalStore();
-const auth = useAuthStore();
-const { privateApi, path } = useApi();
+const app = useAppStore();
+const path = useApiPath();
+const privateApi = usePrivateApi();
 const notif = useNotification();
 
 // States
@@ -44,14 +45,14 @@ async function doUpload() {
             const userUpdateResponse: UserResponse = await privateApi.put(
                 path.user,
                 {
-                    email: auth.user!.email,
-                    tagName: auth.user!.tagName,
-                    fullName: auth.user!.fullName,
+                    email: app.user!.email,
+                    tagName: app.user!.tagName,
+                    fullName: app.user!.fullName,
                     imageId: imageUploadResponse.data!.id,
                 },
             );
 
-            auth.user!.imageId = userUpdateResponse.data?.imageId;
+            app.user!.imageId = userUpdateResponse.data.imageId;
             notif.ok({ message: 'upload_success' });
         }
         catch (err: any) {
@@ -68,12 +69,12 @@ async function doDelete() {
         await privateApi.put(
             path.user,
             {
-                email: auth.user!.email,
-                tagName: auth.user!.tagName,
-                fullName: auth.user!.fullName,
+                email: app.user!.email,
+                tagName: app.user!.tagName,
+                fullName: app.user!.fullName,
             },
         );
-        auth.user!.imageId = undefined;
+        app.user!.imageId = undefined;
         notif.ok({ message: 'update_success' });
     }
     catch (err: any) {
@@ -125,8 +126,8 @@ function closeModal() {
                         class="flex w-full flex-col items-center justify-center gap-8"
                     >
                         <UAvatar
-                            :src="path.getImage(auth.user?.imageId)"
-                            :alt="auth.user?.fullName.toUpperCase()"
+                            :src="path.getImage(app.user?.imageId)"
+                            :alt="app.user?.fullName.toUpperCase()"
                             size="3xl"
                         />
                         <input

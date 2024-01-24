@@ -6,8 +6,8 @@ const searchModal = useSearchModalStore();
 const createPageModal = useCreatePageModalStore();
 const shortcut = useShortcuts();
 const sideMenu = useSideMenuStore();
-const auth = useAuthStore();
-const { path } = useApi();
+const app = useAppStore();
+const path = useApiPath();
 const stomp = useStompClient();
 
 const aside = ref<HTMLDivElement>();
@@ -17,8 +17,8 @@ defineExpose({ aside });
 onMounted(async () => {
     initSize();
     await initMenuItemData();
-    if (auth.user) {
-        await stomp.subscribe(`/topic/user/${auth.user.id}/preview`, (payload: MenuMessagePayloadDto) => {
+    if (app.user) {
+        await stomp.subscribe(`/topic/user/${app.user.id}/preview`, (payload: MenuMessagePayloadDto) => {
             if (payload.action === 'ADD') {
                 sideMenu.addPreview(
                     {
@@ -84,12 +84,12 @@ async function initMenuItemData() {
             >
                 <div class="flex h-full w-full items-center gap-2">
                     <UAvatar
-                        :src="path.getImage(auth.user?.imageId)"
-                        :alt="auth.user?.fullName.toUpperCase()"
+                        :src="path.getImage(app.user?.imageId)"
+                        :alt="app.user?.fullName.toUpperCase()"
                         size="sm"
                     />
                     <p class="truncate text-sm font-semibold">
-                        {{ auth.user?.fullName }}
+                        {{ app.user?.fullName }}
                     </p>
                 </div>
             </header>
