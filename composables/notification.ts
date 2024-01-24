@@ -1,12 +1,13 @@
+import { v4 as uuid } from 'uuid';
+
 export function useNotification() {
+    const TIMEOUT = 1500;
     const toast = useToast();
     const { $m } = useMessage();
-    const app = useAppStore();
-    const TIMEOUT = 1500;
 
     return {
         info: (p: { title?: string, message: string }) => {
-            const toastId = `toats-${app.getId()}`;
+            const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
                 click: () => toast.remove(toastId),
@@ -18,7 +19,7 @@ export function useNotification() {
         },
 
         ok: (p: { title?: string, message: string }) => {
-            const toastId = `toats-${app.getId()}`;
+            const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
                 click: () => toast.remove(toastId),
@@ -31,7 +32,7 @@ export function useNotification() {
         },
 
         warn: (p: { title?: string, message: string }) => {
-            const toastId = `toats-${app.getId()}`;
+            const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
                 click: () => toast.remove(toastId),
@@ -44,7 +45,7 @@ export function useNotification() {
         },
 
         error: (p: { title?: string, message: string }) => {
-            const toastId = `toats-${app.getId()}`;
+            const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
                 click: () => toast.remove(toastId),
