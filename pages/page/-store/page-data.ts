@@ -14,22 +14,46 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
     const imagePosition = ref<number>(0);
     const authority = ref<Authority>(AUTHORITY.VIEWERS);
 
-    watchDebounced(
-        [iconKey, imagePosition, imageId, title],
-        async () => {
-            if (id.value) {
-                await privateApi.put(path.pagePageId({ pageId: id.value }), {
-                    title: title.value,
-                    iconKey: iconKey.value,
-                    imageId: imageId.value,
-                    imagePosition: imagePosition.value,
-                });
-            }
-        },
-        {
-            debounce: 500,
-        },
-    );
+    async function updatePageData(param: {
+        title?: string | null
+        iconKey?: string | null
+        imageId?: string | null
+        imagePosition?: number | null
+    }) {
+        function doOverride<T>(p: {
+            originalValue: Ref<T | undefined>
+            newValue: T | undefined | null
+        }) {
+            // eslint-disable-next-line eqeqeq
+            p.originalValue.value = p.newValue != undefined
+                ? p.newValue
+                : p.newValue === undefined
+                    ? p.originalValue.value
+                    : undefined;
+            return p.originalValue.value;
+        }
+
+        if (id.value) {
+            await privateApi.put(path.pagePageId({ pageId: id.value }), {
+                title: doOverride({
+                    originalValue: title,
+                    newValue: param.title,
+                }),
+                iconKey: doOverride({
+                    originalValue: iconKey,
+                    newValue: param.iconKey,
+                }),
+                imageId: doOverride({
+                    originalValue: imageId,
+                    newValue: param.imageId,
+                }),
+                imagePosition: doOverride({
+                    originalValue: imagePosition,
+                    newValue: param.imagePosition,
+                }),
+            });
+        }
+    }
 
     return {
         id,
@@ -38,5 +62,6 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
         iconKey,
         authority,
         imagePosition,
+        updatePageData,
     };
 });

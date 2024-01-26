@@ -9,6 +9,12 @@ const editorHeader = useEditorHeaderStore();
 // States & Refs
 const emojiPickerRef = ref<HTMLDivElement>();
 const isEmojiPickerOpen = ref(false);
+const pageTitle = computed({
+    get: () => pageData.title,
+    set: newTitle => pageData.updatePageData({
+        title: newTitle,
+    }),
+});
 const isHover = ref(false);
 const isFocus = ref(false);
 
@@ -20,14 +26,27 @@ onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 
 // Actions
 async function pickEmoji(emojiKey: string) {
-    pageData.iconKey = emojiKey;
+    pageData.updatePageData({
+        iconKey: emojiKey,
+    });
     isEmojiPickerOpen.value = false;
 }
 
 async function removeEmoji() {
-    pageData.iconKey = undefined;
+    pageData.updatePageData({
+        iconKey: null,
+    });
     isEmojiPickerOpen.value = false;
 }
+watchDebounced(
+    () => pageData.title,
+    newTitle => pageData.updatePageData({
+        title: newTitle,
+    }),
+    {
+        debounce: 500,
+    },
+);
 </script>
 
 <template>
@@ -87,7 +106,7 @@ async function removeEmoji() {
             />
         </div>
         <UTextarea
-            v-model="pageData.title"
+            v-model="pageTitle"
             :rows="1"
             placeholder="Untitled"
             autoresize

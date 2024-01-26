@@ -70,3 +70,11 @@ export interface MenuMessagePayloadDto {
     name: string
     iconKey?: string
 }
+
+export interface PageHeaderDto {
+    id: string
+    title: string
+    iconKey: string
+    imageId: string
+    imagePosition: number
+}

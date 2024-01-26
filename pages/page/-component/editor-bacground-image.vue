@@ -57,7 +57,15 @@ watch(isRepositioning, () => {
 // Actions
 async function saveReposition() {
     isRepositioning.value = false;
-    pageData.imagePosition = newImagePosition.value;
+    pageData.updatePageData({
+        imagePosition: newImagePosition.value,
+    });
+}
+
+async function deleteBackgroundImage() {
+    await pageData.updatePageData({
+        imageId: null,
+    });
 }
 </script>
 
@@ -90,7 +98,7 @@ async function saveReposition() {
                                 <template v-if="!isRepositioning && !editorHeader.isUploadingImage">
                                     <UButtonGroup size="xs" orientation="horizontal">
                                         <UButton label="Change" color="gray" variant="solid" @click="editorHeader.fileDialog.open" />
-                                        <UButton label="Remove" color="gray" variant="solid" @click="pageData.imageId = undefined" />
+                                        <UButton label="Remove" color="gray" variant="solid" @click="deleteBackgroundImage" />
                                         <UButton label="Reposition" color="gray" variant="solid" @click="isRepositioning = true" />
                                     </UButtonGroup>
                                 </template>

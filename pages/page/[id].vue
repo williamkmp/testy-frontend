@@ -6,9 +6,10 @@ import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
 import { usePageDataStore } from './-store/page-data';
 import { useEditorBodyStore } from './-store/editor-body';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
-import type { PageBlockResponse, PageDataResponse } from '~/types';
+import type { PageBlockResponse, PageDataResponse, PageHeaderDto } from '~/types';
 
 // Dependency
+const stomp = useStompClient();
 const app = useAppStore();
 const path = useApiPath();
 const privateApi = usePrivateApi();
@@ -41,6 +42,19 @@ const { pending } = await useLazyAsyncData(`document`, async () => {
         iconKey: blockData.iconKey,
         width: blockData.width,
     }));
+
+    stomp.subscribe(`/topic/page/${pageData.id}/header`, (payload: PageHeaderDto, header) => {
+        if (app.sessionId === header.sessionId)
+            return;
+        if (pageData.title !== payload.title)
+            pageData.title = payload.title;
+        if (pageData.iconKey !== payload.iconKey)
+            pageData.iconKey = payload.iconKey;
+        if (pageData.imageId !== payload.imageId)
+            pageData.imageId = payload.imageId;
+        if (pageData.imagePosition !== payload.imagePosition)
+            pageData.imagePosition = payload.imagePosition;
+    });
 });
 
 watchImmediate([() => pageData.iconKey, () => pageData.title], () => {

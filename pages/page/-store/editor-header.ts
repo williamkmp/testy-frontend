@@ -23,10 +23,12 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
     });
 
     // Actions
-    function showEditorIcon() {
+    async function showEditorIcon() {
         const emojiKeys = Object.keys(EMOJI);
         const randomEmojiKey = emojiKeys[emojiKeys.length * Math.random() << 0];
-        pageData.iconKey = randomEmojiKey;
+        await pageData.updatePageData({
+            iconKey: randomEmojiKey,
+        });
     }
 
     fileDialog.onChange(async (files: FileList | null) => {
@@ -35,11 +37,16 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
         isUploadingImage.value = true;
         const blob = files[0];
         if (blob) {
+            await pageData.updatePageData({
+                imageId: 'placeHolder-id',
+            });
             const resizedBlob = await resizeImage(blob, 3500);
             const response: ImageResponse = await privateApi.postForm(path.image, {
                 image: resizedBlob,
             });
-            pageData.imageId = response.data.id;
+            await pageData.updatePageData({
+                imageId: response.data.id,
+            });
         }
         isUploadingImage.value = false;
     });
