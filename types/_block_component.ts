@@ -3,7 +3,6 @@ import type { Block, BlockType } from '~/types';
 
 export interface BlockProps {
     index: number
-    isFocused: boolean
 }
 
 export interface BlockEmit {
@@ -13,7 +12,7 @@ export interface BlockEmit {
     (e: 'focus'): void
     (e: 'blur'): void
     (e: 'change', uuid: string, content: JSONContent): void
-    (e: 'transaction', uuid: string, content: JSONContent): void
+    (e: 'transaction', uuid: string, transaction: Uint8Array): void
 }
 
 export type BlockModel = Block;

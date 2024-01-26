@@ -5,9 +5,6 @@ import { createEditor } from '../-utils/editor-utils';
 import type { Block, BlockType } from '~/types';
 
 export const useEditorBodyStore = defineStore('PageEditorBody', () => {
-    // Dependencies
-    const _app = useAppStore();
-
     // States
     const DRAGGABLE_CLASS = 'draggable';
     const focusedBlockIndex = ref(-1);
@@ -47,7 +44,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     }
 
     function removeBlockAt(index: number) {
-        // TODO: change param from using index to block.uuid
         blockList.value.splice(index, 1);
     }
 

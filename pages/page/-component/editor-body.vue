@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { SlickItem, SlickList } from 'vue-slicksort';
-import type { JSONContent } from '@tiptap/vue-3';
+import type { Editor, JSONContent } from '@tiptap/vue-3';
 import { useEditorBodyStore } from '../-store/editor-body';
+import { usePageDataStore } from '../-store/page-data';
 import Paragraph from './block/paragraph.vue';
 import BlockQuotes from './block/blockquotes.vue';
 import List from './block/list.vue';
 import Heading from './block/heading.vue';
 import Divider from './block/divider.vue';
+import type { BlockType } from '~/types';
+
+// Dependency
+const pageData = usePageDataStore();
+const stomp = useStompClient();
 
 const editorBody = useEditorBodyStore();
 const focusedBlock = computed({
@@ -17,9 +23,8 @@ const focusedBlock = computed({
 // TODO: implement block @transaction event handling
 
 function handleUserDelete(index: number) {
-    // TODO: move method from store to this component
-    const removedBlock = blockList.value[index];
-    const previousBlock = blockList.value[index - 1];
+    const removedBlock = editorBody.blockList[index];
+    const previousBlock = editorBody.blockList[index - 1];
     if (!previousBlock || !removedBlock)
         return;
 
@@ -63,6 +68,21 @@ function handleUserEnter(index: number, content?: JSONContent) {
     editorBody.insertBlockAt(index, content);
     focusedBlock.value = index + 1;
 }
+
+function handleUserChangeBlockType(index: number, newType: BlockType) {
+    handleUserChangeBlockType(index, newType);
+}
+
+function handleTransaction(uuid: string, transaction: Uint8Array) {
+    // TODO: impelmement transaction publish
+    stomp.send('/app/page');
+}
+
+onMounted(() => {
+    stomp.subscribe(`/topic/page/${pageData.id}/block.transaction`, (payload, header) => {
+        // TODO: apply transaction to block using Y.applyUpdate(block, payload.transaction, origin);
+    });
+});
 </script>
 
 <template>
@@ -76,61 +96,57 @@ function handleUserEnter(index: number, content?: JSONContent) {
                     <template v-if="block.type === 'PARAGRAPH'">
                         <Paragraph
                             v-model="editorBody.blockList[index]"
-                            :is-focused="index === focusedBlock"
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
-                            @delete="() => editorBody.handleUserDelete(index)"
-                            @turn="(type) => editorBody.turnInto(index, type)"
+                            @delete="() => handleUserDelete(index)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @transaction="handleTransaction"
                         />
                     </template>
                     <template v-else-if="block.type === 'BLOCK_QUOTES'">
                         <BlockQuotes
                             v-model="editorBody.blockList[index]"
-                            :is-focused="index === focusedBlock"
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
-                            @delete="() => editorBody.handleUserDelete(index)"
-                            @turn="(type) => editorBody.turnInto(index, type)"
+                            @delete="() => handleUserDelete(index)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
                         />
                     </template>
                     <template v-else-if="block.type === 'NUMBERED_LIST' || block.type === 'BULLET_LIST' ">
                         <List
                             v-model="editorBody.blockList[index]"
-                            :is-focused="index === focusedBlock"
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
-                            @delete="() => editorBody.handleUserDelete(index)"
-                            @turn="(type) => editorBody.turnInto(index, type)"
+                            @delete="() => handleUserDelete(index)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
                         />
                     </template>
                     <template v-else-if="block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3'">
                         <Heading
                             v-model="editorBody.blockList[index]"
-                            :is-focused="index === focusedBlock"
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
-                            @delete="() => editorBody.handleUserDelete(index)"
-                            @turn="(type) => editorBody.turnInto(index, type)"
+                            @delete="() => handleUserDelete(index)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
                         />
                     </template>
                     <template v-else-if="block.type === 'DIVIDER'">
                         <Divider
                             v-model="editorBody.blockList[index]"
-                            :is-focused="index === focusedBlock"
                             :index="index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
-                            @delete="() => editorBody.handleUserDelete(index)"
-                            @turn="(type) => editorBody.turnInto(index, type)"
+                            @delete="() => handleUserDelete(index)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
                         />
                     </template>
                 </SlickItem>
