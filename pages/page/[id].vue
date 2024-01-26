@@ -57,6 +57,10 @@ const { pending } = await useLazyAsyncData(`document`, async () => {
     });
 });
 
+onBeforeRouteLeave(() => {
+    stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+});
+
 watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
     app.headerTitle = pageData.title;
     app.emojiKey = pageData.iconKey;

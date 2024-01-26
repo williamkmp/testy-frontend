@@ -47,54 +47,8 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     }
 
     function removeBlockAt(index: number) {
+        // TODO: change param from using index to block.uuid
         blockList.value.splice(index, 1);
-    }
-
-    function handleUserEnter(index: number, content?: JSONContent) {
-        insertBlockAt(index, content);
-        focusedBlockIndex.value = index + 1;
-    }
-
-    function handleUserDelete(index: number) {
-        const removedBlock = blockList.value[index];
-        const previousBlock = blockList.value[index - 1];
-        if (!previousBlock || !removedBlock)
-            return;
-
-        removeBlockAt(index);
-        const currentEditor = removedBlock?.editor as Editor | undefined;
-        const previousEditor = previousBlock?.editor as Editor | undefined;
-
-        if (currentEditor && previousEditor && !currentEditor.isEmpty) {
-            if (previousEditor.isEmpty) {
-                previousEditor.commands.setContent(
-                    currentEditor.getJSON(),
-                );
-            }
-            else {
-                previousEditor.commands.insertContentAt(
-                    previousEditor.getText().length + 1,
-                    currentEditor.getJSON().content || [],
-                );
-            }
-
-            const previousTextLen = (previousBlock.editor as Editor).getText().length;
-            const removedTextLen = (removedBlock.editor as Editor).getText().length;
-            const caretPosition = previousTextLen - removedTextLen + 1;
-            previousEditor
-                .chain()
-                .focus()
-                .setTextSelection(caretPosition)
-                .joinBackward()
-                .run();
-        }
-        else {
-            if (previousEditor)
-                previousEditor.commands.focus('end');
-        }
-
-        if (currentEditor)
-            currentEditor.destroy();
     }
 
     function turnInto(index: number, type: BlockType) {
@@ -108,8 +62,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         DRAGGABLE_CLASS,
         blockList,
         insertBlockAt,
-        handleUserDelete,
-        handleUserEnter,
+        removeBlockAt,
         focusedBlockIndex,
         reset,
         turnInto,

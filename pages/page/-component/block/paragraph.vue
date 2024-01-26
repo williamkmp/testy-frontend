@@ -16,7 +16,10 @@ const ydoc = computed (() => getEditorYdoc(block.value.editor));
 
 // Hooks
 onBeforeMount(() => {
-    ydoc.value?.on('update', (_update: Uint8Array) => {
+    ydoc.value?.on('update', (_update: Uint8Array, origin?: string) => {
+        if (origin !== undefined) {
+
+        }
         // TODO: implemnet transaction handling
         console.log(`updating paragraph[${props.index}]`);
     });
@@ -43,6 +46,10 @@ function handleDelete() {
     const caretPosition = editor.value.view.state.selection.$anchor.pos;
     if (caretPosition <= 1)
         emit('delete');
+}
+
+function handleDocumentUpdate(update: Uint8Array, origin?: string) {
+    // TODO: move Y.Doc updat here
 }
 </script>
 
