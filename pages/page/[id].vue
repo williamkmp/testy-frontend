@@ -17,8 +17,7 @@ const routeParam = useRoute().params as { id: string };
 const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
-const { pending } = await useAsyncData(`document`, async () => {
-    editorBody.reset();
+const { pending } = await useLazyAsyncData(`document-${routeParam.id}`, async () => {
     const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
     const blockResponse: PageBlockResponse = await privateApi(path.pageBlocks({ pageId: routeParam.id }));
 
@@ -42,7 +41,9 @@ const { pending } = await useAsyncData(`document`, async () => {
         iconKey: blockData.iconKey,
         width: blockData.width,
     }));
+});
 
+await useAsyncData('docuemt-connection', async () => {
     await stomp.subscribe(`/topic/page/${pageData.id}/header`, (payload: PageHeaderDto, header: any) => {
         if (app.sessionId === header.sessionId)
             return;
@@ -57,12 +58,14 @@ const { pending } = await useAsyncData(`document`, async () => {
     });
 });
 
-onBeforeRouteLeave(() => {
-    stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+onBeforeRouteLeave(async () => {
+    await stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+    editorBody.reset();
 });
 
-onBeforeRouteUpdate(() => {
-    stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+onBeforeRouteUpdate(async () => {
+    await stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+    editorBody.reset();
 });
 
 watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
