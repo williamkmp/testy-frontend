@@ -16,17 +16,17 @@ const ydoc = computed (() => getEditorYdoc(block.value.editor));
 
 // Hooks
 onBeforeMount(() => {
-    ydoc.value?.on('update', (_update: Uint8Array, origin?: string) => {
-        if (origin !== undefined) {
-
-        }
-        // TODO: implemnet transaction handling
-        console.log(`updating paragraph[${props.index}]`);
-    });
-    editor.value?.on('blur', () => emit('blur'));
-    editor.value?.on('focus', () => emit('focus'));
+    ydoc.value?.on('update', handleDocumentUpdate);
+    editor.value?.on('blur', onEditorBlur);
+    editor.value?.on('focus', onEditorFocus);
     if (props.isFocused)
         editor.value?.commands.focus('start');
+});
+
+onUnmounted(() => {
+    ydoc.value?.off('update', handleDocumentUpdate);
+    editor.value?.off('blur', onEditorBlur);
+    editor.value?.off('focus', onEditorFocus);
 });
 
 // Actions
@@ -49,7 +49,16 @@ function handleDelete() {
 }
 
 function handleDocumentUpdate(update: Uint8Array, origin?: string) {
-    // TODO: move Y.Doc updat here
+    if (origin === undefined)
+        emit('transaction', update);
+}
+
+function onEditorFocus() {
+    emit('focus');
+}
+
+function onEditorBlur() {
+    emit('blur');
 }
 </script>
 

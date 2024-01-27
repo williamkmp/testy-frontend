@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { SlickItem, SlickList } from 'vue-slicksort';
 import type { Editor, JSONContent } from '@tiptap/vue-3';
+import { applyUpdate } from 'yjs';
 import { useEditorBodyStore } from '../-store/editor-body';
 import { usePageDataStore } from '../-store/page-data';
+import { getEditorYdoc } from '../-utils/editor-utils';
 import Paragraph from './block/paragraph.vue';
 import BlockQuotes from './block/blockquotes.vue';
 import List from './block/list.vue';
 import Heading from './block/heading.vue';
 import Divider from './block/divider.vue';
-import type { BlockType } from '~/types';
+import type { Block, BlockMessageDto, BlockType } from '~/types';
 
 // Dependency
-const pageData = usePageDataStore();
 const stomp = useStompClient();
+const app = useAppStore();
+const pageData = usePageDataStore();
 
 const editorBody = useEditorBodyStore();
 const focusedBlock = computed({
@@ -73,15 +76,31 @@ function handleUserChangeBlockType(index: number, newType: BlockType) {
     handleUserChangeBlockType(index, newType);
 }
 
-function handleTransaction(uuid: string, transaction: Uint8Array) {
-    // TODO: impelmement transaction publish
-    stomp.send('/app/page');
+function handleTransaction(block: Block, update: Uint8Array) {
+    const payload: BlockMessageDto = {
+        id: block.id,
+        type: block.type,
+        transaction: update,
+    };
+    stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }
 
 onMounted(() => {
-    stomp.subscribe(`/topic/page/${pageData.id}/block.transaction`, (payload, header) => {
-        // TODO: apply transaction to block using Y.applyUpdate(block, payload.transaction, origin);
+    stomp.subscribe(`/topic/page/${pageData.id}/block.transaction`, (payload: BlockMessageDto, header) => {
+        if (header.sessionId === app.sessionId)
+            return;
+        const block = editorBody.blockList.find(block => block.id === payload.id);
+        if (!block || !block.editor)
+            return;
+        const blockDocument = getEditorYdoc(block.editor);
+        const transaction = payload.transaction as Uint8Array;
+        if (blockDocument)
+            applyUpdate(blockDocument, transaction, 'external');
     });
+});
+
+onBeforeRouteLeave(() => {
+    stomp.unsubscribe(`/topic/page/${pageData.id}/block.transaction`);
 });
 </script>
 
@@ -97,18 +116,20 @@ onMounted(() => {
                         <Paragraph
                             v-model="editorBody.blockList[index]"
                             :index="index"
+                            :is-focused="focusedBlock === index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
-                            @transaction="handleTransaction"
+                            @transaction="(update) => handleTransaction(block, update)"
                         />
                     </template>
                     <template v-else-if="block.type === 'BLOCK_QUOTES'">
                         <BlockQuotes
                             v-model="editorBody.blockList[index]"
                             :index="index"
+                            :is-focused="focusedBlock === index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -120,6 +141,7 @@ onMounted(() => {
                         <List
                             v-model="editorBody.blockList[index]"
                             :index="index"
+                            :is-focused="focusedBlock === index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -131,6 +153,7 @@ onMounted(() => {
                         <Heading
                             v-model="editorBody.blockList[index]"
                             :index="index"
+                            :is-focused="focusedBlock === index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -142,6 +165,7 @@ onMounted(() => {
                         <Divider
                             v-model="editorBody.blockList[index]"
                             :index="index"
+                            :is-focused="focusedBlock === index"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"

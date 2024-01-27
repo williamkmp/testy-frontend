@@ -78,3 +78,16 @@ export interface PageHeaderDto {
     imageId: string
     imagePosition: number
 }
+
+export interface BlockMessageDto {
+    id: string
+    type: BlockType
+    content?: string
+    width?: number
+    iconKey?: string
+    fileId?: string
+    transaction?: Uint8Array
+
+    previousId?: string
+    nextId?: string
+}
