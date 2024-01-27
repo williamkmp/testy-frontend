@@ -9,11 +9,6 @@ const emit = defineEmits<{ change: [blockType: BlockType], delete: [], add: [], 
 const editorBody = useEditorBodyStore();
 const options = [
     {
-        icon: 'i-heroicons-trash',
-        label: 'Delete',
-        click: () => emit('delete'),
-    },
-    {
         icon: 'i-heroicons-plus-circle',
         label: 'Add Below',
         click: () => emit('add'),
@@ -67,6 +62,11 @@ const options = [
         icon: 'i-material-symbols-folder',
         label: 'File',
         click: () => emit('change', 'FILE'),
+    },
+    {
+        icon: 'i-material-symbols-image',
+        label: 'Image',
+        click: () => emit('change', 'IMAGE'),
     },
     {
         icon: 'i-material-symbols-stacks-rounded',
