@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import BlockControl from './control/control.vue';
-import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
+import type { BlockEmit, BlockProps, BlockType } from '~/types';
 
 // Component Definition
 const props = defineProps<BlockProps>();
 const emit = defineEmits<BlockEmit>();
-const _block = defineModel<BlockModel>({ required: true });
 </script>
 
 <template>

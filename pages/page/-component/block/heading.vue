@@ -24,17 +24,17 @@ const headingLevel = computed(() => {
 
 // Hooks
 onBeforeMount(() => {
-    ydoc.value?.on('update', (_update: Uint8Array) => {
-        // TODO: implemnet transaction handling
-        console.log(`updating heading[${props.index}]`);
-    });
-    editor.value?.on('blur', () => emit('blur'));
-    editor.value?.on('focus', () => emit('focus'));
-    editor.value?.commands.unsetMark('bold');
-    editor.value?.commands.unsetMark('underline');
-    editor.value?.commands.unsetMark('italic');
+    ydoc.value?.on('update', handleDocumentUpdate);
+    editor.value?.on('blur', onEditorBlur);
+    editor.value?.on('focus', onEditorFocus);
     if (props.isFocused)
         editor.value?.commands.focus('start');
+});
+
+onUnmounted(() => {
+    ydoc.value?.off('update', handleDocumentUpdate);
+    editor.value?.off('blur', onEditorBlur);
+    editor.value?.off('focus', onEditorFocus);
 });
 
 // Actions
@@ -54,6 +54,19 @@ function handleDelete() {
     const caretPosition = editor.value.view.state.selection.$anchor.pos;
     if (caretPosition <= 1)
         emit('delete');
+}
+
+function handleDocumentUpdate(update: Uint8Array, origin?: string) {
+    if (origin === undefined)
+        emit('transaction', update);
+}
+
+function onEditorFocus() {
+    emit('focus');
+}
+
+function onEditorBlur() {
+    emit('blur');
 }
 </script>
 
