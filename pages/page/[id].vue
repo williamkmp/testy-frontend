@@ -17,7 +17,7 @@ const routeParam = useRoute().params as { id: string };
 const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
-const { pending } = await useLazyAsyncData(`document`, async () => {
+const { pending } = await useAsyncData(`document`, async () => {
     editorBody.reset();
     const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
     const blockResponse: PageBlockResponse = await privateApi(path.pageBlocks({ pageId: routeParam.id }));
@@ -43,7 +43,7 @@ const { pending } = await useLazyAsyncData(`document`, async () => {
         width: blockData.width,
     }));
 
-    stomp.subscribe(`/topic/page/${pageData.id}/header`, (payload: PageHeaderDto, header) => {
+    await stomp.subscribe(`/topic/page/${pageData.id}/header`, (payload: PageHeaderDto, header: any) => {
         if (app.sessionId === header.sessionId)
             return;
         if (pageData.title !== payload.title)
@@ -58,6 +58,10 @@ const { pending } = await useLazyAsyncData(`document`, async () => {
 });
 
 onBeforeRouteLeave(() => {
+    stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+});
+
+onBeforeRouteUpdate(() => {
     stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
 });
 
