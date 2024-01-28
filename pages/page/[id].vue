@@ -5,8 +5,8 @@ import EditorHeader from './-component/editor-header.vue';
 import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
 import { usePageDataStore } from './-store/page-data';
 import { useEditorBodyStore } from './-store/editor-body';
-import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
-import type { PageBlockResponse, PageDataResponse, PageHeaderDto } from '~/types';
+import { applyBlockTransaction, createEditor, editorHTMLToJSON } from './-utils/editor-utils';
+import type { BlockMessageDto, PageBlockResponse, PageDataResponse, PageHeaderDto } from '~/types';
 
 // Dependency
 const stomp = useStompClient();
@@ -43,8 +43,8 @@ const { pending } = await useLazyAsyncData(`document-${routeParam.id}`, async ()
     }));
 });
 
-await useAsyncData('docuemt-connection', async () => {
-    await stomp.subscribe(`/topic/page/${pageData.id}/header`, (payload: PageHeaderDto, header: any) => {
+await useAsyncData('document-connection', async () => {
+    await stomp.subscribe(`/topic/page/${routeParam.id}/header`, (payload: PageHeaderDto, header: any) => {
         if (app.sessionId === header.sessionId)
             return;
         if (pageData.title !== payload.title)
@@ -56,15 +56,26 @@ await useAsyncData('docuemt-connection', async () => {
         if (pageData.imagePosition !== payload.imagePosition)
             pageData.imagePosition = payload.imagePosition;
     });
+
+    await stomp.subscribe(`/topic/page/${routeParam.id}/block.transaction`, (payload: BlockMessageDto, header) => {
+        if (header.sessionId === app.sessionId)
+            return;
+        const block = editorBody.blockList.find(block => block.id === payload.id);
+        const transaction = new Uint8Array(payload.transaction as number []);
+        if (block)
+            applyBlockTransaction(block, transaction, 'external');
+    });
 });
 
 onBeforeRouteLeave(async () => {
     await stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+    await stomp.unsubscribe(`/topic/page/${pageData.id}/block.transaction`);
     editorBody.reset();
 });
 
 onBeforeRouteUpdate(async () => {
     await stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
+    await stomp.unsubscribe(`/topic/page/${pageData.id}/block.transaction`);
     editorBody.reset();
 });
 
@@ -75,7 +86,7 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
 </script>
 
 <template>
-    <div :key="`page-${routeParam.id}`" class="flex h-full min-h-full w-full flex-col items-center">
+    <div :key="`page-${routeParam.id}`" class="flex size-full min-h-full flex-col items-center">
         <!-- Page Loading View -->
         <template v-if="pending">
             <PageSkeletonLoader />

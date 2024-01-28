@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { SlickItem, SlickList } from 'vue-slicksort';
 import type { Editor, JSONContent } from '@tiptap/vue-3';
-import { applyUpdate } from 'yjs';
 import { useEditorBodyStore } from '../-store/editor-body';
 import { usePageDataStore } from '../-store/page-data';
-import { getEditorYdoc } from '../-utils/editor-utils';
 import Paragraph from './block/paragraph.vue';
 import BlockQuotes from './block/blockquotes.vue';
 import List from './block/list.vue';
@@ -14,7 +12,6 @@ import type { Block, BlockMessageDto, BlockType } from '~/types';
 
 // Dependency
 const stomp = useStompClient();
-const app = useAppStore();
 const pageData = usePageDataStore();
 
 const editorBody = useEditorBodyStore();
@@ -76,32 +73,14 @@ function handleUserChangeBlockType(index: number, newType: BlockType) {
     handleUserChangeBlockType(index, newType);
 }
 
-function handleTransaction(block: Block, update: Uint8Array) {
+async function handleTransaction(block: Block, update: Uint8Array) {
     const payload: BlockMessageDto = {
         id: block.id,
         type: block.type,
-        transaction: update,
+        transaction: Array.from(update),
     };
-    stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
+    await stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }
-
-onMounted(() => {
-    stomp.subscribe(`/topic/page/${pageData.id}/block.transaction`, (payload: BlockMessageDto, header) => {
-        if (header.sessionId === app.sessionId)
-            return;
-        const block = editorBody.blockList.find(block => block.id === payload.id);
-        if (!block || !block.editor)
-            return;
-        const blockDocument = getEditorYdoc(block.editor);
-        const transaction = payload.transaction as Uint8Array;
-        if (blockDocument)
-            applyUpdate(blockDocument, transaction, 'external');
-    });
-});
-
-onBeforeRouteLeave(() => {
-    stomp.unsubscribe(`/topic/page/${pageData.id}/block.transaction`);
-});
 </script>
 
 <template>

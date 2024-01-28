@@ -49,7 +49,7 @@ function handleDelete() {
 }
 
 function handleDocumentUpdate(update: Uint8Array, origin?: string) {
-    if (origin === undefined)
+    if (origin !== 'external')
         emit('transaction', update);
 }
 
