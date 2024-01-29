@@ -22,7 +22,7 @@ const headingLevel = computed(() => {
 
 // Hooks
 onBeforeMount(() => {
-    editor.value.on('update', handleContentUpdate);
+    editor.value.on('update', onContentUpdate);
     editor.value.on('blur', onEditorBlur);
     editor.value.on('focus', onEditorFocus);
     if (props.isFocused)
@@ -30,7 +30,7 @@ onBeforeMount(() => {
 });
 
 onUnmounted(() => {
-    editor.value.off('update', handleContentUpdate);
+    editor.value.off('update', onContentUpdate);
     editor.value.off('blur', onEditorBlur);
     editor.value.off('focus', onEditorFocus);
 });
@@ -54,7 +54,7 @@ function handleDelete() {
         emit('delete');
 }
 
-function handleContentUpdate() {
+function onContentUpdate() {
     emit('change', editor.value.getHTML());
 }
 function onEditorFocus() {
