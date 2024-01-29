@@ -80,7 +80,7 @@ const profileForm = useFormDeclaration({
                     :alt="app.user?.fullName.toUpperCase()"
                     size="2xl"
                 />
-                <div class="flex h-full w-full items-end justify-end">
+                <div class="flex size-full items-end justify-end">
                     <UButton
                         label="Change"
                         variant="outline"
@@ -90,7 +90,7 @@ const profileForm = useFormDeclaration({
 
                 <!-- User email field -->
                 <div
-                    class="flex h-full w-full flex-col items-start justify-start gap-1"
+                    class="flex size-full flex-col items-start justify-start gap-1"
                 >
                     <label class="text-base font-semibold">
                         Email
@@ -109,7 +109,7 @@ const profileForm = useFormDeclaration({
 
                 <!-- User name field -->
                 <div
-                    class="flex h-full w-full flex-col items-start justify-start gap-1"
+                    class="flex size-full flex-col items-start justify-start gap-1"
                 >
                     <label class="text-base font-semibold">
                         Name
@@ -127,7 +127,7 @@ const profileForm = useFormDeclaration({
 
                 <!-- User tagname field -->
                 <div
-                    class="flex h-full w-full flex-col items-start justify-start gap-1"
+                    class="flex size-full flex-col items-start justify-start gap-1"
                 >
                     <label class="text-base font-semibold">
                         Username

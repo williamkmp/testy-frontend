@@ -57,13 +57,13 @@ watchDebounced(
         <template v-if="editorHeader.hasIcon">
             <UPopover
                 :open="isEmojiPickerOpen"
-                class="h-min w-min"
+                class="size-min"
                 :popper="{ placement: 'bottom' }"
                 @update:open="(t) => console.log(t)"
             >
                 <template #default>
                     <div
-                        class="flex h-20 w-20 items-center justify-center rounded bg-transparent p-3 transition-all hover:cursor-pointer hover:bg-gray-400/20"
+                        class="flex size-20 items-center justify-center rounded bg-transparent p-3 transition-all hover:cursor-pointer hover:bg-gray-400/20"
                         @click="isEmojiPickerOpen = true"
                     >
                         <EmojiIcon :emoji-name="pageData.iconKey" />

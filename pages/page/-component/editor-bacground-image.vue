@@ -84,14 +84,14 @@ async function deleteBackgroundImage() {
                     :style="{ objectPosition: `center ${isRepositioning ? newImagePosition : pageData.imagePosition}%` }"
                 >
                 <div
-                    class="pointer-events-none absolute flex h-full w-full items-center justify-center transition"
+                    class="pointer-events-none absolute flex size-full items-center justify-center transition"
                     :class="[
                         editorHeader.isUploadingImage ? 'bg-black/50' : 'bg-transparent',
                     ]"
                 >
                     <template v-if="!editorHeader.isUploadingImage">
                         <div
-                            class="relative flex h-full w-full max-w-3xl items-center justify-center"
+                            class="relative flex size-full max-w-3xl items-center justify-center"
                             :class="[(isRepositioning || isHover) ? 'opacity-100' : 'opacity-0']"
                         >
                             <div class="pointer-events-auto absolute right-0 top-0 mt-2">

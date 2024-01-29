@@ -30,7 +30,7 @@ const logoutModalStore = useLogoutModalStore();
                         Toggle darkmode appereance.
                     </span>
                 </div>
-                <div class="flex h-full w-full items-end justify-end">
+                <div class="flex size-full items-end justify-end">
                     <UToggle v-model="app.isDark" />
                 </div>
 
@@ -44,7 +44,7 @@ const logoutModalStore = useLogoutModalStore();
                         Change account password
                     </span>
                 </div>
-                <div class="flex h-full w-full items-end justify-end">
+                <div class="flex size-full items-end justify-end">
                     <UButton
                         label="Change"
                         variant="outline"
@@ -63,7 +63,7 @@ const logoutModalStore = useLogoutModalStore();
                         Logout from all devices
                     </span>
                 </div>
-                <div class="flex h-full w-full items-end justify-end">
+                <div class="flex size-full items-end justify-end">
                     <UButton
                         label="Logout"
                         icon="i-heroicons-arrow-left-on-rectangle"
@@ -83,7 +83,7 @@ const logoutModalStore = useLogoutModalStore();
                         Delete account premanently.
                     </span>
                 </div>
-                <div class="flex h-full w-full items-end justify-end">
+                <div class="flex size-full items-end justify-end">
                     <UButton
                         label="Delete"
                         icon="i-heroicons-trash"

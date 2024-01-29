@@ -163,7 +163,7 @@ function closeModal() {
                         >
                             <Cropper
                                 ref="cropperRef"
-                                class="h-full w-full"
+                                class="size-full"
                                 image-restriction="stencil"
                                 :src="chosenImageSrc"
                                 :default-boundaries="cropperBoundry"
