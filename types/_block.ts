@@ -16,11 +16,11 @@ type ValuesAsKeys<T extends Record<any, PropertyKey>> = keyof T;
 export type BlockType = ValuesAsKeys<typeof BLOCK_TYPE>;
 
 export interface Block {
-    id: string
-    type: BlockType
-    editor?: any
-    width?: number
-    numbering?: number
-    fileId?: string
-    iconKey?: string
+    id: string;
+    type: BlockType;
+    editor?: any;
+    width?: number;
+    numbering?: number;
+    fileId?: string;
+    iconKey?: string;
 };

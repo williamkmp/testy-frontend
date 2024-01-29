@@ -40,7 +40,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
     }
 
     function addPreview(
-        menu: { id: string, name: string, iconKey?: string },
+        menu: { id: string; name: string; iconKey?: string },
         parentId?: string,
     ) {
         const newMenu: MenuItem = {
@@ -76,7 +76,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
         return undefined;
     }
 
-    function updatePreview(menu: { id: string, name: string, iconKey?: string }) {
+    function updatePreview(menu: { id: string; name: string; iconKey?: string }) {
         const preview = findMenuBydId(menu.id, menuItems.value);
         if (!preview)
             return;
@@ -86,7 +86,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
             preview.iconKey = menu.iconKey;
     }
 
-    function deletePreview(param: { parentId?: string, previewId: string }) {
+    function deletePreview(param: { parentId?: string; previewId: string }) {
         if (!param.parentId) {
             menuItems.value = menuItems.value.filter(menu => menu.id !== param.previewId);
         }

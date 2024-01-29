@@ -5,7 +5,7 @@ export type LoginResponse = ServerResponseData<
     UserDto
     &
     {
-        token: TokenDto
+        token: TokenDto;
     }
 >;
 
