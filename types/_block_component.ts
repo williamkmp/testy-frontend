@@ -12,8 +12,7 @@ export interface BlockEmit {
     (e: 'delete'): void;
     (e: 'focus'): void;
     (e: 'blur'): void;
-    (e: 'change', content: JSONContent): void;
-    (e: 'transaction', transaction: Uint8Array): void;
+    (e: 'change', content: string): void;
 }
 
 export type BlockModel = Block;

@@ -86,7 +86,6 @@ export interface BlockMessageDto {
     width?: number;
     iconKey?: string;
     fileId?: string;
-    transaction?: Array<number>;
 
     previousId?: string;
     nextId?: string;

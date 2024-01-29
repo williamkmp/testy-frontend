@@ -73,11 +73,11 @@ function handleUserChangeBlockType(index: number, newType: BlockType) {
     handleUserChangeBlockType(index, newType);
 }
 
-async function handleTransaction(block: Block, update: Uint8Array) {
+async function handleTransaction(block: Block, content: string) {
     const payload: BlockMessageDto = {
         id: block.id,
         type: block.type,
-        transaction: Array.from(update),
+        content,
     };
     await stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }
@@ -101,7 +101,7 @@ async function handleTransaction(block: Block, update: Uint8Array) {
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
-                            @transaction="(update) => handleTransaction(block, update)"
+                            @change="(content) => handleTransaction(block, content)"
                         />
                     </template>
                     <template v-else-if="block.type === 'BLOCK_QUOTES'">
@@ -114,6 +114,7 @@ async function handleTransaction(block: Block, update: Uint8Array) {
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @change="(content) => handleTransaction(block, content)"
                         />
                     </template>
                     <template v-else-if="block.type === 'NUMBERED_LIST' || block.type === 'BULLET_LIST' ">
@@ -126,6 +127,7 @@ async function handleTransaction(block: Block, update: Uint8Array) {
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @change="(content) => handleTransaction(block, content)"
                         />
                     </template>
                     <template v-else-if="block.type === 'HEADING_1' || block.type === 'HEADING_2' || block.type === 'HEADING_3'">
@@ -138,6 +140,7 @@ async function handleTransaction(block: Block, update: Uint8Array) {
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @change="(content) => handleTransaction(block, content)"
                         />
                     </template>
                     <template v-else-if="block.type === 'DIVIDER'">

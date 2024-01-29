@@ -16,7 +16,7 @@ const emit = defineEmits<BlockEmit>();
             @change="(blockType: BlockType) => emit('turn', blockType)"
         />
         <!-- block body -->
-        <div class="h-full w-full py-1">
+        <div class="size-full py-1">
             <UDivider />
         </div>
     </div>

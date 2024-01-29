@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
 import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
-import { getEditorYdoc } from '../../-utils/editor-utils';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
 
@@ -11,8 +10,7 @@ const emit = defineEmits<BlockEmit>();
 const block = defineModel<BlockModel>({ required: true });
 
 // States
-const editor = computed(() => block.value.editor as Editor | undefined);
-const ydoc = computed (() => getEditorYdoc(block.value.editor));
+const editor = computed(() => block.value.editor as Editor);
 const headingLevel = computed(() => {
     if (block.value.type === 'HEADING_2')
         return 2;
@@ -24,17 +22,17 @@ const headingLevel = computed(() => {
 
 // Hooks
 onBeforeMount(() => {
-    ydoc.value?.on('update', handleDocumentUpdate);
-    editor.value?.on('blur', onEditorBlur);
-    editor.value?.on('focus', onEditorFocus);
+    editor.value.on('update', handleContentUpdate);
+    editor.value.on('blur', onEditorBlur);
+    editor.value.on('focus', onEditorFocus);
     if (props.isFocused)
-        editor.value?.commands.focus('start');
+        editor.value.commands.focus('start');
 });
 
 onUnmounted(() => {
-    ydoc.value?.off('update', handleDocumentUpdate);
-    editor.value?.off('blur', onEditorBlur);
-    editor.value?.off('focus', onEditorFocus);
+    editor.value.off('update', handleContentUpdate);
+    editor.value.off('blur', onEditorBlur);
+    editor.value.off('focus', onEditorFocus);
 });
 
 // Actions
@@ -56,11 +54,9 @@ function handleDelete() {
         emit('delete');
 }
 
-function handleDocumentUpdate(update: Uint8Array, origin?: string) {
-    if (origin === undefined)
-        emit('transaction', update);
+function handleContentUpdate() {
+    emit('change', editor.value.getHTML());
 }
-
 function onEditorFocus() {
     emit('focus');
 }

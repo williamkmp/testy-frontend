@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
 import type { Editor } from '@tiptap/vue-3';
-import { getEditorYdoc } from '../../-utils/editor-utils';
 import { useEditorBodyStore } from '../../-store/editor-body';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
@@ -15,24 +14,23 @@ const block = defineModel<BlockModel>({ required: true });
 const editorBody = useEditorBodyStore();
 
 // States
-const editor = computed(() => block.value.editor as Editor | undefined);
-const ydoc = computed (() => getEditorYdoc(block.value.editor));
+const editor = computed(() => block.value.editor as Editor);
 const previousBlockNumbering = computed(() => editorBody.blockList[props.index - 1]?.numbering || 0);
 watchImmediate([previousBlockNumbering, () => block.value.type], () => block.value.numbering = block.value.type === 'NUMBERED_LIST' ? previousBlockNumbering.value + 1 : 0);
 
 // Hooks
 onBeforeMount(() => {
-    ydoc.value?.on('update', handleDocumentUpdate);
-    editor.value?.on('blur', onEditorBlur);
-    editor.value?.on('focus', onEditorFocus);
+    editor.value.on('update', handleContentUpdate);
+    editor.value.on('blur', onEditorBlur);
+    editor.value.on('focus', onEditorFocus);
     if (props.isFocused)
-        editor.value?.commands.focus('start');
+        editor.value.commands.focus('start');
 });
 
 onUnmounted(() => {
-    ydoc.value?.off('update', handleDocumentUpdate);
-    editor.value?.off('blur', onEditorBlur);
-    editor.value?.off('focus', onEditorFocus);
+    editor.value.off('update', handleContentUpdate);
+    editor.value.off('blur', onEditorBlur);
+    editor.value.off('focus', onEditorFocus);
     block.value.numbering = undefined;
 });
 
@@ -54,9 +52,8 @@ function handleDelete() {
         emit('delete');
 }
 
-function handleDocumentUpdate(update: Uint8Array, origin?: string) {
-    if (origin === undefined)
-        emit('transaction', update);
+function handleContentUpdate() {
+    emit('change', editor.value.getHTML());
 }
 
 function onEditorFocus() {

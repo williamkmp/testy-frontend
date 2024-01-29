@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { Editor } from '@tiptap/vue-3';
 import EditorBody from './-component/editor-body.vue';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorHeader from './-component/editor-header.vue';
 import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
 import { usePageDataStore } from './-store/page-data';
 import { useEditorBodyStore } from './-store/editor-body';
-import { applyBlockTransaction, createEditor, editorHTMLToJSON } from './-utils/editor-utils';
+import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
 import type { BlockMessageDto, PageBlockResponse, PageDataResponse, PageHeaderDto } from '~/types';
 
 // Dependency
@@ -61,9 +62,7 @@ await useAsyncData('document-connection', async () => {
         if (header.sessionId === app.sessionId)
             return;
         const block = editorBody.blockList.find(block => block.id === payload.id);
-        const transaction = new Uint8Array(payload.transaction as number []);
-        if (block)
-            applyBlockTransaction(block, transaction, 'external');
+        (block?.editor as Editor).commands.setContent(editorHTMLToJSON(payload.content as string));
     });
 });
 
