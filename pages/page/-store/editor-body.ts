@@ -9,13 +9,6 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     const DRAGGABLE_CLASS = 'draggable';
     const focusedBlockIndex = ref(-1);
     const blockList = ref<Array<Block>>([]);
-    const _contents = computed(() => blockList.value.map(block => block.editor
-        ? ({
-                isActive: !(block.editor as Editor).isDestroyed,
-                isEditable: !(block.editor as Editor).isEditable,
-                content: JSON.stringify((block.editor as Editor).getHTML()),
-            })
-        : '- none -'));
 
     function reset() {
         for (const block of blockList.value) {
@@ -62,6 +55,5 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         focusedBlockIndex,
         reset,
         turnInto,
-        _contents,
     };
 });

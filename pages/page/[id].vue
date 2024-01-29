@@ -18,7 +18,10 @@ const routeParam = useRoute().params as { id: string };
 const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
-const { pending } = await useLazyAsyncData(`document-${routeParam.id}`, async () => {
+const pageLoading = ref(true);
+onMounted(async () => {
+    pageLoading.value = true;
+    editorBody.reset();
     const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
     const blockResponse: PageBlockResponse = await privateApi(path.pageBlocks({ pageId: routeParam.id }));
 
@@ -42,9 +45,9 @@ const { pending } = await useLazyAsyncData(`document-${routeParam.id}`, async ()
         iconKey: blockData.iconKey,
         width: blockData.width,
     }));
-});
 
-await useAsyncData('document-connection', async () => {
+    pageLoading.value = false;
+
     await stomp.subscribe(`/topic/page/${routeParam.id}/header`, (payload: PageHeaderDto, header: any) => {
         if (app.sessionId === header.sessionId)
             return;
@@ -87,7 +90,7 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
 <template>
     <div :key="`page-${routeParam.id}`" class="flex size-full min-h-full flex-col items-center">
         <!-- Page Loading View -->
-        <template v-if="pending">
+        <template v-if="pageLoading">
             <PageSkeletonLoader />
         </template>
 
