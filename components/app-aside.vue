@@ -50,11 +50,9 @@ onMounted(async () => {
 function initSize() {
     if (!aside.value)
         return;
-
-    if (sideMenu.size !== null)
-        aside.value.style.width = sideMenu.size;
-    else
-        aside.value.style.width = `${getComputedStyle(aside.value).minWidth}px`;
+    aside.value.style.width = sideMenu.size == null
+        ? `${getComputedStyle(aside.value).minWidth}px`
+        : sideMenu.size;
 }
 
 async function initMenuItemData() {
