@@ -19,17 +19,17 @@
  */
 
 export interface EmojiDefinition {
-    key: string
-    alt: string
-    background: string
-    name: string
-    code: string
-    keyword: string
-    image: string
+    key: string;
+    alt: string;
+    background: string;
+    name: string;
+    code: string;
+    keyword: string;
+    image: string;
 }
 
 interface EmojiMap {
-    [k: string]: EmojiDefinition
+    [k: string]: EmojiDefinition;
 }
 
 export const EMOJI: EmojiMap = {
