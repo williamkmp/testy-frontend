@@ -8,19 +8,19 @@ type FormInitialValue<T extends ZodType<any, any, any>> = Partial<{
 }>;
 
 export function useFormDeclaration<T extends z.ZodRawShape>(arg: {
-    schema: z.ZodObject<T>
+    schema: z.ZodObject<T>;
 
     onSubmit: (
         formSubmitEvent: FormSubmitEvent<z.output<typeof arg.schema>>,
         formElementApi: Ref<UFormApi | undefined>
-    ) => Promise<void>
+    ) => Promise<void>;
 
     onError?: (
         error: any,
         formElementApi: Ref<UFormApi | undefined>
-    ) => Promise<void>
+    ) => Promise<void>;
 
-    initial?: FormInitialValue<typeof arg.schema>
+    initial?: FormInitialValue<typeof arg.schema>;
 }) {
     const notif = useNotification();
 
