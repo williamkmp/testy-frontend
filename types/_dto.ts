@@ -57,9 +57,9 @@ export interface PageDataDto {
 export interface BlockDto {
     id: string;
     type: BlockType;
-    content?: string;
-    width?: number;
-    iconKey?: string;
+    content: string;
+    width: number;
+    iconKey: string;
     fileId: string;
 }
 
@@ -82,9 +82,9 @@ export interface PageHeaderDto {
 export interface BlockMessageDto {
     id: string;
     type: BlockType;
-    content?: string;
-    width?: number;
-    iconKey?: string;
+    content: string;
+    width: number;
+    iconKey: string;
     fileId?: string;
 
     previousId?: string;

@@ -70,7 +70,17 @@ function handleUserEnter(index: number, content?: JSONContent) {
 }
 
 function handleUserChangeBlockType(index: number, newType: BlockType) {
-    handleUserChangeBlockType(index, newType);
+    const block = editorBody.blockList.at(index) as Block;
+    const blockContent = (block.editor as Editor).getHTML();
+    const payload: BlockMessageDto = {
+        id: block.id,
+        type: newType,
+        content: blockContent,
+        width: block.width,
+        iconKey: block.iconKey,
+    };
+    stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
+    editorBody.turnInto(index, newType);
 }
 
 const handleContentUpdate = useDebounceFn((block: Block, content: string) => {
@@ -78,6 +88,8 @@ const handleContentUpdate = useDebounceFn((block: Block, content: string) => {
         id: block.id,
         type: block.type,
         content,
+        width: block.width,
+        iconKey: block.iconKey,
     };
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }, 500);

@@ -19,7 +19,7 @@ const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
 const pageLoading = ref(true);
-onMounted(async () => {
+await useAsyncData('editor', async () => {
     pageLoading.value = true;
     editorBody.reset();
     const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
@@ -34,21 +34,20 @@ onMounted(async () => {
     pageData.id = pageResponse.data.id;
 
     // Mapping block data
-    const blockDataList = blockResponse.data;
-    editorBody.blockList = blockDataList.map(blockData => ({
+    editorBody.blockList = blockResponse.data.map(blockData => ({
         id: blockData.id,
         type: blockData.type,
         editor: blockData.content !== undefined
             ? createEditor(editorHTMLToJSON(blockData.content))
             : undefined,
         fileId: blockData.fileId,
-        iconKey: blockData.iconKey,
-        width: blockData.width,
+        iconKey: blockData.iconKey || 'emoji-1215',
+        width: blockData.width || 100,
+        numbering: 0,
     }));
-
     pageLoading.value = false;
 
-    await stomp.subscribe(`/topic/page/${routeParam.id}/header`, (payload: PageHeaderDto, header: any) => {
+    stomp.subscribe(`/topic/page/${routeParam.id}/header`, (payload: PageHeaderDto, header: any) => {
         if (app.sessionId === header.sessionId)
             return;
         if (pageData.title !== payload.title)
@@ -61,11 +60,19 @@ onMounted(async () => {
             pageData.imagePosition = payload.imagePosition;
     });
 
-    await stomp.subscribe(`/topic/page/${routeParam.id}/block.transaction`, (payload: BlockMessageDto, header) => {
-        if (header.sessionId === app.sessionId)
-            return;
-        const block = editorBody.blockList.find(block => block.id === payload.id);
-        (block?.editor as Editor).commands.setContent(editorHTMLToJSON(payload.content as string));
+    stomp.subscribe(`/topic/page/${routeParam.id}/block.transaction`, (payload: BlockMessageDto, header) => {
+        if (header.sessionId !== app.sessionId) {
+            const block = editorBody.blockList.find(block => block.id === payload.id)!;
+            const editor = block?.editor as Editor;
+            const currentContent = editor.getHTML();
+
+            block.type = payload.type;
+            block.width = payload.width;
+            block.iconKey = payload.iconKey;
+            block.fileId = payload.fileId;
+            if (payload.content !== currentContent)
+                editor.commands.setContent(editorHTMLToJSON(payload.content!));
+        }
     });
 });
 

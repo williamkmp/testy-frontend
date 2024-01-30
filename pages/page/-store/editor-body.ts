@@ -32,6 +32,9 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
                 id: uuid(),
                 type: newBlockType,
                 editor: newBlockEditor as any,
+                iconKey: 'emoji-1215',
+                numbering: 0,
+                width: 100,
             },
         );
     }

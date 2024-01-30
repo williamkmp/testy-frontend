@@ -18,9 +18,9 @@ export type BlockType = ValuesAsKeys<typeof BLOCK_TYPE>;
 export interface Block {
     id: string;
     type: BlockType;
-    editor?: any;
-    width?: number;
-    numbering?: number;
+    editor: any;
+    width: number;
+    numbering: number;
     fileId?: string;
-    iconKey?: string;
+    iconKey: string;
 };

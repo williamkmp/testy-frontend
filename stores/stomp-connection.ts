@@ -84,5 +84,5 @@ export const useStompClient = defineStore('StompConnection', () => {
         }
     }
 
-    return { subscribe, unsubscribe, send };
+    return { subscribe, unsubscribe, send, getConnection };
 });
