@@ -1,5 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to) => {
     const auth = useAuth();
+    const stomp = useStompClient();
 
     const excludedRoutes = {
         '/login': true,
@@ -10,5 +11,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
     if (to.path in excludedRoutes)
         return;
 
+    await stomp.getConnection();
     await auth.refreshAuth();
 });
