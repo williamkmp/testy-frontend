@@ -8,7 +8,6 @@ const menu = defineModel<MenuItem>({ required: true });
 
 // Dependencies
 const sideMenu = useSideMenuStore();
-const sleep = useSleep();
 
 // States
 const childRefs = ref<any[]>([]);
@@ -35,8 +34,6 @@ async function toggleExpand() {
 
         if (props.level <= 1)
             menu.value.children = await sideMenu.fetchPreviewsOf(menu.value.type, menu.value.id);
-        else
-            await sleep.for(1000);
 
         isFetchingChildren.value = false;
     }
@@ -61,8 +58,8 @@ function forceCloseChildren(page: MenuItem) {
         :style="{ paddingLeft: `${props.level}rem` }"
     >
         <UButton icon="i-ep-arrow-right-bold" variant="ghost" color="gray" class="opacity-60 transition-transform" :class="[menu.isOpen ? 'rotate-90' : 'rotate-0']" size="2xs" @click="toggleExpand" />
-        <button class="flex h-full w-full items-center justify-start gap-2 pr-5" @click="clickhandler">
-            <div class="grid h-4 w-4 shrink-0 place-items-center">
+        <button class="flex size-full items-center justify-start gap-2 pr-5" @click="clickhandler">
+            <div class="grid size-4 shrink-0 place-items-center">
                 <EmojiIcon v-if="menu.iconKey !== undefined" :emoji-name="menu.iconKey" minified />
                 <UIcon v-else name="i-heroicons-document" />
             </div>

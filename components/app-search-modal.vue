@@ -29,13 +29,13 @@ const searchModal = useSearchModalStore();
             <template #default>
                 <main class="h-[50dvh] w-full overflow-y-auto overflow-x-hidden">
                     <template v-if="searchModal.isLoading">
-                        <div class="grid h-full w-full place-items-center">
-                            <UIcon class="h-6 w-6 animate-spin text-gray-400" name="i-heroicons-arrow-path-20-solid" />
+                        <div class="grid size-full place-items-center">
+                            <UIcon class="size-6 animate-spin text-gray-400" name="i-heroicons-arrow-path-20-solid" />
                         </div>
                     </template>
                     <template v-else>
-                        <div class="fle-col flex h-full w-full">
-                            ini
+                        <div class="flex size-full flex-col">
+                            <!-- search result -->
                         </div>
                     </template>
                 </main>

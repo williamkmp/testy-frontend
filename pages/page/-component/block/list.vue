@@ -31,7 +31,7 @@ onUnmounted(() => {
     editor.value.off('update', onContentUpdate);
     editor.value.off('blur', onEditorBlur);
     editor.value.off('focus', onEditorFocus);
-    block.value.numbering = undefined;
+    block.value.numbering = 0;
 });
 
 // Actions

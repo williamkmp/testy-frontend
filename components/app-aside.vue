@@ -77,12 +77,12 @@ async function initMenuItemData() {
         ]"
     >
         <div
-            class="flex h-full w-full min-w-[14rem] flex-col gap-4 overflow-hidden bg-gray-300/20 px-4 py-3"
+            class="flex size-full min-w-[14rem] flex-col gap-4 overflow-hidden bg-gray-300/20 px-4 py-3"
         >
             <header
                 class="flex w-full select-none items-center justify-start"
             >
-                <div class="flex h-full w-full items-center gap-2">
+                <div class="flex size-full items-center gap-2">
                     <UAvatar
                         :src="path.getImage(app.user?.imageId)"
                         :alt="app.user?.fullName.toUpperCase()"
@@ -155,7 +155,7 @@ async function initMenuItemData() {
                 <header>
                     <span class="text-xs font-medium  text-gray-600/60 dark:text-gray-400">workspace</span>
                 </header>
-                <div class="h-full w-full overflow-y-auto overflow-x-hidden">
+                <div class="size-full overflow-y-auto overflow-x-hidden">
                     <div
                         v-if="isFetchingMenuItem"
                         class="flex flex-col gap-2"

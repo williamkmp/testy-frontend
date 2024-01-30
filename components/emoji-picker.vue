@@ -2,8 +2,8 @@
 import type { EmojiDefinition } from '~/utils/emoji';
 
 const emit = defineEmits<{
-    remove: []
-    choose: [emojiKey: string]
+    remove: [];
+    choose: [emojiKey: string];
 }>();
 
 const isLoading = ref(true);
@@ -43,7 +43,7 @@ function chooseRandom() {
 </script>
 
 <template>
-    <div class="flex h-full w-full flex-col gap-4">
+    <div class="flex size-full flex-col gap-4">
         <header class="flex w-full items-center gap-2">
             <UInput
                 v-model="searchText" placeholder="Fiter ..." size="xs" variant="outline" color="gray" class="w-full"
@@ -62,12 +62,12 @@ function chooseRandom() {
                 />
             </UTooltip>
         </header>
-        <main class="h-full max-h-full w-full overflow-auto pr-1">
+        <main class="size-full max-h-full overflow-auto pr-1">
             <template v-if="!isLoading">
                 <div class="grid w-full grid-cols-[repeat(auto-fill,minmax(36px,1fr))] gap-1">
                     <div
                         v-for="emoji in emojiList" :key="emoji.key"
-                        class="h-9 w-9 rounded p-1 hover:bg-gray-900/10 dark:hover:bg-gray-200/10"
+                        class="size-9 rounded p-1 hover:bg-gray-900/10 dark:hover:bg-gray-200/10"
                         @click="$emit('choose', emoji.key)"
                     >
                         <EmojiIcon :emoji-name="emoji.key" minified />
@@ -75,7 +75,7 @@ function chooseRandom() {
                 </div>
             </template>
             <template v-else>
-                <div class="flex h-full w-full items-center justify-center">
+                <div class="flex size-full items-center justify-center">
                     <UIcon name="i-heroicons-arrow-path" class="animate-spin text-gray-500" />
                 </div>
             </template>

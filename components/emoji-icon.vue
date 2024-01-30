@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const props = withDefaults(defineProps<
     {
-        emojiName?: string
-        minified: boolean
+        emojiName?: string;
+        minified: boolean;
     }
 >(), {
     emojiName: 'emoji-1241',
@@ -18,8 +18,8 @@ const emoji = computed(() => {
 </script>
 
 <template>
-    <div class="relative aspect-square h-full w-full">
-        <img v-if="!props.minified" class="h-full w-full" :class="{ hidden: isFallback }" :src="emoji.image" @error="isFallback = true">
-        <div v-if="isFallback || props.minified" class="absolute h-full w-full" :style="{ background: emoji.background }" />
+    <div class="relative aspect-square size-full">
+        <img v-if="!props.minified" class="size-full" :class="{ hidden: isFallback }" :src="emoji.image" @error="isFallback = true">
+        <div v-if="isFallback || props.minified" class="absolute size-full" :style="{ background: emoji.background }" />
     </div>
 </template>

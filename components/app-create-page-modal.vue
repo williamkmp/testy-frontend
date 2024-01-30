@@ -30,13 +30,13 @@ const isImageHover = ref(false);
 const isRepositioning = ref(false);
 const isDragging = ref(false);
 const inviteEmailText = ref<string>();
-const inviteList = ref<Array<{ email: string, authority: Authority }>>([]);
+const inviteList = ref<Array<{ email: string; authority: Authority }>>([]);
 const pageData = ref<{
-    title?: string
-    imagePosition: number
-    imageSrc?: string
-    iconKey?: string
-    image?: Blob
+    title?: string;
+    imagePosition: number;
+    imageSrc?: string;
+    iconKey?: string;
+    image?: Blob;
 }>({
     imagePosition: 50,
 });
@@ -227,7 +227,10 @@ const btnClass = 'opacity-40 hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-
                                 class="w-full object-cover"
                                 :style="{ objectPosition: `center ${pageData.imagePosition}%` }"
                             >
-                            <div class="pointer-events-none absolute flex h-full w-full max-w-md items-center justify-center transition-opacity" :class="[(isRepositioning || isImageHover) ? 'opacity-100' : 'opacity-0']">
+                            <div
+                                class="pointer-events-none absolute flex size-full max-w-md items-center justify-center transition-opacity"
+                                :class="[(isRepositioning || isImageHover) ? 'opacity-100' : 'opacity-0']"
+                            >
                                 <div class="pointer-events-auto absolute right-0 top-0 mt-2">
                                     <template v-if="!isRepositioning">
                                         <UButtonGroup size="xs" orientation="horizontal">
@@ -283,13 +286,13 @@ const btnClass = 'opacity-40 hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-
                                 <UPopover
                                     :disabled="isSubmittingPage"
                                     :open="isEmojiPickerOpen"
-                                    class="h-min w-min"
+                                    class="size-min"
                                     :popper="{ placement: 'bottom' }"
                                     @update:open="(t) => console.log(t)"
                                 >
                                     <template #default>
                                         <div
-                                            class="flex h-12 w-12 items-center justify-center rounded bg-transparent p-0.5 transition-all hover:cursor-pointer hover:bg-gray-400/20"
+                                            class="flex size-12 items-center justify-center rounded bg-transparent p-0.5 transition-all hover:cursor-pointer hover:bg-gray-400/20"
                                             @click="isEmojiPickerOpen = true"
                                         >
                                             <EmojiIcon :emoji-name="pageData.iconKey" />
