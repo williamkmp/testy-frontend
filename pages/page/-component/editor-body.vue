@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { SlickItem, SlickList } from 'vue-slicksort';
 import type { Editor, JSONContent } from '@tiptap/vue-3';
+import { SlickItem, SlickList } from 'vue-slicksort';
 import { useEditorBodyStore } from '../-store/editor-body';
 import { usePageDataStore } from '../-store/page-data';
-import Paragraph from './block/paragraph.vue';
 import BlockQuotes from './block/blockquotes.vue';
-import List from './block/list.vue';
-import Heading from './block/heading.vue';
 import Divider from './block/divider.vue';
+import Heading from './block/heading.vue';
+import List from './block/list.vue';
+import Paragraph from './block/paragraph.vue';
 import type { Block, BlockMessageDto, BlockType } from '~/types';
 
 // Dependency
@@ -19,8 +19,7 @@ const focusedBlock = computed({
     get: () => editorBody.focusedBlockIndex,
     set: value => editorBody.focusedBlockIndex = value,
 });
-
-// TODO: implement block @transaction event handling
+const draggedBlockId = ref<string>();
 
 function handleUserDelete(index: number) {
     const removedBlock = editorBody.blockList[index];
@@ -70,8 +69,10 @@ function handleUserEnter(index: number, content?: JSONContent) {
 }
 
 function handleUserChangeBlockType(index: number, newType: BlockType) {
+    editorBody.turnInto(index, newType);
     const block = editorBody.blockList.at(index) as Block;
     const blockContent = (block.editor as Editor).getHTML();
+
     const payload: BlockMessageDto = {
         id: block.id,
         type: newType,
@@ -80,7 +81,6 @@ function handleUserChangeBlockType(index: number, newType: BlockType) {
         iconKey: block.iconKey,
     };
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
-    editorBody.turnInto(index, newType);
 }
 
 const handleContentUpdate = useDebounceFn((block: Block, content: string) => {
@@ -93,6 +93,29 @@ const handleContentUpdate = useDebounceFn((block: Block, content: string) => {
     };
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }, 500);
+
+function setBlockMove(selected: { index: number }) {
+    const block = editorBody.blockList.at(selected.index) as Block;
+    draggedBlockId.value = block.id;
+}
+
+async function saveBlockMove() {
+    if (draggedBlockId.value) {
+        await nextTick();
+        const index = editorBody.blockList.findIndex(block => block.id === draggedBlockId.value);
+        if (index < 0)
+            return;
+        const block = editorBody.blockList[index] as Block;
+        const prevBlock = editorBody.blockList[index - 1];
+        const nextBlock = editorBody.blockList[index + 1];
+        stomp.send(`/app/page/${pageData.id}/block.move`, {
+            id: block.id,
+            prevId: prevBlock ? prevBlock.id : undefined,
+            nextId: nextBlock ? nextBlock.id : undefined,
+        });
+        draggedBlockId.value = undefined;
+    }
+}
 </script>
 
 <template>
@@ -101,6 +124,9 @@ const handleContentUpdate = useDebounceFn((block: Block, content: string) => {
             <SlickList
                 v-model:list="editorBody.blockList"
                 use-drag-handle
+                use-window-as-scrol-container
+                @sort-start="setBlockMove"
+                @sort-end="saveBlockMove"
             >
                 <SlickItem v-for="(block, index) in editorBody.blockList" :key="block.id" :index="index">
                     <template v-if="block.type === 'PARAGRAPH'">

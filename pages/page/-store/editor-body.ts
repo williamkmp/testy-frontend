@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { v4 as uuid } from 'uuid';
 import type { Editor, JSONContent } from '@tiptap/vue-3';
-import { createEditor } from '../-utils/editor-utils';
+import { createEditor, editorHTMLToJSON } from '../-utils/editor-utils';
 import type { Block, BlockType } from '~/types';
 
 export const useEditorBodyStore = defineStore('PageEditorBody', () => {
@@ -47,7 +47,12 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         const block = blockList.value[index];
         if (!block || block.type === type)
             return;
+        const isBlockTypeNonEditor = (type === 'DIVIDER' || type === 'IMAGE' || type === 'FILE');
+        const EMPTY_CONTENT = '<p></p>';
+
         block.type = type;
+        if (isBlockTypeNonEditor)
+            (block.editor as Editor).commands.setContent(editorHTMLToJSON(EMPTY_CONTENT));
     }
 
     return {

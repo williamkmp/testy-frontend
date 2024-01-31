@@ -87,6 +87,6 @@ export interface BlockMessageDto {
     iconKey: string;
     fileId?: string;
 
-    previousId?: string;
+    prevId?: string;
     nextId?: string;
 }

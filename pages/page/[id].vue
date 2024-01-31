@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
-import EditorBody from './-component/editor-body.vue';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
+import EditorBody from './-component/editor-body.vue';
 import EditorHeader from './-component/editor-header.vue';
 import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
-import { usePageDataStore } from './-store/page-data';
 import { useEditorBodyStore } from './-store/editor-body';
+import { usePageDataStore } from './-store/page-data';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
 import type { BlockMessageDto, PageBlockResponse, PageDataResponse, PageHeaderDto } from '~/types';
 
@@ -19,7 +19,7 @@ const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
 const pageLoading = ref(true);
-await useAsyncData('editor', async () => {
+onMounted(async () => {
     pageLoading.value = true;
     editorBody.reset();
     const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
@@ -74,17 +74,30 @@ await useAsyncData('editor', async () => {
                 editor.commands.setContent(editorHTMLToJSON(payload.content!));
         }
     });
+
+    stomp.subscribe(`/topic/page/${routeParam.id}/block.move`, async (payload: BlockMessageDto, header) => {
+        const targetIndex = editorBody.blockList.findIndex(block => block.id === payload.id);
+        const afterIndex = payload.nextId !== undefined
+            ? editorBody.blockList.findIndex(block => block.id === payload.nextId)
+            : 0;
+        if (header.sessionId !== app.sessionId && targetIndex >= 0) {
+            const targetBlock = editorBody.blockList.splice(targetIndex, 1)[0];
+            editorBody.blockList.splice(afterIndex, 0, targetBlock);
+        }
+    });
 });
 
 onBeforeRouteLeave(async () => {
-    await stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
-    await stomp.unsubscribe(`/topic/page/${pageData.id}/block.transaction`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/header`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.transaction`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.move`);
     editorBody.reset();
 });
 
 onBeforeRouteUpdate(async () => {
-    await stomp.unsubscribe(`/topic/page/${pageData.id}/header`);
-    await stomp.unsubscribe(`/topic/page/${pageData.id}/block.transaction`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/header`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.transaction`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.move`);
     editorBody.reset();
 });
 
