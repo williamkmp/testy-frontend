@@ -10,6 +10,7 @@ export interface BlockEmit {
     (e: 'enter', content?: JSONContent): void;
     (e: 'turn', type: BlockType): void;
     (e: 'delete'): void;
+    (e: 'deleteAppend'): void;
     (e: 'focus'): void;
     (e: 'blur'): void;
     (e: 'change', content: string): void;

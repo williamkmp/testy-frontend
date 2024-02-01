@@ -4,7 +4,7 @@ import { useEditorBodyStore } from '../../../-store/editor-body';
 import type { BlockType } from '~/types';
 
 const props = defineProps<{ isFocused: boolean }>();
-const emit = defineEmits<{ change: [blockType: BlockType], delete: [], add: [], clickMenu: [] }>();
+const emit = defineEmits<{ change: [blockType: BlockType]; delete: []; add: []; clickMenu: [] }>();
 
 const editorBody = useEditorBodyStore();
 const options = [

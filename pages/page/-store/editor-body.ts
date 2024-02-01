@@ -37,6 +37,9 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     }
 
     function removeBlockAt(index: number) {
+        const targetBlock = blockList.value[index];
+        if (targetBlock && targetBlock.editor)
+            (targetBlock.editor as Editor).destroy();
         blockList.value.splice(index, 1);
     }
 

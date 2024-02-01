@@ -21,17 +21,19 @@ const focusedBlock = computed({
     set: value => editorBody.focusedBlockIndex = value,
 });
 
-function handleUserDelete(index: number) {
+function handleUserDelete(index: number, append: boolean = false) {
     const removedBlock = editorBody.blockList[index];
     const previousBlock = editorBody.blockList[index - 1];
+    editorBody.removeBlockAt(index);
+    stomp.send(`/app/page/${pageData.id}/block.delete`, { id: removedBlock.id });
+
     if (!previousBlock || !removedBlock)
         return;
 
-    editorBody.removeBlockAt(index);
     const currentEditor = removedBlock?.editor as Editor | undefined;
     const previousEditor = previousBlock?.editor as Editor | undefined;
 
-    if (currentEditor && previousEditor && !currentEditor.isEmpty) {
+    if (currentEditor && previousEditor && !currentEditor.isEmpty && append) {
         if (previousEditor.isEmpty) {
             previousEditor.commands.setContent(
                 currentEditor.getJSON(),
@@ -58,9 +60,6 @@ function handleUserDelete(index: number) {
         if (previousEditor)
             previousEditor.commands.focus('end');
     }
-
-    if (currentEditor)
-        currentEditor.destroy();
 }
 
 function handleUserEnter(index: number, content?: JSONContent) {
@@ -148,7 +147,8 @@ async function saveBlockMove() {
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
-                            @delete="() => handleUserDelete(index)"
+                            @delete="() => handleUserDelete(index, false)"
+                            @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
                             @change="(content) => handleContentUpdate(block, content)"
                         />
@@ -162,6 +162,7 @@ async function saveBlockMove() {
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
                             @change="(content) => handleContentUpdate(block, content)"
                         />
@@ -175,6 +176,7 @@ async function saveBlockMove() {
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
                             @change="(content) => handleContentUpdate(block, content)"
                         />
@@ -188,6 +190,7 @@ async function saveBlockMove() {
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
                             @change="(content) => handleContentUpdate(block, content)"
                         />
@@ -201,6 +204,7 @@ async function saveBlockMove() {
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
                             @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
                         />
                     </template>

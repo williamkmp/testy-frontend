@@ -25,8 +25,8 @@ const loginForm = useFormDeclaration({
             email: form.data.email,
             password: form.data.password,
         });
-        await navigateTo('/');
         notif.ok({ message: 'Login Success' });
+        navigateTo('/');
     },
 });
 </script>

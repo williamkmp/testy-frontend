@@ -100,12 +100,23 @@ onMounted(async () => {
         const newBlock = editorBody.insertBlockAt(previousIndex, newBlockContent);
         newBlock.id = payload.id;
     });
+
+    stomp.subscribe(`/topic/page/${routeParam.id}/block.delete`, (payload: BlockMessageDto, header) => {
+        if (header.sessionId === app.sessionId)
+            return;
+        const deletedBlockIndex = editorBody.blockList.findIndex(block => block.id === payload.id);
+        if (deletedBlockIndex < 0 || deletedBlockIndex >= editorBody.blockList.length)
+            return;
+        editorBody.blockList.splice(deletedBlockIndex, 1);
+    });
 });
 
 onBeforeRouteLeave(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/header`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.transaction`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.move`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     editorBody.reset();
 });
 
@@ -113,6 +124,8 @@ onBeforeRouteUpdate(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/header`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.transaction`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.move`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     editorBody.reset();
 });
 

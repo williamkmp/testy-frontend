@@ -13,6 +13,7 @@ const emit = defineEmits<BlockEmit>();
             :is-focused="props.isFocused"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
+            @delete="$emit('delete')"
             @change="(blockType: BlockType) => emit('turn', blockType)"
         />
         <!-- block body -->

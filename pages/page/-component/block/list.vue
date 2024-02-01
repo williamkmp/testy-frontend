@@ -49,7 +49,7 @@ function handleDelete() {
         return;
     const caretPosition = editor.value.view.state.selection.$anchor.pos;
     if (caretPosition <= 1)
-        emit('delete');
+        emit('deleteAppend');
 }
 
 function onContentUpdate() {
@@ -71,6 +71,7 @@ function onEditorBlur() {
             :is-focused="props.isFocused"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
+            @delete="$emit('delete')"
             @change="(blockType: BlockType) => emit('turn', blockType)"
         />
         <!-- block body -->
