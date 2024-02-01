@@ -30,7 +30,7 @@ export function createEditor(content?: JSONContent): Editor {
     });
 }
 
-export function editorHTMLToJSON(html: string) {
+export function editorHTMLToJSON(html: string = '<p></p>') {
     const editor = new Editor({
         content: html,
         editable: false,

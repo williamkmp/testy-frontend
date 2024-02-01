@@ -75,15 +75,30 @@ onMounted(async () => {
         }
     });
 
-    stomp.subscribe(`/topic/page/${routeParam.id}/block.move`, async (payload: BlockMessageDto, header) => {
+    stomp.subscribe(`/topic/page/${routeParam.id}/block.move`, (payload: BlockMessageDto, header) => {
+        if (header.sessionId === app.sessionId)
+            return;
         const targetIndex = editorBody.blockList.findIndex(block => block.id === payload.id);
+        if (targetIndex < 0)
+            return;
         const afterIndex = payload.nextId !== undefined
             ? editorBody.blockList.findIndex(block => block.id === payload.nextId)
             : 0;
-        if (header.sessionId !== app.sessionId && targetIndex >= 0) {
-            const targetBlock = editorBody.blockList.splice(targetIndex, 1)[0];
-            editorBody.blockList.splice(afterIndex, 0, targetBlock);
-        }
+        const targetBlock = editorBody.blockList.splice(targetIndex, 1)[0];
+        editorBody.blockList.splice(afterIndex, 0, targetBlock);
+    });
+
+    stomp.subscribe(`/topic/page/${routeParam.id}/block.add`, (payload: BlockMessageDto, header) => {
+        if (header.sessionId === app.sessionId)
+            return;
+        const previousIndex = payload.prevId !== undefined
+            ? editorBody.blockList.findIndex(block => block.id === payload.prevId)
+            : 0;
+        if (previousIndex < 0)
+            return;
+        const newBlockContent = editorHTMLToJSON(payload.content);
+        const newBlock = editorBody.insertBlockAt(previousIndex, newBlockContent);
+        newBlock.id = payload.id;
     });
 });
 

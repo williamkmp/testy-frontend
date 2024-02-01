@@ -24,19 +24,16 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         const newBlockType: BlockType = (currentBlockType === 'NUMBERED_LIST' || currentBlockType === 'BULLET_LIST')
             ? currentBlockType
             : 'PARAGRAPH';
-
-        blockList.value.splice(
-            index + 1,
-            0,
-            {
-                id: uuid(),
-                type: newBlockType,
-                editor: newBlockEditor as any,
-                iconKey: 'emoji-1215',
-                numbering: 0,
-                width: 100,
-            },
-        );
+        const newBlock = {
+            id: uuid(),
+            type: newBlockType,
+            editor: newBlockEditor as any,
+            iconKey: 'emoji-1215',
+            numbering: 0,
+            width: 100,
+        };
+        blockList.value.splice(index + 1, 0, newBlock);
+        return newBlock;
     }
 
     function removeBlockAt(index: number) {

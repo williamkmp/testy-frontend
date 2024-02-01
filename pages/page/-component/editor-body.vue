@@ -13,13 +13,13 @@ import type { Block, BlockMessageDto, BlockType } from '~/types';
 // Dependency
 const stomp = useStompClient();
 const pageData = usePageDataStore();
-
 const editorBody = useEditorBodyStore();
+
+const draggedBlockId = ref<string>();
 const focusedBlock = computed({
     get: () => editorBody.focusedBlockIndex,
     set: value => editorBody.focusedBlockIndex = value,
 });
-const draggedBlockId = ref<string>();
 
 function handleUserDelete(index: number) {
     const removedBlock = editorBody.blockList[index];
@@ -64,15 +64,26 @@ function handleUserDelete(index: number) {
 }
 
 function handleUserEnter(index: number, content?: JSONContent) {
-    editorBody.insertBlockAt(index, content);
+    const prevBlock = editorBody.blockList[index];
+    const nextBlock = editorBody.blockList[index + 1];
+    const createdBlock = editorBody.insertBlockAt(index, content);
     focusedBlock.value = index + 1;
+    const payload: BlockMessageDto = {
+        id: createdBlock.id,
+        type: createdBlock.type,
+        content: (createdBlock.editor as Editor).getHTML(),
+        nextId: nextBlock?.id,
+        prevId: prevBlock?.id,
+        width: createdBlock.width,
+        iconKey: createdBlock.iconKey,
+    };
+    stomp.send(`/app/page/${pageData.id}/block.add`, payload);
 }
 
 function handleUserChangeBlockType(index: number, newType: BlockType) {
     editorBody.turnInto(index, newType);
     const block = editorBody.blockList.at(index) as Block;
     const blockContent = (block.editor as Editor).getHTML();
-
     const payload: BlockMessageDto = {
         id: block.id,
         type: newType,
