@@ -4,6 +4,7 @@ import { SlickItem, SlickList } from 'vue-slicksort';
 import { useEditorBodyStore } from '../-store/editor-body';
 import { usePageDataStore } from '../-store/page-data';
 import BlockQuotes from './block/blockquotes.vue';
+import File from './block/file.vue';
 import Divider from './block/divider.vue';
 import Heading from './block/heading.vue';
 import List from './block/list.vue';
@@ -197,6 +198,19 @@ async function saveBlockMove() {
                     </template>
                     <template v-else-if="block.type === 'DIVIDER'">
                         <Divider
+                            v-model="editorBody.blockList[index]"
+                            :index="index"
+                            :is-focused="focusedBlock === index"
+                            @focus="focusedBlock = index"
+                            @blur="focusedBlock = -1"
+                            @enter="(content) => handleUserEnter(index, content)"
+                            @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
+                        />
+                    </template>
+                    <template v-else-if="block.type === 'FILE'">
+                        <File
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
