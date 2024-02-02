@@ -82,7 +82,7 @@ fileDialog.onChange(async (files: FileList | null) => {
                 </sections>
                 <div class="grow" />
                 <section v-if="hasFile" class="flex items-center justify-end">
-                    <a :href="path.getFile(block.fileId)">
+                    <a :href="path.getFile(block.fileId)" download>
                         <UButton variant="ghost" icon="i-ic-baseline-download-for-offline" />
                     </a>
                 </section>
