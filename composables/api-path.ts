@@ -15,6 +15,9 @@ export function useApiPath() {
         // image
         image: encodeURI('/image'),
         getImage: (id?: string) => encodeURI(`${baseUrl}image/${id || '-1'}`),
+        file: encodeURI(`/file`),
+        getFile: (id?: string) => encodeURI(`${baseUrl}file/${id || '-1'}`),
+        getFilePreview: (id?: string) => encodeURI(`${baseUrl}file/${id || '-1'}/preview`),
 
         // page
         page: encodeURI('/page'),

@@ -13,7 +13,7 @@ export interface BlockEmit {
     (e: 'deleteAppend'): void;
     (e: 'focus'): void;
     (e: 'blur'): void;
-    (e: 'change', content: string): void;
+    (e: 'change', content?: string): void;
 }
 
 export type BlockModel = Block;

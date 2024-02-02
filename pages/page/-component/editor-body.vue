@@ -94,13 +94,14 @@ function handleUserChangeBlockType(index: number, newType: BlockType) {
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }
 
-const handleContentUpdate = useDebounceFn((block: Block, content: string) => {
+const handleContentUpdate = useDebounceFn((block: Block, content?: string) => {
     const payload: BlockMessageDto = {
         id: block.id,
         type: block.type,
-        content,
+        content: content || '<p></p>',
         width: block.width,
         iconKey: block.iconKey,
+        fileId: block.fileId,
     };
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }, 500);
@@ -220,6 +221,7 @@ async function saveBlockMove() {
                             @delete="() => handleUserDelete(index)"
                             @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @change="() => handleContentUpdate(block)"
                         />
                     </template>
                 </SlickItem>

@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import BlockControl from './control/control.vue';
-import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
+import type { BlockEmit, BlockModel, BlockProps, BlockType, FilePreviewResponse, FileUploadResponse } from '~/types';
+import localizeFileSize from '~/utils/localize-file-size';
 
 // Component Definition
 const props = defineProps<BlockProps>();
 const emit = defineEmits<BlockEmit>();
 const block = defineModel<BlockModel>({ required: true });
+
+// Dependecies
+const path = useApiPath();
+const privateApi = usePrivateApi();
 
 // States
 const isLoading = ref(false);
@@ -24,20 +29,29 @@ function clickHandler() {
 }
 
 watchImmediate(() => block.value.fileId, async (fileId) => {
-    isLoading.value = true;
     if (!fileId) {
         message.value = 'Upload file';
     }
     else {
-        // TODO: get file preview
+        isLoading.value = true;
+        const response: FilePreviewResponse = await privateApi.get(path.getFilePreview(fileId));
+        const fileName = response.data.name;
+        const fileSize = localizeFileSize(response.data.size);
+        message.value = `${fileName} - ${fileSize}`;
+        isLoading.value = false;
     }
-    isLoading.value = false;
 });
 
-fileDialog.onChange(async () => {
+fileDialog.onChange(async (files: FileList | null) => {
+    if (files == null || files[0] == null)
+        return;
     isLoading.value = true;
-    // TODO: file upload
+    const fileUploadResponse: FileUploadResponse = await privateApi.postForm(path.file, {
+        file: files[0],
+    });
+    block.value.fileId = fileUploadResponse.data.id;
     isLoading.value = false;
+    emit('change');
 });
 </script>
 
@@ -68,7 +82,9 @@ fileDialog.onChange(async () => {
                 </sections>
                 <div class="grow" />
                 <section v-if="hasFile" class="flex items-center justify-end">
-                    <UButton variant="ghost" icon="i-ic-baseline-download-for-offline" />
+                    <a :href="path.getFile(block.fileId)">
+                        <UButton variant="ghost" icon="i-ic-baseline-download-for-offline" />
+                    </a>
                 </section>
             </div>
         </div>

@@ -15,14 +15,14 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
     const authority = ref<Authority>(AUTHORITY.VIEWERS);
 
     async function updatePageData(param: {
-        title?: string | null
-        iconKey?: string | null
-        imageId?: string | null
-        imagePosition?: number | null
+        title?: string | null;
+        iconKey?: string | null;
+        imageId?: string | null;
+        imagePosition?: number | null;
     }) {
         function doOverride<T>(p: {
-            originalValue: Ref<T | undefined>
-            newValue: T | undefined | null
+            originalValue: Ref<T | undefined>;
+            newValue: T | undefined | null;
         }) {
             // eslint-disable-next-line eqeqeq
             p.originalValue.value = p.newValue != undefined

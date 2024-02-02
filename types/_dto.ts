@@ -90,3 +90,11 @@ export interface BlockMessageDto {
     prevId?: string;
     nextId?: string;
 }
+
+export interface FilePreviewDto {
+    id: string;
+    name: string;
+    url: string;
+    size: number;
+    extension: string;
+}
