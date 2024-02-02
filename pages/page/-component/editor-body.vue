@@ -10,6 +10,7 @@ import Heading from './block/heading.vue';
 import List from './block/list.vue';
 import Paragraph from './block/paragraph.vue';
 import Image from './block/image.vue';
+import Collection from './block/collection.vue';
 import type { Block, BlockMessageDto, BlockType } from '~/types';
 
 // Dependency
@@ -237,6 +238,20 @@ async function saveBlockMove() {
                             @delete-append="() => handleUserDelete(index, true)"
                             @turn="(type) => handleUserChangeBlockType(index, type)"
                             @change="() => handleContentUpdate(block)"
+                        />
+                    </template>
+                    <template v-else-if="block.type === 'COLLECTION'">
+                        <Collection
+                            v-model="editorBody.blockList[index]"
+                            :index="index"
+                            :is-focused="focusedBlock === index"
+                            @focus="focusedBlock = index"
+                            @blur="focusedBlock = -1"
+                            @enter="(content) => handleUserEnter(index, content)"
+                            @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @change="(content) => handleContentUpdate(block, content)"
                         />
                     </template>
                 </SlickItem>
