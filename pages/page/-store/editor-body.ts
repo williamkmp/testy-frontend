@@ -47,10 +47,16 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         const block = blockList.value[index];
         if (!block || block.type === type)
             return;
-        const isBlockTypeNonEditor = (type === 'DIVIDER' || type === 'IMAGE' || type === 'FILE');
-        const EMPTY_CONTENT = '<p></p>';
 
         block.type = type;
+        const EMPTY_CONTENT = '<p></p>';
+        const isBlockTypeNonEditor = (
+            type === 'DIVIDER'
+                || type === 'IMAGE'
+                || type === 'FILE'
+                || type === 'COLLECTION'
+        );
+
         if (isBlockTypeNonEditor) {
             (block.editor as Editor).commands.setContent(editorHTMLToJSON(EMPTY_CONTENT));
             block.width = 100;
