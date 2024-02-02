@@ -4,7 +4,6 @@ import type { EmojiDefinition } from '~/utils/emoji';
 const props = defineProps({
     removeable: { type: Boolean, default: false },
     randomable: { type: Boolean, default: false },
-    searchable: { type: Boolean, default: false },
 });
 
 const emit = defineEmits<{
