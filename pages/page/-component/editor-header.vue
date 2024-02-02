@@ -75,7 +75,6 @@ watchDebounced(
                         class="h-80 w-[24rem] px-2 py-3"
                     >
                         <EmojiPicker
-                            searchable
                             removeable
                             randomable
                             @choose="pickEmoji"
