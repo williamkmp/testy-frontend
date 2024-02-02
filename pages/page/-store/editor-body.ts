@@ -51,8 +51,13 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         const EMPTY_CONTENT = '<p></p>';
 
         block.type = type;
-        if (isBlockTypeNonEditor)
+        if (isBlockTypeNonEditor) {
             (block.editor as Editor).commands.setContent(editorHTMLToJSON(EMPTY_CONTENT));
+            block.width = 100;
+            block.fileId = undefined;
+            block.numbering = 0;
+            block.iconKey = 'emoji-1215';
+        }
     }
 
     return {
