@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { EmojiDefinition } from '~/utils/emoji';
 
+const props = defineProps({
+    removeable: { type: Boolean, default: false },
+    randomable: { type: Boolean, default: false },
+    searchable: { type: Boolean, default: false },
+});
+
 const emit = defineEmits<{
     remove: [];
     choose: [emojiKey: string];
@@ -49,13 +55,13 @@ function chooseRandom() {
                 v-model="searchText" placeholder="Fiter ..." size="xs" variant="outline" color="gray" class="w-full"
                 icon="i-heroicons-magnifying-glass" :disabled="isLoading"
             />
-            <UTooltip text="Random">
+            <UTooltip v-if="props.randomable" text="Random">
                 <UButton
                     icon="i-heroicons-puzzle-piece" color="gray" variant="solid" size="xs" :disabled="isLoading"
                     @click="chooseRandom"
                 />
             </UTooltip>
-            <UTooltip text="Remove">
+            <UTooltip v-if="props.removeable" text="Remove">
                 <UButton
                     icon="i-heroicons-x-circle" color="red" variant="soft" size="xs" :disabled="isLoading"
                     @click="$emit('remove')"
