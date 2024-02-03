@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
-import { BubbleMenu, EditorContent } from '@tiptap/vue-3';
+import { EditorContent } from '@tiptap/vue-3';
+import { useColelction } from '../../-composeables/collection-state';
 import BlockControl from './control/control.vue';
 import type { BlockEmit, BlockModel, BlockProps, BlockType } from '~/types';
 
@@ -13,6 +14,7 @@ const block = defineModel<BlockModel>({ required: true });
 const editor = computed(() => block.value.editor as Editor);
 const isEmojiPickerOpen = ref(false);
 const emojiPickerRef = ref<HTMLDivElement>();
+const collection = useColelction(block.value.id);
 
 // Hooks
 onBeforeMount(() => {
@@ -95,10 +97,7 @@ async function pickEmoji(emojiKey: string) {
                             </div>
                         </template>
                         <template #panel>
-                            <div
-                                ref="emojiPickerRef"
-                                class="h-60 w-[24rem] px-2 py-3"
-                            >
+                            <div ref="emojiPickerRef" class="h-60 w-[24rem] px-2 py-3">
                                 <EmojiPicker @choose="pickEmoji" />
                             </div>
                         </template>
@@ -110,22 +109,43 @@ async function pickEmoji(emojiKey: string) {
                         @keydown.enter="handleEnter"
                         @keydown.delete="handleDelete"
                     />
+                    <div class="opacity-0 transition group-hover:opacity-100">
+                        <UButton
+                            leading-icon="i-heroicons-plus"
+                            label="New"
+                            color="blue"
+                            variant="soft"
+                            size="xs"
+                            @click="collection.addPage"
+                        />
+                    </div>
                 </section>
-                <UDivider />
             </header>
 
-            <table class="min-w-full">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Page 1</td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Body -->
+            <div class="max-h-96 w-full overflow-y-auto">
+                <UDivider class="mb-2" />
+                <template v-if="!collection.isLoading.value">
+                    <div class="flex w-full flex-col">
+                        <template v-for="page in collection.pages.value" :key="page.id">
+                            <NuxtLink :to="`/page/${page.id}`">
+                                <div class="flex w-full items-center justify-start gap-2 rounded-lg p-2 hover:bg-gray-200/50">
+                                    <div class="grid size-6 shrink-0 place-items-center">
+                                        <EmojiIcon v-if="page.iconKey !== undefined" :emoji-name="page.iconKey" minified />
+                                        <UIcon v-else name="i-heroicons-document" />
+                                    </div>
+                                    <span class="text-gray-800 decoration-gray-50 dark:text-white">{{ page.title || 'Untitled' }}</span>
+                                </div>
+                            </NuxtLink>
+                        </template>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="flex size-full items-center justify-center rounded-lg bg-gray-200">
+                        <UIcon name="i-heriocons-arrow-path" class="animate-spin" />
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </template>
