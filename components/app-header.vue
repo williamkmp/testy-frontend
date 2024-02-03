@@ -1,7 +1,24 @@
 <script lang="ts" setup>
+import { useChatModalStore } from '~/pages/page/-store/chat-modal';
+import { usePageDataStore } from '~/pages/page/-store/page-data';
+
 const sideMenu = useSideMenuStore();
+const chatModal = useChatModalStore();
+const pageData = usePageDataStore();
 const app = useAppStore();
 const shortcut = useShortcuts();
+
+defineShortcuts({
+    alt_t: {
+        usingInput: true,
+        handler: toggleChatModal,
+    },
+});
+
+function toggleChatModal() {
+    if (pageData.id !== undefined)
+        chatModal.isOpen = !chatModal.isOpen;
+}
 </script>
 
 <template>
@@ -36,7 +53,19 @@ const shortcut = useShortcuts();
 
         <!-- right control -->
         <div class="flex items-center">
-            <slot name="right-control" />
+            <UTooltip
+                text="View Chat"
+                :shortcuts="['alt', 'T']"
+                :popper="{ placement: 'bottom-end' }"
+            >
+                <UButton
+                    v-if="pageData.id !== undefined"
+                    icon="i-heroicons-chat-bubble-bottom-center-text"
+                    color="black"
+                    variant="ghost"
+                    @click="() => chatModal.isOpen = true"
+                />
+            </UTooltip>
         </div>
     </header>
 </template>

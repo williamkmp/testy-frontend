@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { AUTHORITY, type Authority } from '~/types';
+import type { Authority } from '~/types';
 
 export const usePageDataStore = defineStore('EditorPageData', () => {
     // Dependency
@@ -12,7 +12,16 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
     const imageId = ref<string>();
     const iconKey = ref<string>();
     const imagePosition = ref<number>(0);
-    const authority = ref<Authority>(AUTHORITY.VIEWERS);
+    const authority = ref<Authority>();
+
+    function reset() {
+        id.value = undefined;
+        title.value = undefined;
+        imageId.value = undefined;
+        iconKey.value = undefined;
+        imagePosition.value = 0;
+        authority.value = undefined;
+    }
 
     async function updatePageData(param: {
         title?: string | null;
@@ -63,5 +72,6 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
         authority,
         imagePosition,
         updatePageData,
+        reset,
     };
 });

@@ -36,8 +36,13 @@ export default defineAppConfig({
 
         modal: {
             overlay: {
-                background: 'bg-gray-800/75',
+                background: 'bg-gray-800/75 dark:bg-gray-600/75',
             },
+        },
+
+        slideover: {
+            overlay: { background: 'bg-gray-800/75 dark:bg-gray-800/75' },
+            width: 'w-screen max-w-xl',
         },
     },
 });

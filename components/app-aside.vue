@@ -110,7 +110,7 @@ async function initMenuItemData() {
                     />
                 </UTooltip>
 
-                <UButton
+                <!-- <UButton
                     color="gray"
                     label="Updates & Notification"
                     icon="i-heroicons-clock"
@@ -118,7 +118,7 @@ async function initMenuItemData() {
                     class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
                     size="sm"
                     block
-                />
+                /> -->
 
                 <UButton
                     color="gray"

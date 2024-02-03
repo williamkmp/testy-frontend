@@ -4,6 +4,7 @@ import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorBody from './-component/editor-body.vue';
 import EditorHeader from './-component/editor-header.vue';
 import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
+import PageChatArea from './-component/page-chat-area.vue';
 import { useEditorBodyStore } from './-store/editor-body';
 import { usePageDataStore } from './-store/page-data';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
@@ -118,6 +119,7 @@ onBeforeRouteLeave(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     editorBody.reset();
+    pageData.reset();
 });
 
 onBeforeRouteUpdate(async () => {
@@ -152,5 +154,6 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
                 <EditorBody />
             </UContainer>
         </template>
+        <PageChatArea />
     </div>
 </template>
