@@ -13,7 +13,10 @@ const sideMenu = useSideMenuStore();
 const childRefs = ref<any[]>([]);
 const isFetchingChildren = ref(true);
 const pageTitle = computed(() => {
-    if (menu.value.title === undefined || menu.value.title.trim() === '')
+    const title = menu.value.type === 'COLLECTION'
+        ? menu.value.title.replace(/<[^>]*>/g, '')
+        : menu.value.title;
+    if (title === undefined || title.trim() === '')
         return 'Untitled';
     return menu.value.title;
 });
