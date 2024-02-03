@@ -3,21 +3,14 @@ import { DragHandle } from 'vue-slicksort';
 import { useEditorBodyStore } from '../../../-store/editor-body';
 import type { BlockType } from '~/types';
 
-const props = defineProps<{ isFocused: boolean }>();
+const props = defineProps({
+    isFocused: { type: Boolean, required: true },
+    nonTurnable: { type: Boolean, required: false, default: false },
+});
 const emit = defineEmits<{ change: [blockType: BlockType]; delete: []; add: []; clickMenu: [] }>();
 
 const editorBody = useEditorBodyStore();
-const options = [
-    {
-        icon: 'i-heroicons-plus-circle',
-        label: 'Add Below',
-        click: () => emit('add'),
-    },
-    {
-        icon: 'i-heroicons-trash',
-        label: 'Delete',
-        click: () => emit('delete'),
-    },
+const blockTypes = [
     {
         icon: 'i-material-symbols-format-h1-rounded',
         label: 'Heading 1',
@@ -96,14 +89,32 @@ const options = [
                 <div class="relative p-1">
                     <UButtonGroup orientation="vertical" size="xs">
                         <UButton
-                            v-for="menu in options"
-                            :key="menu.label"
-                            :label="menu.label"
-                            :icon="menu.icon"
-                            color="gray"
-                            variant="ghost"
-                            @click="menu.click"
+                            key="add-below"
+                            label="Add Below"
+                            icon="i-heroicons-plus-circle"
+                            color="blue"
+                            variant="soft"
+                            @click="() => $emit('add')"
                         />
+                        <UButton
+                            key="delete"
+                            label="Delete"
+                            icon="i-heroicons-trash"
+                            color="red"
+                            variant="soft"
+                            @click="() => $emit('delete')"
+                        />
+                        <template v-if="!props.nonTurnable">
+                            <UButton
+                                v-for="menu in blockTypes"
+                                :key="menu.label"
+                                :label="menu.label"
+                                :icon="menu.icon"
+                                color="gray"
+                                variant="ghost"
+                                @click="menu.click"
+                            />
+                        </template>
                     </UButtonGroup>
                 </div>
             </template>

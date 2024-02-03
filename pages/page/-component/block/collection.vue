@@ -68,8 +68,9 @@ async function pickEmoji(emojiKey: string) {
 </script>
 
 <template>
-    <div class="group flex items-start justify-start gap-1">
+    <div class="group my-2 flex items-start justify-start gap-1">
         <BlockControl
+            non-turnable
             :is-focused="props.isFocused"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
@@ -90,7 +91,7 @@ async function pickEmoji(emojiKey: string) {
                                 class="flex size-8 items-center justify-center rounded bg-transparent transition-all hover:cursor-pointer hover:bg-gray-400/20"
                                 @click="isEmojiPickerOpen = true"
                             >
-                                <EmojiIcon :emoji-name="block.iconKey" />
+                                <EmojiIcon :emoji-name="block.iconKey" minified />
                             </div>
                         </template>
                         <template #panel>

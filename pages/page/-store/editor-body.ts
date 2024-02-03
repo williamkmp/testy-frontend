@@ -50,6 +50,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
 
         block.type = type;
         const EMPTY_CONTENT = '<p></p>';
+        const COLLECTION_DEFAULT = '<p>Collection</p>';
         const isBlockTypeNonEditor = (
             type === 'DIVIDER'
                 || type === 'IMAGE'
@@ -58,7 +59,9 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
         );
 
         if (isBlockTypeNonEditor) {
-            (block.editor as Editor).commands.setContent(editorHTMLToJSON(EMPTY_CONTENT));
+            (block.editor as Editor).commands.setContent(editorHTMLToJSON(
+                type === 'COLLECTION' ? COLLECTION_DEFAULT : EMPTY_CONTENT,
+            ));
             block.width = 100;
             block.fileId = undefined;
             block.numbering = 0;
