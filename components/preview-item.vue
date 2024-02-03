@@ -18,7 +18,7 @@ const pageTitle = computed(() => {
         : menu.value.title;
     if (title === undefined || title.trim() === '')
         return 'Untitled';
-    return menu.value.title;
+    return title;
 });
 
 async function clickhandler() {
