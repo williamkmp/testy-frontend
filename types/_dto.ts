@@ -98,3 +98,11 @@ export interface FilePreviewDto {
     size: number;
     extension: string;
 }
+
+export interface ChatDto {
+    id: string;
+    content: string;
+    senderId: string;
+    pageId: string;
+    sentAt: string;
+}

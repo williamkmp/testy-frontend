@@ -7,7 +7,7 @@ export function useAuth() {
     const publicApi = usePublicApi();
     const notif = useNotification();
 
-    async function doLogin(param: { email: string, password: string }) {
+    async function doLogin(param: { email: string; password: string }) {
         const response: LoginResponse = await publicApi.post(
             path.authLogin,
             {

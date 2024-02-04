@@ -1,4 +1,4 @@
-import type { BlockDto, FilePreviewDto, ImageDto, PageDataDto, PagePreviewDto, TokenDto, UserDto } from './_dto';
+import type { BlockDto, ChatDto, FilePreviewDto, ImageDto, PageDataDto, PagePreviewDto, TokenDto, UserDto } from './_dto';
 import type { ServerResponseData } from './_server';
 
 export type LoginResponse = ServerResponseData<
@@ -24,3 +24,5 @@ export type PageBlockResponse = ServerResponseData<Array<BlockDto>>;
 export type FileUploadResponse = ServerResponseData<FilePreviewDto>;
 
 export type FilePreviewResponse = ServerResponseData<FilePreviewDto>;
+
+export type ChatListResponse = ServerResponseData<Array<ChatDto>>;

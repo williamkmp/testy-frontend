@@ -8,6 +8,7 @@ import PageChatArea from './-component/page-chat-area.vue';
 import { useEditorBodyStore } from './-store/editor-body';
 import { usePageDataStore } from './-store/page-data';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
+import { useChatModalStore } from './-store/chat-modal';
 import type { BlockMessageDto, PageBlockResponse, PageDataResponse, PageHeaderDto } from '~/types';
 
 // Dependency
@@ -18,6 +19,7 @@ const privateApi = usePrivateApi();
 const routeParam = useRoute().params as { id: string };
 const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
+const chatModal = useChatModalStore();
 
 const pageLoading = ref(true);
 onMounted(async () => {
@@ -114,21 +116,26 @@ onMounted(async () => {
 
 onBeforeRouteLeave(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/header`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/chat`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.transaction`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.move`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     editorBody.reset();
     pageData.reset();
+    chatModal.reset();
 });
 
 onBeforeRouteUpdate(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/header`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/chat`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.transaction`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.move`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     editorBody.reset();
+    pageData.reset();
+    chatModal.reset();
 });
 
 watchImmediate([() => pageData.iconKey, () => pageData.title], () => {

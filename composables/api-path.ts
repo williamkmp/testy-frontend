@@ -28,5 +28,8 @@ export function useApiPath() {
 
         // block
         collectionPagePreview: (p: { collectionId: string }) => encodeURI(`/block/collection/${p.collectionId}/page/preview`),
+
+        // chat
+        chatPage: (pageId: string) => encodeURI(`/chat/page/${pageId}`),
     };
 }
