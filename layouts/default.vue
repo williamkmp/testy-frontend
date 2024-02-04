@@ -76,8 +76,9 @@ watch([isResizing, mouse.x], () => {
                 <slot />
             </div>
         </section>
+
+        <UNotifications />
+        <AppSearchModal />
+        <AppCreatePageModal />
     </div>
-    <UNotifications />
-    <AppSearchModal />
-    <AppCreatePageModal />
 </template>
