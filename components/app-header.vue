@@ -7,18 +7,6 @@ const chatModal = useChatModalStore();
 const pageData = usePageDataStore();
 const app = useAppStore();
 const shortcut = useShortcuts();
-
-defineShortcuts({
-    alt_t: {
-        usingInput: true,
-        handler: toggleChatModal,
-    },
-});
-
-function toggleChatModal() {
-    if (pageData.id !== undefined)
-        chatModal.isOpen = !chatModal.isOpen;
-}
 </script>
 
 <template>
@@ -54,12 +42,12 @@ function toggleChatModal() {
         <!-- right control -->
         <div class="flex items-center">
             <UTooltip
+                v-if="pageData.id !== undefined"
                 text="View Chat"
                 :shortcuts="['alt', 'T']"
                 :popper="{ placement: 'bottom-end' }"
             >
                 <UButton
-                    v-if="pageData.id !== undefined"
                     icon="i-heroicons-chat-bubble-bottom-center-text"
                     color="black"
                     variant="ghost"
