@@ -9,9 +9,12 @@ const app = useAppStore();
 const shortcut = useShortcuts();
 
 const userCanDeletePage = computed(() => {
-    if (pageData.authority === undefined)
+    if (pageData.authority === 'FULL_ACCESS')
+        return true;
+    else if (pageData.authority === 'COLLABORATORS')
+        return !pageData.isRootPage;
+    else
         return false;
-    return (pageData.authority === 'COLLABORATORS' && !pageData.isRootPage) || pageData.authority === 'COLLABORATORS';
 });
 </script>
 
@@ -22,7 +25,7 @@ const userCanDeletePage = computed(() => {
         <!-- Left control -->
         <div class="flex items-center gap-4">
             <UTooltip
-                :text=" sideMenu.isOpen ? 'Close Menu' : 'Open menu' "
+                :text="sideMenu.isOpen ? 'Close Menu' : 'Open menu'"
                 :shortcuts="[shortcut.metaSymbol.value, '\\']"
                 :popper="{ placement: 'right' }"
             >

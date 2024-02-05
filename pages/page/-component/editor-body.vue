@@ -138,7 +138,7 @@ async function saveBlockMove() {
             <SlickList
                 v-model:list="editorBody.blockList"
                 use-drag-handle
-                use-window-as-scrol-container
+                use-window-as-scroll-container
                 @sort-start="setBlockMove"
                 @sort-end="saveBlockMove"
             >

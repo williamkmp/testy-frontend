@@ -37,9 +37,6 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
         isUploadingImage.value = true;
         const blob = files[0];
         if (blob) {
-            await pageData.updatePageData({
-                imageId: 'placeHolder-id',
-            });
             const resizedBlob = await resizeImage(blob, 3500);
             const response: ImageResponse = await privateApi.postForm(path.image, {
                 image: resizedBlob,
