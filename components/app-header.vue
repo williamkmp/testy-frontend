@@ -43,8 +43,7 @@ const shortcut = useShortcuts();
         <div class="flex items-center">
             <UTooltip
                 v-if="pageData.id !== undefined"
-                text="View Chat"
-                :shortcuts="['alt', 'T']"
+                text="Comments"
                 :popper="{ placement: 'bottom-end' }"
             >
                 <UButton
