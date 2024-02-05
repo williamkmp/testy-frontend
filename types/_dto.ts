@@ -99,6 +99,13 @@ export interface FilePreviewDto {
     extension: string;
 }
 
+export interface PageMessagingErrorDto {
+    status: number;
+    message: string;
+    pageId: string;
+    userId: string;
+}
+
 export interface ChatDto {
     id: string;
     content: string;
