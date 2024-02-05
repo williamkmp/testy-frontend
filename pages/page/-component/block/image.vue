@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BlockControl from './control/control.vue';
-import type { BlockEmit, BlockModel, BlockProps, BlockType, FilePreviewResponse, FileUploadResponse } from '~/types';
+import type { BlockEmit, BlockModel, BlockProps, BlockType, FileUploadResponse } from '~/types';
 
 // Component Definition
 const props = defineProps<BlockProps>();
