@@ -11,6 +11,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
     if (to.path in excludedRoutes)
         return;
 
-    await stomp.getConnection();
-    await auth.refreshAuth();
+    const isRefreshSuccess = await auth.refreshAuth();
+    if (!isRefreshSuccess)
+        return navigateTo('/login');
+    else
+        await stomp.getConnection();
 });

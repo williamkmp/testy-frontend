@@ -1,8 +1,8 @@
-import axios, { type AxiosError, type AxiosResponse, type CreateAxiosDefaults, HttpStatusCode, type InternalAxiosRequestConfig } from 'axios';
+import axios, { type AxiosError, type AxiosResponse, HttpStatusCode, type InternalAxiosRequestConfig } from 'axios';
 import type { ServerResponseData, ServerResponseError, ServerResponseOkay, ServerStandardResposne } from '~/types';
 
 type RetryableRequest = InternalAxiosRequestConfig & {
-    _isRetry: boolean
+    _isRetry: boolean;
 };
 
 export function usePrivateApi() {
@@ -63,7 +63,11 @@ export function usePrivateApi() {
                 && !originalRequest._isRetry
             ) {
                 originalRequest._isRetry = true;
-                await auth.refreshAuth();
+                const isRefreshSuccess = await auth.refreshAuth();
+                if (!isRefreshSuccess) {
+                    await auth.logout();
+                    return Promise.reject(response);
+                }
                 return api(originalRequest);
             }
             return Promise.reject(response);

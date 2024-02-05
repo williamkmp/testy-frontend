@@ -1,11 +1,10 @@
-import type { LoginResponse, ServerResponseError, TokenResponse, UserResponse } from '~/types';
+import type { LoginResponse } from '~/types';
 
 export function useAuth() {
     // dependency
     const app = useAppStore();
     const path = useApiPath();
     const publicApi = usePublicApi();
-    const notif = useNotification();
 
     async function doLogin(param: { email: string; password: string }) {
         const response: LoginResponse = await publicApi.post(
@@ -26,7 +25,7 @@ export function useAuth() {
         };
     }
 
-    async function refreshAuth() {
+    async function refreshAuth(): Promise<boolean> {
         try {
             const response: LoginResponse = await publicApi.post(path.authToken, {
                 refreshToken: app.refreshToken || 'invalid_token',
@@ -40,12 +39,11 @@ export function useAuth() {
                 fullName: response.data.fullName,
                 imageId: response.data.imageId,
             };
+
+            return true;
         }
         catch (e) {
-            const response = e as ServerResponseError;
-            if (response.status && response.message)
-                notif.warn({ message: response.message });
-            await logout();
+            return false;
         }
     }
 
