@@ -1,12 +1,7 @@
 <script lang="ts" setup>
-const props = withDefaults(defineProps<
-    {
-        emojiName?: string;
-        minified: boolean;
-    }
->(), {
-    emojiName: 'emoji-1241',
-    minified: false,
+const props = defineProps({
+    emojiName: { default: 'emoji-1241', type: String, required: false },
+    minified: { default: true, type: Boolean, required: false },
 });
 
 const isFallback = ref(props.minified);
