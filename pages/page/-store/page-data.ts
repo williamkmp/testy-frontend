@@ -13,6 +13,8 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
     const iconKey = ref<string>();
     const imagePosition = ref<number>(0);
     const authority = ref<Authority>();
+    const collectionId = ref<string>();
+    const isRootPage = computed(() => collectionId.value === undefined);
 
     function reset() {
         id.value = undefined;
@@ -21,6 +23,7 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
         iconKey.value = undefined;
         imagePosition.value = 0;
         authority.value = undefined;
+        collectionId.value = undefined;
     }
 
     async function updatePageData(param: {
@@ -71,6 +74,8 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
         iconKey,
         authority,
         imagePosition,
+        collectionId,
+        isRootPage,
         updatePageData,
         reset,
     };

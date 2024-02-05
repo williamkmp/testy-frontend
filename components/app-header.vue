@@ -7,6 +7,12 @@ const chatModal = useChatModalStore();
 const pageData = usePageDataStore();
 const app = useAppStore();
 const shortcut = useShortcuts();
+
+const userCanDeletePage = computed(() => {
+    if (pageData.authority === undefined)
+        return false;
+    return (pageData.authority === 'COLLABORATORS' && !pageData.isRootPage) || pageData.authority === 'COLLABORATORS';
+});
 </script>
 
 <template>
@@ -41,18 +47,45 @@ const shortcut = useShortcuts();
 
         <!-- right control -->
         <div class="flex items-center">
-            <UTooltip
-                v-if="pageData.id !== undefined"
-                text="Comments"
-                :popper="{ placement: 'bottom-end' }"
-            >
-                <UButton
-                    icon="i-heroicons-chat-bubble-bottom-center-text"
-                    color="black"
-                    variant="ghost"
-                    @click="() => chatModal.isOpen = true"
-                />
-            </UTooltip>
+            <!-- Editor Page Controller -->
+            <div v-if="pageData.id !== undefined" class="flex items-center justify-center gap-2">
+                <UTooltip
+                    text="Comments"
+                    :popper="{ placement: 'bottom' }"
+                >
+                    <UButton
+                        icon="i-heroicons-chat-bubble-bottom-center-text"
+                        color="black"
+                        variant="ghost"
+                        @click="() => chatModal.isOpen = true"
+                    />
+                </UTooltip>
+
+                <UTooltip
+                    text="Members"
+                    :popper="{ placement: 'bottom' }"
+                >
+                    <UButton
+                        icon="i-heroicons-user-group"
+                        color="black"
+                        variant="ghost"
+                        @click="() => chatModal.isOpen = true"
+                    />
+                </UTooltip>
+
+                <UTooltip
+                    v-if="userCanDeletePage"
+                    text="Delete"
+                    :popper="{ placement: 'bottom' }"
+                >
+                    <UButton
+                        icon="i-heroicons-trash"
+                        color="red"
+                        variant="ghost"
+                        @click="() => chatModal.isOpen = true"
+                    />
+                </UTooltip>
+            </div>
         </div>
     </header>
 </template>

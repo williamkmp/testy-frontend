@@ -52,6 +52,7 @@ export interface PageDataDto {
     iconKey: string;
     imageId: string;
     imagePosition: number;
+    collectionId?: string;
 }
 
 export interface BlockDto {

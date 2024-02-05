@@ -39,6 +39,7 @@ onMounted(async () => {
         pageData.authority = pageResponse.data.authority;
         pageData.imagePosition = pageResponse.data.imagePosition;
         pageData.id = pageResponse.data.id;
+        pageData.collectionId = pageResponse.data.collectionId;
 
         // Mapping block data
         editorBody.blockList = blockResponse.data.map(blockData => ({
