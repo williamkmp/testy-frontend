@@ -10,6 +10,6 @@
         <section>
             <slot />
         </section>
+        <UNotifications />
     </div>
-    <UNotifications />
 </template>

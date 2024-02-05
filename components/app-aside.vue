@@ -63,7 +63,6 @@ async function initMenuItemData() {
 </script>
 
 <template>
-    <!-- aside must have a min and max width -->
     <aside
         ref="aside"
         data-role="aside-container"
@@ -74,6 +73,7 @@ async function initMenuItemData() {
                 : 'min-w-0 max-w-0',
         ]"
     >
+        <!-- aside must have a min and max width -->
         <div
             class="flex size-full min-w-[14rem] flex-col gap-4 overflow-hidden bg-gray-300/20 px-4 py-3"
         >
@@ -109,16 +109,6 @@ async function initMenuItemData() {
                         @click="searchModal.isOpen = true"
                     />
                 </UTooltip>
-
-                <!-- <UButton
-                    color="gray"
-                    label="Updates & Notification"
-                    icon="i-heroicons-clock"
-                    variant="ghost"
-                    class="justify-start text-gray-600/60 hover:bg-white dark:text-gray-400"
-                    size="sm"
-                    block
-                /> -->
 
                 <UButton
                     color="gray"
