@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
 import { HttpStatusCode } from 'axios';
+import DeletePageModal from './-component/delete-page-modal.vue';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorBody from './-component/editor-body.vue';
 import EditorHeader from './-component/editor-header.vue';
@@ -234,5 +235,6 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
             </UContainer>
         </template>
         <PageChatArea />
+        <DeletePageModal />
     </div>
 </template>

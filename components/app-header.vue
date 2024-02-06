@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { useChatModalStore } from '~/pages/page/-store/chat-modal';
 import { usePageDataStore } from '~/pages/page/-store/page-data';
+import { useDeletePageModalStore } from '~/pages/page/-store/delete-page-modal';
 
 const sideMenu = useSideMenuStore();
 const chatModal = useChatModalStore();
+const deletaPageModal = useDeletePageModalStore();
 const pageData = usePageDataStore();
 const app = useAppStore();
 const shortcut = useShortcuts();
@@ -85,7 +87,7 @@ const userCanDeletePage = computed(() => {
                         icon="i-heroicons-trash"
                         color="red"
                         variant="ghost"
-                        @click="() => chatModal.isOpen = true"
+                        @click="() => deletaPageModal.isOpen = true"
                     />
                 </UTooltip>
             </div>
