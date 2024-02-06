@@ -1,5 +1,5 @@
 interface MessageMap {
-    [k: string]: (arg: any[]) => string
+    [k: string]: (arg: any[]) => string;
 };
 
 const messageMap: MessageMap = {
