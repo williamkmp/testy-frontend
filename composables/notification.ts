@@ -1,12 +1,12 @@
 import { v4 as uuid } from 'uuid';
 
 export function useNotification() {
-    const TIMEOUT = 1500;
+    const TIMEOUT = 3500;
     const toast = useToast();
     const { $m } = useMessage();
 
     return {
-        info: (p: { title?: string, message: string }) => {
+        info: (p: { title?: string; message: string }) => {
             const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
@@ -18,7 +18,7 @@ export function useNotification() {
             });
         },
 
-        ok: (p: { title?: string, message: string }) => {
+        ok: (p: { title?: string; message: string }) => {
             const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
@@ -31,7 +31,7 @@ export function useNotification() {
             });
         },
 
-        warn: (p: { title?: string, message: string }) => {
+        warn: (p: { title?: string; message: string }) => {
             const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
@@ -44,7 +44,7 @@ export function useNotification() {
             });
         },
 
-        error: (p: { title?: string, message: string }) => {
+        error: (p: { title?: string; message: string }) => {
             const toastId = `toats-${uuid()}`;
             toast.add({
                 id: toastId,
