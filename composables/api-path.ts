@@ -25,6 +25,8 @@ export function useApiPath() {
         pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
         pageCollectionPreview: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/collection/preview`),
         pageBlocks: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/block`),
+        pageMembers: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/user`),
+        pageMemberInfo: (p: { pageId: string; userId: string }) => encodeURI(`/page/${p.pageId}/user/${p.userId}`),
 
         // block
         collectionPagePreview: (p: { collectionId: string }) => encodeURI(`/block/collection/${p.collectionId}/page/preview`),

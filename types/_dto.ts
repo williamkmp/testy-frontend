@@ -114,3 +114,12 @@ export interface ChatDto {
     pageId: string;
     sentAt: string;
 }
+
+export interface MemberDto {
+    id: string;
+    tagName: string;
+    email: string;
+    fullName: string;
+    imageId?: string;
+    authority: Authority;
+}

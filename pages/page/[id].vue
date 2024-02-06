@@ -10,7 +10,8 @@ import { useEditorBodyStore } from './-store/editor-body';
 import { usePageDataStore } from './-store/page-data';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
 import { useChatModalStore } from './-store/chat-modal';
-import type { BlockMessageDto, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMessagingErrorDto } from '~/types';
+import { usePageMemberStore } from './-store/page-member';
+import type { BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto } from '~/types';
 
 // Dependency
 const stomp = useStompClient();
@@ -22,15 +23,19 @@ const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 const notif = useNotification();
 const chatModal = useChatModalStore();
+const pageMember = usePageMemberStore();
 
 const pageLoading = ref(true);
 onMounted(async () => {
     pageLoading.value = true;
+    chatModal.reset();
     editorBody.reset();
 
     try {
         const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
         const blockResponse: PageBlockResponse = await privateApi(path.pageBlocks({ pageId: routeParam.id }));
+        const chatListResponse: ChatListResponse = await privateApi.get(path.chatPage(routeParam.id));
+        const membersResponse: PageMembersResponse = await privateApi.get(path.pageMembers({ pageId: routeParam.id }));
 
         // Setting page data
         pageData.title = pageResponse.data.title;
@@ -53,7 +58,14 @@ onMounted(async () => {
             width: blockData.width || 100,
             numbering: 0,
         }));
+
+        // Loading page comments and members information
+        chatModal.chatList = chatListResponse.data.reverse();
+        for (const memberData of membersResponse.data)
+            pageMember.members[memberData.id] = memberData;
+
         pageLoading.value = false;
+        chatModal.isLoading = false;
 
         stomp.subscribe(`/topic/page/${routeParam.id}/header`, (payload: PageHeaderDto, header: any) => {
             if (app.sessionId === header.sessionId)
@@ -137,6 +149,32 @@ onMounted(async () => {
                 location.reload();
             }
         });
+
+        stomp.subscribe(`/topic/page/${routeParam.id}/chat`, async (payload: ChatDto) => {
+            chatModal.chatList.push({
+                id: payload.id,
+                content: payload.content,
+                pageId: payload.pageId,
+                senderId: payload.senderId,
+                sentAt: payload.sentAt,
+            });
+
+            const senderId = payload.senderId;
+            if (!pageMember.members[senderId]) {
+                const response: PageMemberResponse = await privateApi.get(path.pageMemberInfo({
+                    userId: senderId,
+                    pageId: routeParam.id,
+                }));
+                pageMember.members[senderId] = {
+                    id: response.data.id,
+                    email: response.data.email,
+                    fullName: response.data.fullName,
+                    tagName: response.data.tagName,
+                    authority: response.data.authority,
+                    imageId: response.data.imageId,
+                };
+            }
+        });
     }
     catch (error) {
         console.error('Page load error', error);
@@ -152,6 +190,7 @@ onBeforeRouteLeave(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/user/${app.user!.id}/error`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/chat`);
     editorBody.reset();
     pageData.reset();
     chatModal.reset();
@@ -165,6 +204,7 @@ onBeforeRouteUpdate(async () => {
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.add`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/block.delete`);
     await stomp.unsubscribe(`/topic/page/${routeParam.id}/user/${app.user!.id}/error`);
+    await stomp.unsubscribe(`/topic/page/${routeParam.id}/chat`);
     editorBody.reset();
     pageData.reset();
     chatModal.reset();
