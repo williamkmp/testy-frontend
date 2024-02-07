@@ -42,14 +42,6 @@ function handleEnter(e: Event) {
     emit('enter', newBlockContent);
 }
 
-function handleDelete() {
-    if (!editor.value)
-        return;
-    const caretPosition = editor.value.view.state.selection.$anchor.pos;
-    if (caretPosition <= 1)
-        emit('deleteAppend');
-}
-
 function onContentUpdate() {
     emit('change', editor.value.getHTML());
 }
@@ -107,7 +99,6 @@ async function pickEmoji(emojiKey: string) {
                         :editor="editor"
                         class="w-full max-w-full hover:cursor-text"
                         @keydown.enter="handleEnter"
-                        @keydown.delete="handleDelete"
                     />
                     <div class="opacity-0 transition group-hover:opacity-100">
                         <UButton
