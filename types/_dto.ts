@@ -105,6 +105,7 @@ export interface PageMessagingErrorDto {
     message: string;
     pageId: string;
     userId: string;
+    redirectUrl?: string;
 }
 
 export interface ChatDto {

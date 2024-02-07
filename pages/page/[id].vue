@@ -133,11 +133,12 @@ onMounted(async () => {
 
         stomp.subscribe(`/topic/page/${routeParam.id}/user/${app.user!.id}/error`, async (payload: PageMessagingErrorDto) => {
             if (payload.status === HttpStatusCode.NotFound) {
-                notif.warn({
+                notif.info({
                     title: 'Page Deleted',
                     message: 'Page is deleted contact page owner for information',
                 });
-                await navigateTo('/');
+                const redirectPath = payload.redirectUrl || '/';
+                await navigateTo(redirectPath);
             }
             else if (payload.status === HttpStatusCode.Unauthorized) {
                 notif.warn({

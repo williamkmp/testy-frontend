@@ -12,15 +12,9 @@ const notif = useNotification();
 async function doDeletePage() {
     try {
         isLoading.value = true;
-        if (pageData.id) {
-            const response = await privateApi.delete(path.pagePageId({ pageId: pageData.id }));
-            // TODO: implement page delete redirect
-        }
+        if (pageData.id)
+            await privateApi.delete(path.pagePageId({ pageId: pageData.id }));
         isLoading.value = false;
-        notif.ok({
-            title: 'Deleted',
-            message: 'Page successfully deleted',
-        });
     }
     catch (error) {
         console.error(error);
