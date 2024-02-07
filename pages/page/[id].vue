@@ -5,13 +5,15 @@ import DeletePageModal from './-component/delete-page-modal.vue';
 import EditorBackgroundImage from './-component/editor-bacground-image.vue';
 import EditorBody from './-component/editor-body.vue';
 import EditorHeader from './-component/editor-header.vue';
-import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
+import ManageMemberModal from './-component/manage-member-modal.vue';
 import PageChatArea from './-component/page-chat-area.vue';
-import { useEditorBodyStore } from './-store/editor-body';
-import { usePageDataStore } from './-store/page-data';
-import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
+import PageSkeletonLoader from './-component/page-skeleton-loader.vue';
 import { useChatModalStore } from './-store/chat-modal';
+import { useEditorBodyStore } from './-store/editor-body';
+import { useMemberModalStore } from './-store/member-modal';
+import { usePageDataStore } from './-store/page-data';
 import { usePageMemberStore } from './-store/page-member';
+import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
 import type { BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto } from '~/types';
 
 // Dependency
@@ -25,12 +27,14 @@ const editorBody = useEditorBodyStore();
 const notif = useNotification();
 const chatModal = useChatModalStore();
 const pageMember = usePageMemberStore();
+const memberModal = useMemberModalStore();
 
 const pageLoading = ref(true);
 onMounted(async () => {
     pageLoading.value = true;
     chatModal.reset();
     editorBody.reset();
+    memberModal.reset();
 
     try {
         const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
@@ -237,5 +241,6 @@ watchImmediate([() => pageData.iconKey, () => pageData.title], () => {
         </template>
         <PageChatArea />
         <DeletePageModal />
+        <ManageMemberModal />
     </div>
 </template>
