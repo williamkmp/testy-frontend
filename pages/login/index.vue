@@ -6,7 +6,6 @@ definePageMeta({ layout: 'authentication' });
 // Dependency
 const { $v } = useMessage();
 const auth = useAuth();
-const notif = useNotification();
 
 const loginForm = useFormDeclaration({
     schema: z.object({
@@ -25,8 +24,7 @@ const loginForm = useFormDeclaration({
             email: form.data.email,
             password: form.data.password,
         });
-        notif.ok({ message: 'Login Success' });
-        navigateTo('/');
+        await navigateTo('/?refresh=true');
     },
 });
 </script>
