@@ -12,7 +12,7 @@ import { useChatModalStore } from './-store/chat-modal';
 import { useEditorBodyStore } from './-store/editor-body';
 import { useMemberModalStore } from './-store/member-modal';
 import { usePageDataStore } from './-store/page-data';
-import { usePageMemberStore } from './-store/page-member';
+import { usePageUserCache } from './-store/user-cache';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
 import type { BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto } from '~/types';
 
@@ -26,7 +26,7 @@ const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 const notif = useNotification();
 const chatModal = useChatModalStore();
-const pageMember = usePageMemberStore();
+const userCache = usePageUserCache();
 const memberModal = useMemberModalStore();
 
 const pageLoading = ref(true);
@@ -64,10 +64,13 @@ onMounted(async () => {
             numbering: 0,
         }));
 
-        // Loading page comments and members information
+        // Load page members
+        // TODO: implement load page member
+
+        // Loading page comments and cache user information
         chatModal.chatList = chatListResponse.data.reverse();
-        for (const memberData of membersResponse.data)
-            pageMember.members[memberData.id] = memberData;
+        for (const chatData of chatListResponse.data)
+            await userCache.cacheUser(chatData.senderId);
 
         pageLoading.value = false;
         chatModal.isLoading = false;
@@ -164,22 +167,11 @@ onMounted(async () => {
                 senderId: payload.senderId,
                 sentAt: payload.sentAt,
             });
+            await userCache.cacheUser(payload.senderId);
+        });
 
-            const senderId = payload.senderId;
-            if (!pageMember.members[senderId]) {
-                const response: PageMemberResponse = await privateApi.get(path.pageMemberInfo({
-                    userId: senderId,
-                    pageId: routeParam.id,
-                }));
-                pageMember.members[senderId] = {
-                    id: response.data.id,
-                    email: response.data.email,
-                    fullName: response.data.fullName,
-                    tagName: response.data.tagName,
-                    authority: response.data.authority,
-                    imageId: response.data.imageId,
-                };
-            }
+        stomp.subscribe(`/topic/page/${routeParam.id}/members`, async (payload) => {
+            // TODO: member operation
         });
     }
     catch (error) {

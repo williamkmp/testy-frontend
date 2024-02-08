@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useChatModalStore } from '../-store/chat-modal';
 import { usePageDataStore } from '../-store/page-data';
-import { usePageMemberStore } from '../-store/page-member';
+import { usePageUserCache } from '../-store/user-cache';
 
 // Dependency
 const path = useApiPath();
@@ -9,7 +9,7 @@ const app = useAppStore();
 const privateApi = usePrivateApi();
 const pageData = usePageDataStore();
 const chatModal = useChatModalStore();
-const pageMemmbers = usePageMemberStore();
+const userCache = usePageUserCache();
 
 // States
 const chatAreaRef = ref<HTMLDivElement>();
@@ -73,12 +73,12 @@ function handleInput(e: KeyboardEvent) {
                                             class="mb-0.5 flex w-full gap-0.5"
                                         >
                                             <UAvatar
-                                                :alt="capitalize(pageMemmbers.members[chat.senderId].fullName)"
-                                                :src="path.getFile(pageMemmbers.members[chat.senderId].imageId)"
+                                                :alt="capitalize(userCache.users[chat.senderId].fullName)"
+                                                :src="path.getFile(userCache.users[chat.senderId].imageId)"
                                                 size="3xs"
                                             />
                                             <span class="truncate text-xs">
-                                                {{ pageMemmbers.members[chat.senderId].tagName }}
+                                                {{ userCache.users[chat.senderId].tagName }}
                                             </span>
                                         </div>
 
