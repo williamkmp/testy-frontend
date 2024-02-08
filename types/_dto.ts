@@ -124,3 +124,9 @@ export interface MemberDto {
     imageId?: string;
     authority: Authority;
 }
+
+export interface AuthorityMessageDto {
+    id: string;
+    authority: Authority;
+    action: 'ADD' | 'UPDATE' | 'DELETE';
+}

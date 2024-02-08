@@ -14,7 +14,7 @@ import { useMemberModalStore } from './-store/member-modal';
 import { usePageDataStore } from './-store/page-data';
 import { usePageUserCache } from './-store/user-cache';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
-import type { BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto } from '~/types';
+import type { AuthorityMessageDto, BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto } from '~/types';
 
 // Dependency
 const stomp = useStompClient();
@@ -65,7 +65,16 @@ onMounted(async () => {
         }));
 
         // Load page members
-        // TODO: implement load page member
+        for (const memberData of membersResponse.data) {
+            memberModal.members[memberData.id] = memberData;
+            userCache.users[memberData.id] = {
+                id: memberData.id,
+                email: memberData.email,
+                fullName: memberData.fullName,
+                tagName: memberData.tagName,
+                imageId: memberData.imageId,
+            };
+        }
 
         // Loading page comments and cache user information
         chatModal.chatList = chatListResponse.data.reverse();
@@ -170,7 +179,7 @@ onMounted(async () => {
             await userCache.cacheUser(payload.senderId);
         });
 
-        stomp.subscribe(`/topic/page/${routeParam.id}/members`, async (payload) => {
+        stomp.subscribe(`/topic/page/${routeParam.id}/members`, async (payload: AuthorityMessageDto) => {
             // TODO: member operation
         });
     }
