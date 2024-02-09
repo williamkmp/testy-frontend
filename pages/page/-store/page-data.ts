@@ -5,6 +5,7 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
     // Dependency
     const path = useApiPath();
     const privateApi = usePrivateApi();
+    const notif = useNotification();
 
     // States
     const id = ref<string>();
@@ -46,24 +47,37 @@ export const usePageDataStore = defineStore('EditorPageData', () => {
         }
 
         if (id.value) {
-            await privateApi.put(path.pagePageId({ pageId: id.value }), {
-                title: doOverride({
-                    originalValue: title,
-                    newValue: param.title,
-                }),
-                iconKey: doOverride({
-                    originalValue: iconKey,
-                    newValue: param.iconKey,
-                }),
-                imageId: doOverride({
-                    originalValue: imageId,
-                    newValue: param.imageId,
-                }),
-                imagePosition: doOverride({
-                    originalValue: imagePosition,
-                    newValue: param.imagePosition,
-                }),
-            });
+            try {
+                await privateApi.put(path.pagePageId({ pageId: id.value }), {
+                    title: doOverride({
+                        originalValue: title,
+                        newValue: param.title,
+                    }),
+                    iconKey: doOverride({
+                        originalValue: iconKey,
+                        newValue: param.iconKey,
+                    }),
+                    imageId: doOverride({
+                        originalValue: imageId,
+                        newValue: param.imageId,
+                    }),
+                    imagePosition: doOverride({
+                        originalValue: imagePosition,
+                        newValue: param.imagePosition,
+                    }),
+                });
+            }
+            catch (e: any) {
+                if (e.message && e.status) {
+                    if (e.status >= 400 && e.status <= 499)
+                        notif.warn({ message: e.message });
+                    else if (e.status >= 500 && e.status <= 599)
+                        notif.error({ message: e.message });
+                    else if (e.status >= 200 && e.status <= 299)
+                        notif.ok({ message: e.message });
+                }
+                await navigateTo('/');
+            }
         }
     }
 
