@@ -33,5 +33,8 @@ export function useApiPath() {
 
         // chat
         chatPage: (pageId: string) => encodeURI(`/chat/page/${pageId}`),
+
+        // Authority
+        pageMember: (pageId?: string) => encodeURI(`/page/${pageId}/member`),
     };
 }

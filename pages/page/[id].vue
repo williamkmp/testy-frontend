@@ -37,10 +37,14 @@ onMounted(async () => {
     memberModal.reset();
 
     try {
-        const pageResponse: PageDataResponse = await privateApi(path.pagePageId({ pageId: routeParam.id }));
-        const blockResponse: PageBlockResponse = await privateApi(path.pageBlocks({ pageId: routeParam.id }));
-        const chatListResponse: ChatListResponse = await privateApi.get(path.chatPage(routeParam.id));
-        const membersResponse: PageMembersResponse = await privateApi.get(path.pageMembers({ pageId: routeParam.id }));
+        const responses = await Promise.all([
+            privateApi(path.pagePageId({ pageId: routeParam.id })),
+            privateApi(path.pageBlocks({ pageId: routeParam.id })),
+            privateApi.get(path.chatPage(routeParam.id)),
+        ]);
+        const pageResponse = responses[0] as PageDataResponse;
+        const blockResponse = responses[1] as PageBlockResponse;
+        const chatListResponse = responses[2] as ChatListResponse;
 
         // Setting page data
         pageData.title = pageResponse.data.title;
@@ -63,18 +67,6 @@ onMounted(async () => {
             width: blockData.width || 100,
             numbering: 0,
         }));
-
-        // Load page members
-        for (const memberData of membersResponse.data) {
-            memberModal.members[memberData.id] = memberData;
-            userCache.users[memberData.id] = {
-                id: memberData.id,
-                email: memberData.email,
-                fullName: memberData.fullName,
-                tagName: memberData.tagName,
-                imageId: memberData.imageId,
-            };
-        }
 
         // Loading page comments and cache user information
         chatModal.chatList = chatListResponse.data.reverse();
@@ -177,10 +169,6 @@ onMounted(async () => {
                 sentAt: payload.sentAt,
             });
             await userCache.cacheUser(payload.senderId);
-        });
-
-        stomp.subscribe(`/topic/page/${routeParam.id}/members`, async (payload: AuthorityMessageDto) => {
-            // TODO: member operation
         });
     }
     catch (error) {
