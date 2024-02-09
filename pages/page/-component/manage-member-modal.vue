@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { DebuggerEvent } from 'vue';
 import { useMemberModalStore } from '../-store/member-modal';
 import { usePageDataStore } from '../-store/page-data';
-import { AUTHORITY, type AuthorityMessageDto, type MemberDto, type PageMembersResponse, type UserDto } from '~/types';
+import { AUTHORITY, type AuthorityMessageDto, type MemberDto, type PageMembersResponse, type SearchUserByEmailResponse, type UserDto } from '~/types';
 
 // Dependency
 const app = useAppStore();
@@ -10,6 +9,7 @@ const pageData = usePageDataStore();
 const memberModal = useMemberModalStore();
 const path = useApiPath();
 const privateApi = usePrivateApi();
+const notif = useNotification();
 
 // States
 const isSubmitting = ref(false);
@@ -34,7 +34,7 @@ watch(
         // On modal open
         if (isModalOpen) {
             isLoading.value = true;
-            emailField.value = '';
+            potentialUserList.value = [];
             const memberResponse: PageMembersResponse = await privateApi.get(path.pageMembers({ pageId: pageData.id! }));
             for (const data of memberResponse.data) {
                 if (app.user?.id !== data.id) {
@@ -65,6 +65,7 @@ watch(
             isLoading.value = true;
             initialMemberList.value = [];
             updatedMemberList.value = [];
+            potentialUserList.value = [];
             emailField.value = '';
         }
     },
@@ -73,6 +74,20 @@ watch(
 watchDebounced(
     emailField,
     async () => {
+        if (emailField.value.trim() !== '') {
+            const searchString = emailField.value.trim();
+            const resultList: SearchUserByEmailResponse = await privateApi.get(path.userSearchEmail(searchString));
+            potentialUserList.value = resultList.data.map(record => ({
+                id: record.id,
+                fullName: record.fullName,
+                email: record.email,
+                tagName: record.tagName,
+                imageId: record.imageId,
+            }));
+        }
+        else {
+            potentialUserList.value = [];
+        }
         isLoading.value = false;
     },
     {
@@ -91,7 +106,7 @@ async function saveUpdate() {
         action: user.authority === 'REMOVE'
             ? 'DELETE'
             : 'UPDATE',
-        authority: user.authority !== 'REMOVE'
+        role: user.authority !== 'REMOVE'
             ? user.authority
             : 'VIEWERS',
     }));
@@ -101,38 +116,47 @@ async function saveUpdate() {
 }
 
 async function doAddMember(userId: string) {
-    if (emailField.value.trim() !== '') {
-        isSubmitting.value = true;
+    isSubmitting.value = true;
+    try {
         await privateApi.post(
             path.pageMember(pageData.id),
             {
                 id: userId,
                 action: 'ADD',
-                authority: 'VIEWERS',
+                role: 'VIEWERS',
             } satisfies AuthorityMessageDto,
         );
-        isSubmitting.value = false;
         memberModal.isOpen = false;
-        emailField.value = '';
     }
+    catch (e) {}
+    isSubmitting.value = false;
 }
 
 async function leavePage() {
-    if (emailField.value.trim() !== '') {
-        isSubmitting.value = true;
-        await privateApi.post(
-            path.pageMember(pageData.id),
-            {
-                id: app.user!.id,
-                action: 'DELETE',
-                authority: 'VIEWERS',
-            } satisfies AuthorityMessageDto,
-        );
-        isSubmitting.value = false;
+    isSubmitting.value = true;
+    const isAdmin = pageData.authority === 'FULL_ACCESS';
+    const isLastAdmin = initialMemberList.value
+        .filter(member => member.id !== app.user?.id)
+        .every(member => member.authority !== 'FULL_ACCESS');
+
+    if (isAdmin && isLastAdmin) {
         memberModal.isOpen = false;
-        emailField.value = '';
+        notif.warn({
+            title: 'Cannot Leave',
+            message: 'Page admin cannot be empty, choose another member to have Full Access',
+        });
+        return;
+    }
+
+    try {
+        await privateApi.delete(path.pageMember(pageData.id));
+        memberModal.isOpen = false;
         await navigateTo('/');
     }
+    catch (error) {
+        console.error('error leaving page', error);
+    }
+    isSubmitting.value = false;
 }
 </script>
 
@@ -173,14 +197,18 @@ async function leavePage() {
                         </span>
                     </header>
 
-                    <section class="flex w-full gap-2">
+                    <section v-if="canUpdateMember" class="flex w-full gap-2">
                         <UInput
                             v-model="emailField"
                             placeholder="member@email.com"
                             class="w-full"
                             :disabled="!canUpdateMember"
                             @focus="isSearchingMember = true"
-                            @blur="isSearchingMember = false"
+                            @blur="() => {
+                                if (emailField.trim() === '') {
+                                    isSearchingMember = false
+                                }
+                            }"
                         />
                         <UButton
                             label="search"
@@ -200,7 +228,7 @@ async function leavePage() {
                         <template v-if="!isLoading && !isSearchingMember">
                             <div class="flex h-full max-h-full flex-col overflow-y-auto pr-2">
                                 <template v-for="member of updatedMemberList" :key="member.id">
-                                    <div class="flex w-full items-center justify-between py-2">
+                                    <div class="flex w-full items-center justify-between p-2">
                                         <!-- Member information -->
                                         <section class="flex items-center gap-3">
                                             <UAvatar :alt="capitalize(member.fullName)" :src="path.getFile(member.imageId)" size="md" />
@@ -249,8 +277,8 @@ async function leavePage() {
 
                                 <!-- Potential user list -->
                                 <template v-for="user of potentialUserList" :key="user.id">
-                                    <div
-                                        class="flex w-full cursor-pointer items-center justify-between py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+                                    <button
+                                        class="flex w-full cursor-pointer items-center justify-between p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
                                         @click="doAddMember(user.id)"
                                     >
                                         <section class="flex items-center gap-3">
@@ -260,7 +288,7 @@ async function leavePage() {
                                                 <span class="text-xs opacity-60">{{ user.email }}</span>
                                             </div>
                                         </section>
-                                    </div>
+                                    </button>
                                 </template>
                             </div>
                         </template>
@@ -272,12 +300,12 @@ async function leavePage() {
                                     color="red"
                                     variant="outline"
                                     block
-                                    :disabled="!isMemberListUpdated || isSubmitting"
+                                    :disabled="isSubmitting"
                                     :loading="isSubmitting"
                                     @click="leavePage"
                                 />
                             </div>
-                            <div class="w-full">
+                            <div v-if="canUpdateMember" class="w-full">
                                 <UButton
                                     label="Save"
                                     color="blue"

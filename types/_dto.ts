@@ -127,6 +127,6 @@ export interface MemberDto {
 
 export interface AuthorityMessageDto {
     id: string;
-    authority: Authority;
+    role: Authority;
     action: 'ADD' | 'UPDATE' | 'DELETE';
 }

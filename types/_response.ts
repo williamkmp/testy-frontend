@@ -13,6 +13,8 @@ export type TokenResponse = ServerResponseData<TokenDto>;
 
 export type UserResponse = ServerResponseData<UserDto>;
 
+export type SearchUserByEmailResponse = ServerResponseData<UserDto[]>;
+
 export type ImageResponse = ServerResponseData<ImageDto>;
 
 export type PagePreviewResponse = ServerResponseData<Array<PagePreviewDto>>;

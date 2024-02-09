@@ -10,6 +10,7 @@ export function useApiPath() {
         user: encodeURI('/user'),
         userUserId: (p: { userId: string }) => encodeURI(`/user/${p.userId}`),
         userMe: encodeURI('/user/me'),
+        userSearchEmail: (email: string) => encodeURI(`/user/email/${email}`),
         userPassword: encodeURI('/user/password'),
 
         // image
