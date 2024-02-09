@@ -22,10 +22,13 @@ const pageTitle = computed(() => {
 });
 
 function clickhandler() {
-    if (menu.value.type === 'COLLECTION')
-        return;
-    const pagePath = `/page/${menu.value.id}`;
-    navigateTo(pagePath);
+    if (menu.value.type === 'COLLECTION') {
+        toggleExpand();
+    }
+    else {
+        const pagePath = `/page/${menu.value.id}`;
+        navigateTo(pagePath);
+    }
 }
 
 async function toggleExpand() {
