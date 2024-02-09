@@ -14,7 +14,7 @@ import { useMemberModalStore } from './-store/member-modal';
 import { usePageDataStore } from './-store/page-data';
 import { usePageUserCache } from './-store/user-cache';
 import { createEditor, editorHTMLToJSON } from './-utils/editor-utils';
-import type { AuthorityMessageDto, BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto } from '~/types';
+import type { AuthorityMessageDto, BlockMessageDto, ChatDto, ChatListResponse, PageBlockResponse, PageDataResponse, PageHeaderDto, PageMemberResponse, PageMembersResponse, PageMessagingErrorDto, ServerResponseError } from '~/types';
 
 // Dependency
 const stomp = useStompClient();
@@ -171,8 +171,17 @@ onMounted(async () => {
             await userCache.cacheUser(payload.senderId);
         });
     }
-    catch (error) {
-        console.error('Page load error', error);
+    catch (e: any) {
+        console.error('Page load error', e);
+        if (e.status) {
+            const error = e.status as number;
+            if (error === HttpStatusCode.Forbidden) {
+                notif.warn({
+                    title: 'Forbidden Access',
+                    message: 'You aren\'t registered as page member',
+                });
+            }
+        }
         await navigateTo('/');
     }
 });
