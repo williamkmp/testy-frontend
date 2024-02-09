@@ -53,7 +53,7 @@ export const useSideMenuStore = defineStore('GlobalSideMenu', () => {
             children: [],
         };
         if (!parentId) {
-            menuItems.value.push();
+            menuItems.value.push(newMenu);
             return;
         }
         const parentPreview = findMenuBydId(parentId, menuItems.value);
