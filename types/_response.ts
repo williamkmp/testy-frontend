@@ -19,6 +19,8 @@ export type ImageResponse = ServerResponseData<ImageDto>;
 
 export type PagePreviewResponse = ServerResponseData<Array<PagePreviewDto>>;
 
+export type SearchPageResponse = ServerResponseData<Array<PagePreviewDto>>;
+
 export type PageDataResponse = ServerResponseData<PageDataDto>;
 
 export type PageBlockResponse = ServerResponseData<Array<BlockDto>>;

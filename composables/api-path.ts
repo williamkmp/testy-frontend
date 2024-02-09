@@ -22,6 +22,7 @@ export function useApiPath() {
 
         // page
         page: encodeURI('/page'),
+        pageSearch: (text: string) => encodeURI(`/page/search/${text}`),
         pagePreview: encodeURI('/page/preview'),
         pagePageId: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}`),
         pageCollectionPreview: (p: { pageId: string }) => encodeURI(`/page/${p.pageId}/collection/preview`),

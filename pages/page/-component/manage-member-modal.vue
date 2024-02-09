@@ -270,7 +270,7 @@ async function leavePage() {
                                         <section class="flex flex-col items-center justify-center">
                                             <UIcon name="i-heroicons-no-symbol" class="text-6xl" />
                                             <span class="text-base font-semibold opacity-70">Not Found</span>
-                                            <span class="text-sm opacity-70">User with taht email is not found</span>
+                                            <span class="text-sm opacity-70">User with email not found</span>
                                         </section>
                                     </div>
                                 </template>
