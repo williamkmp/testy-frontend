@@ -35,6 +35,15 @@ onUnmounted(() => {
     editor.value.off('focus', onEditorFocus);
 });
 
+watchImmediate(
+    () => props.isEditable,
+    (isEditable) => {
+        editor.value.options.editable = isEditable;
+        editor.value.view.update(editor.value.view.props);
+        editor.value.setEditable(props.isEditable);
+    },
+);
+
 // Actions
 function handleEnter(e: Event) {
     e.preventDefault();
@@ -77,6 +86,7 @@ function onEditorBlur() {
     >
         <BlockControl
             :is-focused="props.isFocused"
+            :is-disabled="!props.isEditable"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
             @delete="$emit('delete')"
@@ -92,7 +102,7 @@ function onEditorBlur() {
             }"
         >
             <BubbleMenu
-                v-if="editor"
+                v-if="editor && isEditable"
                 :editor="editor"
             >
                 <UButtonGroup orientation="horizontal" size="xs">
@@ -116,7 +126,8 @@ function onEditorBlur() {
             <EditorContent
                 v-if="editor !== undefined"
                 :editor="editor"
-                class="w-full max-w-full hover:cursor-text"
+                class="w-full max-w-full"
+                :class="[$props.isEditable ? 'hover:cursor-text' : 'hover:cursor-default']"
                 @keydown.enter="handleEnter"
                 @keydown.delete="handleDelete"
             />

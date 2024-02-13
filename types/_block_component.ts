@@ -4,6 +4,7 @@ import type { Block, BlockType } from '~/types';
 export interface BlockProps {
     index: number;
     isFocused: boolean;
+    isEditable: boolean;
 }
 
 export interface BlockEmit {

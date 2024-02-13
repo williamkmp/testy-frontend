@@ -27,7 +27,7 @@ const fileDialog = useFileDialog({
 
 // Actions
 function uploadImage() {
-    if (!hasFile.value)
+    if (!hasFile.value && props.isEditable)
         fileDialog.open();
 }
 
@@ -47,10 +47,10 @@ fileDialog.onChange(async (files: FileList | null) => {
 useEventListener(window, 'blur', () => isResizing.value = false);
 useEventListener(window, 'mouseup', () => isResizing.value = false);
 useEventListener(resizeHandler, 'mouseup', () => isResizing.value = false);
-useEventListener(resizeHandler, 'mousedown', () => isResizing.value = true);
+useEventListener(resizeHandler, 'mousedown', () => isResizing.value = true && props.isEditable);
 
 watch(mouse.y, (newY, oldY) => {
-    if (!isResizing.value || !resizeHandler.value || !imageRef.value)
+    if (!props.isEditable || !isResizing.value || !resizeHandler.value || !imageRef.value)
         return;
     const delta = newY - oldY;
     block.value.width = block.value.width + delta;
@@ -59,7 +59,7 @@ watch(mouse.y, (newY, oldY) => {
 watchDebounced(
     () => block.value.width,
     (newHeight, oldHeight) => {
-        if (newHeight !== oldHeight)
+        if (newHeight !== oldHeight && props.isEditable)
             emit('change');
     },
     { debounce: 300 },
@@ -70,6 +70,7 @@ watchDebounced(
     <div class="group flex items-start justify-start gap-1">
         <BlockControl
             :is-focused="props.isFocused"
+            :is-disabled="!props.isEditable"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
             @delete="$emit('delete')"
@@ -113,7 +114,8 @@ watchDebounced(
                     <!-- Resize handle -->
                     <div
                         ref="resizeHandler"
-                        class="flex w-full cursor-row-resize justify-center opacity-0 transition group-hover:opacity-100"
+                        class="flex w-full cursor-row-resize justify-center opacity-0 transition"
+                        :class="props.isEditable ? 'group-hover:opacity-100' : '' "
                     >
                         <div class="h-1.5 w-full max-w-32 rounded-3xl bg-gray-500/50" />
                     </div>

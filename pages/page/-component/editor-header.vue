@@ -7,6 +7,7 @@ const pageData = usePageDataStore();
 const editorHeader = useEditorHeaderStore();
 
 // States & Refs
+const userCanUpdate = computed(() => pageData.authority !== 'VIEWERS');
 const emojiPickerRef = ref<HTMLDivElement>();
 const isEmojiPickerOpen = ref(false);
 const pageTitle = computed({
@@ -26,23 +27,31 @@ onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 
 // Actions
 async function pickEmoji(emojiKey: string) {
-    pageData.updatePageData({
-        iconKey: emojiKey,
-    });
-    isEmojiPickerOpen.value = false;
+    if (userCanUpdate.value) {
+        pageData.updatePageData({
+            iconKey: emojiKey,
+        });
+        isEmojiPickerOpen.value = false;
+    }
 }
 
 async function removeEmoji() {
-    pageData.updatePageData({
-        iconKey: null,
-    });
-    isEmojiPickerOpen.value = false;
+    if (userCanUpdate.value) {
+        pageData.updatePageData({
+            iconKey: null,
+        });
+        isEmojiPickerOpen.value = false;
+    }
 }
 watchDebounced(
     () => pageData.title,
-    newTitle => pageData.updatePageData({
-        title: newTitle,
-    }),
+    (newTitle) => {
+        if (userCanUpdate.value) {
+            pageData.updatePageData({
+                title: newTitle,
+            });
+        }
+    },
     {
         debounce: 500,
     },
@@ -59,12 +68,11 @@ watchDebounced(
                 :open="isEmojiPickerOpen"
                 class="size-min"
                 :popper="{ placement: 'bottom' }"
-                @update:open="(t) => console.log(t)"
             >
                 <template #default>
                     <div
                         class="flex size-20 items-center justify-center rounded bg-transparent p-3 transition-all hover:cursor-pointer hover:bg-gray-400/20"
-                        @click="isEmojiPickerOpen = true"
+                        @click="isEmojiPickerOpen = true && userCanUpdate"
                     >
                         <EmojiIcon :emoji-name="pageData.iconKey" />
                     </div>
@@ -86,7 +94,7 @@ watchDebounced(
         </template>
 
         <div
-            v-if="!editorHeader.hasCoverImage || !editorHeader.hasIcon "
+            v-if="(!editorHeader.hasCoverImage || !editorHeader.hasIcon) && userCanUpdate"
             class="flex items-center justify-start gap-1.5"
             :class="[(isHover || isFocus) ? 'opacity-100' : 'opacity-0']"
         >
@@ -109,6 +117,7 @@ watchDebounced(
         </div>
         <UTextarea
             v-model="pageTitle"
+            :disabled="!userCanUpdate"
             :rows="1"
             placeholder="Untitled"
             autoresize

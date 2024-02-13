@@ -24,7 +24,7 @@ const fileDialog = useFileDialog({
 
 // Actions
 function clickHandler() {
-    if (!hasFile.value)
+    if (!hasFile.value && props.isEditable)
         fileDialog.open();
 }
 
@@ -59,6 +59,7 @@ fileDialog.onChange(async (files: FileList | null) => {
     <div class="group flex items-start justify-start gap-1">
         <BlockControl
             :is-focused="props.isFocused"
+            :is-disabled="!props.isEditable"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
             @delete="$emit('delete')"
@@ -68,7 +69,7 @@ fileDialog.onChange(async (files: FileList | null) => {
         <div class="w-full py-1">
             <div
                 class="flex w-full items-center justify-start rounded bg-gray-300/50 px-3 py-2 dark:bg-gray-50/20"
-                :class="{ 'cursor-pointer hover:bg-gray-400/50 hover:dark:bg-gray-200/50': !hasFile }"
+                :class="{ 'cursor-pointer hover:bg-gray-400/50 hover:dark:bg-gray-200/50': !hasFile && isEditable }"
                 @click="clickHandler"
             >
                 <sections class="flex items-center gap-2" :class="{ 'opacity-50': !hasFile }">

@@ -11,6 +11,7 @@ const emit = defineEmits<BlockEmit>();
     <div class="group flex items-center justify-start gap-1">
         <BlockControl
             :is-focused="props.isFocused"
+            :is-disabled="!props.isEditable"
             @click-menu="$emit('focus')"
             @add="$emit('enter')"
             @delete="$emit('delete')"

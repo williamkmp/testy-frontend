@@ -5,6 +5,7 @@ import type { BlockType } from '~/types';
 
 const props = defineProps({
     isFocused: { type: Boolean, required: true },
+    isDisabled: { type: Boolean, required: false, default: false },
     nonTurnable: { type: Boolean, required: false, default: false },
 });
 const emit = defineEmits<{ change: [blockType: BlockType]; delete: []; add: []; clickMenu: [] }>();
@@ -75,59 +76,64 @@ const blockTypes = [
         class="flex items-center justify-center gap-0.5 transition duration-100 group-hover:opacity-100"
         :class="[props.isFocused ? 'opacity-100' : 'opacity-0']"
     >
-        <!-- menu  -->
-        <UPopover :popper="{ placement: 'left' }">
-            <template #default>
-                <div
-                    class="rounded p-0.5 hover:bg-gray-200/50 dark:hover:bg-gray-100/10"
-                    @click="$emit('clickMenu')"
-                >
-                    <UIcon class="text-gray-500" name="i-heroicons-cog-6-tooth-solid" />
-                </div>
-            </template>
-            <template #panel>
-                <div class="relative p-1">
-                    <UButtonGroup orientation="vertical" size="xs">
-                        <UButton
-                            key="add-below"
-                            label="Add Below"
-                            icon="i-heroicons-plus-circle"
-                            color="blue"
-                            variant="soft"
-                            @click="() => $emit('add')"
-                        />
-                        <UButton
-                            key="delete"
-                            label="Delete"
-                            icon="i-heroicons-trash"
-                            color="red"
-                            variant="soft"
-                            @click="() => $emit('delete')"
-                        />
-                        <template v-if="!props.nonTurnable">
+        <template v-if="!props.isDisabled">
+            <!-- menu  -->
+            <UPopover v-if="!isDisabled" :popper="{ placement: 'left' }">
+                <template #default>
+                    <div
+                        class="rounded p-0.5 hover:bg-gray-200/50 dark:hover:bg-gray-100/10"
+                        @click="$emit('clickMenu')"
+                    >
+                        <UIcon class="text-gray-500" name="i-heroicons-cog-6-tooth-solid" />
+                    </div>
+                </template>
+                <template #panel>
+                    <div class="relative p-1">
+                        <UButtonGroup orientation="vertical" size="xs">
                             <UButton
-                                v-for="menu in blockTypes"
-                                :key="menu.label"
-                                :label="menu.label"
-                                :icon="menu.icon"
-                                color="gray"
-                                variant="ghost"
-                                @click="menu.click"
+                                key="add-below"
+                                label="Add Below"
+                                icon="i-heroicons-plus-circle"
+                                color="blue"
+                                variant="soft"
+                                @click="() => $emit('add')"
                             />
-                        </template>
-                    </UButtonGroup>
-                </div>
-            </template>
-        </UPopover>
+                            <UButton
+                                key="delete"
+                                label="Delete"
+                                icon="i-heroicons-trash"
+                                color="red"
+                                variant="soft"
+                                @click="() => $emit('delete')"
+                            />
+                            <template v-if="!props.nonTurnable">
+                                <UButton
+                                    v-for="menu in blockTypes"
+                                    :key="menu.label"
+                                    :label="menu.label"
+                                    :icon="menu.icon"
+                                    color="gray"
+                                    variant="ghost"
+                                    @click="menu.click"
+                                />
+                            </template>
+                        </UButtonGroup>
+                    </div>
+                </template>
+            </UPopover>
 
-        <!-- drag handle -->
-        <DragHandle>
-            <div
-                :class="[editorBody.DRAGGABLE_CLASS]"
-                class="rounded px-1 py-0.5 hover:cursor-grab hover:bg-gray-200 dark:hover:bg-gray-100/10"
-            >
-                <UIcon class="text-gray-500" name="i-ic-round-drag-indicator" />
-            </div>
-        </DragHandle>
+            <!-- drag handle -->
+            <DragHandle v-if="!isDisabled">
+                <div
+                    :class="[editorBody.DRAGGABLE_CLASS]"
+                    class="rounded px-1 py-0.5 hover:cursor-grab hover:bg-gray-200 dark:hover:bg-gray-100/10"
+                >
+                    <UIcon class="text-gray-500" name="i-ic-round-drag-indicator" />
+                </div>
+            </DragHandle>
+        </template>
+        <template v-else>
+            <div data-role="placeholder" class=" w-[2.875rem]" />
+        </template>
     </div>
 </template>

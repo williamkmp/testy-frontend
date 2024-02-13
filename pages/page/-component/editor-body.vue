@@ -19,6 +19,7 @@ const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
 const draggedBlockId = ref<string>();
+const userCanUpdateBlock = computed(() => pageData.authority !== 'VIEWERS');
 const focusedBlock = computed({
     get: () => editorBody.focusedBlockIndex,
     set: value => editorBody.focusedBlockIndex = value,
@@ -148,6 +149,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -162,6 +164,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -176,6 +179,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -190,6 +194,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -204,6 +209,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -217,6 +223,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -231,6 +238,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -245,6 +253,7 @@ async function saveBlockMove() {
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
                             @focus="focusedBlock = index"
                             @blur="focusedBlock = -1"
                             @enter="(content) => handleUserEnter(index, content)"
@@ -259,6 +268,7 @@ async function saveBlockMove() {
         </template>
         <template v-else>
             <UButton
+                v-if="userCanUpdateBlock"
                 label="Add Block"
                 icon="i-heroicons-plus"
                 color="primary"

@@ -15,7 +15,6 @@ export function createEditor(content?: JSONContent): Editor {
     };
     return new Editor({
         content: editorContent,
-        editable: true,
         editorProps: {
             attributes: { class: 'focus:outline-none w-full h-full' },
         },

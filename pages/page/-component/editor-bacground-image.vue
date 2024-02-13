@@ -14,6 +14,7 @@ const isHover = ref(false);
 const isRepositioning = ref(false);
 const isDragging = ref(false);
 const newImagePosition = ref(pageData.imagePosition);
+const userCanUpdate = computed(() => pageData.authority !== 'VIEWERS');
 
 // Event Listeners
 useEventListener(containerRef, 'mousedown', enableRepositionDragging);
@@ -22,7 +23,7 @@ useEventListener(window, 'mouseup', disableRepositionDragging);
 
 function enableRepositionDragging(e: Event) {
     e.preventDefault();
-    if (isRepositioning.value && !isDragging.value)
+    if (isRepositioning.value && !isDragging.value && userCanUpdate.value)
         isDragging.value = true;
 }
 
@@ -33,7 +34,7 @@ function disableRepositionDragging(e: Event) {
 }
 
 watch(mouse.y, (newValue, oldValue) => {
-    if (isDragging.value && isRepositioning.value && imageRef.value) {
+    if (isDragging.value && isRepositioning.value && imageRef.value && userCanUpdate.value) {
         const delta = oldValue - newValue;
         let newPosition = newImagePosition.value;
         newPosition = (delta >= 0)
@@ -56,16 +57,20 @@ watch(isRepositioning, () => {
 
 // Actions
 async function saveReposition() {
-    isRepositioning.value = false;
-    pageData.updatePageData({
-        imagePosition: newImagePosition.value,
-    });
+    if (userCanUpdate.value) {
+        isRepositioning.value = false;
+        pageData.updatePageData({
+            imagePosition: newImagePosition.value,
+        });
+    }
 }
 
 async function deleteBackgroundImage() {
-    await pageData.updatePageData({
-        imageId: null,
-    });
+    if (userCanUpdate.value) {
+        await pageData.updatePageData({
+            imageId: null,
+        });
+    }
 }
 </script>
 
@@ -84,10 +89,9 @@ async function deleteBackgroundImage() {
                     :style="{ objectPosition: `center ${isRepositioning ? newImagePosition : pageData.imagePosition}%` }"
                 >
                 <div
+                    v-if="userCanUpdate"
                     class="pointer-events-none absolute flex size-full items-center justify-center transition"
-                    :class="[
-                        editorHeader.isUploadingImage ? 'bg-black/50' : 'bg-transparent',
-                    ]"
+                    :class="[editorHeader.isUploadingImage ? 'bg-black/50' : 'bg-transparent']"
                 >
                     <template v-if="!editorHeader.isUploadingImage">
                         <div
