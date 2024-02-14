@@ -13,7 +13,7 @@ export function useNotification() {
                 click: () => toast.remove(toastId),
                 color: 'blue',
                 timeout: TIMEOUT,
-                title: p.title || 'Info',
+                title: p.title ?? 'Info',
                 description: $m(p.message),
             });
         },
@@ -26,7 +26,7 @@ export function useNotification() {
                 icon: 'i-heroicons-check-circle',
                 color: 'green',
                 timeout: TIMEOUT,
-                title: p.title || 'Success',
+                title: p.title ?? 'Success',
                 description: $m(p.message),
             });
         },
@@ -39,7 +39,7 @@ export function useNotification() {
                 icon: 'i-heroicons-exclamation-triangle',
                 color: 'amber',
                 timeout: TIMEOUT,
-                title: p.title || 'Warning',
+                title: p.title ?? 'Warning',
                 description: $m(p.message),
             });
         },
@@ -52,7 +52,7 @@ export function useNotification() {
                 icon: 'i-heroicons-no-symbol',
                 color: 'red',
                 timeout: TIMEOUT,
-                title: p.title || 'Error',
+                title: p.title ?? 'Error',
                 description: $m(p.message),
             });
         },

@@ -47,7 +47,7 @@ function handleUserDelete(index: number, append: boolean = false) {
         else {
             previousEditor.commands.insertContentAt(
                 previousEditor.getText().length + 1,
-                currentEditor.getJSON().content || [],
+                currentEditor.getJSON().content ?? [],
             );
         }
 

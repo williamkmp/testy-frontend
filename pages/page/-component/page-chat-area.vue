@@ -69,7 +69,7 @@ function handleInput(e: KeyboardEvent) {
                                     <div class="flex max-w-sm flex-col gap-0.5 px-2 py-1">
                                         <!-- Sender information -->
                                         <div
-                                            v-if="chat.senderId !== app.user?.id && chat.senderId !== (chatModal.chatList[index - 1]?.senderId || -1)"
+                                            v-if="chat.senderId !== app.user?.id && chat.senderId !== (chatModal.chatList[index - 1]?.senderId ?? -1)"
                                             class="mb-0.5 flex w-full gap-0.5"
                                         >
                                             <UAvatar

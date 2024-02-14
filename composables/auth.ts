@@ -28,7 +28,7 @@ export function useAuth() {
     async function refreshAuth(): Promise<boolean> {
         try {
             const response: LoginResponse = await publicApi.post(path.authToken, {
-                refreshToken: app.refreshToken || 'invalid_token',
+                refreshToken: app.refreshToken ?? 'invalid_token',
             });
             app.accessToken = response.data.token.accessToken;
             app.refreshToken = response.data.token.refreshToken;

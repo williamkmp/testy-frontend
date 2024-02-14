@@ -63,8 +63,9 @@ onMounted(async () => {
                 ? createEditor(editorHTMLToJSON(blockData.content))
                 : undefined,
             fileId: blockData.fileId,
-            iconKey: blockData.iconKey || 'emoji-1215',
-            width: blockData.width || 100,
+            iconKey: blockData.iconKey ?? 'emoji-1215',
+            width: blockData.width ?? 100,
+            isChecked: blockData.isChecked ?? false,
             numbering: 0,
         }));
 
