@@ -94,7 +94,7 @@ async function pickEmoji(emojiKey: string) {
                         <template #default>
                             <div
                                 class="flex size-8 items-center justify-center rounded bg-transparent transition-all hover:cursor-pointer hover:bg-gray-400/20"
-                                @click="isEmojiPickerOpen = true"
+                                @click="isEmojiPickerOpen = isEditable"
                             >
                                 <EmojiIcon :emoji-name="block.iconKey" minified />
                             </div>

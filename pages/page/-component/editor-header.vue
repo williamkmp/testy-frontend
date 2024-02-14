@@ -69,11 +69,13 @@ watchDebounced(
                 :open="isEmojiPickerOpen"
                 class="size-min"
                 :popper="{ placement: 'bottom' }"
+                :disabled="!userCanUpdate"
             >
                 <template #default>
                     <div
-                        class="flex size-20 items-center justify-center rounded bg-transparent p-3 transition-all hover:cursor-pointer hover:bg-gray-400/20"
-                        @click="isEmojiPickerOpen = true && userCanUpdate"
+                        class="flex size-20 items-center justify-center rounded bg-transparent p-3 transition-all"
+                        :class="userCanUpdate ? 'hover:cursor-pointer hover:bg-gray-400/20' : 'hover:cursor-default'"
+                        @click="isEmojiPickerOpen = userCanUpdate"
                     >
                         <EmojiIcon :emoji-name="pageData.iconKey" />
                     </div>
