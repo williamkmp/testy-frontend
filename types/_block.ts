@@ -5,6 +5,7 @@ export const BLOCK_TYPE = {
     BLOCK_QUOTES: 'BLOCK_QUOTES',
     BULLET_LIST: 'BULLET_LIST',
     NUMBERED_LIST: 'NUMBERED_LIST',
+    CHECKBOX: 'CHECKBOX',
     PARAGRAPH: 'PARAGRAPH',
     DIVIDER: 'DIVIDER',
     FILE: 'FILE',
@@ -23,4 +24,5 @@ export interface Block {
     numbering: number;
     fileId?: string;
     iconKey: string;
+    isChecked: boolean;
 };

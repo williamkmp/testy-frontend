@@ -4,6 +4,7 @@ import { SlickItem, SlickList } from 'vue-slicksort';
 import { useEditorBodyStore } from '../-store/editor-body';
 import { usePageDataStore } from '../-store/page-data';
 import BlockQuotes from './block/blockquotes.vue';
+import Checkbox from './block/checkbox.vue';
 import File from './block/file.vue';
 import Divider from './block/divider.vue';
 import Heading from './block/heading.vue';
@@ -79,6 +80,8 @@ function handleUserEnter(index: number, content?: JSONContent) {
         prevId: prevBlock?.id,
         width: createdBlock.width,
         iconKey: createdBlock.iconKey,
+        isChecked: createdBlock.isChecked,
+        fileId: createdBlock.fileId,
     };
     stomp.send(`/app/page/${pageData.id}/block.add`, payload);
 }
@@ -93,6 +96,7 @@ function handleUserChangeBlockType(index: number, newType: BlockType) {
         content: blockContent,
         width: block.width,
         iconKey: block.iconKey,
+        isChecked: block.isChecked,
     };
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }
@@ -101,10 +105,11 @@ const handleContentUpdate = useDebounceFn((block: Block, content?: string) => {
     const payload: BlockMessageDto = {
         id: block.id,
         type: block.type,
-        content: content || '<p></p>',
+        content: content ?? '<p></p>',
         width: block.width,
         iconKey: block.iconKey,
         fileId: block.fileId,
+        isChecked: block.isChecked,
     };
     stomp.send(`/app/page/${pageData.id}/block.transaction`, payload);
 }, 500);
@@ -176,6 +181,21 @@ async function saveBlockMove() {
                     </template>
                     <template v-else-if="block.type === 'NUMBERED_LIST' || block.type === 'BULLET_LIST' ">
                         <List
+                            v-model="editorBody.blockList[index]"
+                            :index="index"
+                            :is-focused="focusedBlock === index"
+                            :is-editable="userCanUpdateBlock"
+                            @focus="focusedBlock = index"
+                            @blur="focusedBlock = -1"
+                            @enter="(content) => handleUserEnter(index, content)"
+                            @delete="() => handleUserDelete(index)"
+                            @delete-append="() => handleUserDelete(index, true)"
+                            @turn="(type) => handleUserChangeBlockType(index, type)"
+                            @change="(content) => handleContentUpdate(block, content)"
+                        />
+                    </template>
+                    <template v-else-if="block.type === 'CHECKBOX'">
+                        <Checkbox
                             v-model="editorBody.blockList[index]"
                             :index="index"
                             :is-focused="focusedBlock === index"

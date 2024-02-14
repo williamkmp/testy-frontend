@@ -33,6 +33,11 @@ const blockTypes = [
         click: () => emit('change', 'PARAGRAPH'),
     },
     {
+        icon: 'i-ic-round-check-box',
+        label: 'Checkbox',
+        click: () => emit('change', 'CHECKBOX'),
+    },
+    {
         icon: 'i-material-symbols-format-list-bulleted-rounded',
         label: 'Bullet List',
         click: () => emit('change', 'BULLET_LIST'),

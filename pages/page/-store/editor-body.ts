@@ -21,16 +21,18 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
     function insertBlockAt(index: number, content?: JSONContent) {
         const newBlockEditor = createEditor(content);
         const currentBlockType = blockList.value.at(index)?.type || 'PARAGRAPH';
-        const newBlockType: BlockType = (currentBlockType === 'NUMBERED_LIST' || currentBlockType === 'BULLET_LIST')
+        const newBlockType: BlockType = (currentBlockType === 'NUMBERED_LIST' || currentBlockType === 'BULLET_LIST' || currentBlockType === 'CHECKBOX')
             ? currentBlockType
             : 'PARAGRAPH';
-        const newBlock = {
+        const newBlock: Block = {
             id: uuid(),
             type: newBlockType,
             editor: newBlockEditor as any,
             iconKey: 'emoji-1215',
             numbering: 0,
             width: 100,
+            isChecked: false,
+            fileId: undefined,
         };
         blockList.value.splice(index + 1, 0, newBlock);
         return newBlock;
@@ -66,6 +68,7 @@ export const useEditorBodyStore = defineStore('PageEditorBody', () => {
             block.fileId = undefined;
             block.numbering = 0;
             block.iconKey = 'emoji-1215';
+            block.isChecked = false;
         }
     }
 

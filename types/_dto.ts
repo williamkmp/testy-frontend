@@ -62,6 +62,7 @@ export interface BlockDto {
     width: number;
     iconKey: string;
     fileId: string;
+    isChecked: boolean;
 }
 
 export interface MenuMessagePayloadDto {
@@ -86,6 +87,7 @@ export interface BlockMessageDto {
     content: string;
     width: number;
     iconKey: string;
+    isChecked: boolean;
     fileId?: string;
 
     prevId?: string;

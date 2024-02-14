@@ -99,6 +99,7 @@ onMounted(async () => {
                 block.width = payload.width;
                 block.iconKey = payload.iconKey;
                 block.fileId = payload.fileId;
+                block.isChecked = payload.isChecked;
                 if (payload.content !== currentContent)
                     editor.commands.setContent(editorHTMLToJSON(payload.content!));
             }
