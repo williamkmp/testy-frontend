@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Client } from '@stomp/stompjs';
+import { Client, type StompSubscription } from '@stomp/stompjs';
 
 export const useStompClient = defineStore('StompConnection', () => {
     const app = useAppStore();
@@ -26,10 +26,10 @@ export const useStompClient = defineStore('StompConnection', () => {
         destiniation: string,
         callback: (payload: any, header: Record<string, any>) => void,
         retry?: boolean,
-    ) {
+    ): Promise<StompSubscription> {
         const connection = await getConnection();
         try {
-            connection.subscribe(
+            const subscription = connection.subscribe(
                 destiniation,
                 payload => callback(JSON.parse(payload.body), payload.headers),
                 {
@@ -37,12 +37,15 @@ export const useStompClient = defineStore('StompConnection', () => {
                     userId: app.user!.id,
                 },
             );
+            console.log(`[STOMP]: Subscribed ${destiniation}`);
+            return subscription;
         }
         catch (error) {
             console.error(`[STOMP]: Error subscribing to '${destiniation}'`);
             console.error(error);
             if (!retry)
                 await subscribe(destiniation, callback, true);
+            throw error;
         }
     }
 
