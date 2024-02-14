@@ -16,7 +16,7 @@ const isSubmitting = ref(false);
 const isLoading = ref(true);
 const isSearchingMember = ref(false);
 const emailField = ref('');
-const canUpdateMember = computed(() => pageData.authority === 'FULL_ACCESS');
+const canUpdateMember = computed(() => pageData.authority === 'FULL_ACCESS' && pageData.authority !== undefined);
 const authorities = Object.keys(AUTHORITY).map(authority => ({ name: capitalize(authority), value: authority }));
 const initialMemberList = ref<MemberDto[]>([]);
 const updatedMemberList = ref<MemberDto[]>([]);
@@ -93,6 +93,7 @@ watchDebounced(
     {
         debounce: 500,
         onTrigger: () => isLoading.value = true,
+        immediate: false,
     },
 );
 
@@ -134,7 +135,7 @@ async function doAddMember(userId: string) {
 
 async function leavePage() {
     isSubmitting.value = true;
-    const isAdmin = pageData.authority === 'FULL_ACCESS';
+    const isAdmin = pageData.authority === 'FULL_ACCESS' && pageData.authority !== undefined;
     const isLastAdmin = initialMemberList.value
         .filter(member => member.id !== app.user?.id)
         .every(member => member.authority !== 'FULL_ACCESS');

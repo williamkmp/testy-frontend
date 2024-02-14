@@ -14,7 +14,7 @@ const isHover = ref(false);
 const isRepositioning = ref(false);
 const isDragging = ref(false);
 const newImagePosition = ref(pageData.imagePosition);
-const userCanUpdate = computed(() => pageData.authority !== 'VIEWERS');
+const userCanUpdate = computed(() => pageData.authority !== 'VIEWERS' && pageData.authority !== undefined);
 
 // Event Listeners
 useEventListener(containerRef, 'mousedown', enableRepositionDragging);

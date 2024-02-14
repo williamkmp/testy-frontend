@@ -62,7 +62,10 @@ watchDebounced(
         if (newHeight !== oldHeight && props.isEditable)
             emit('change');
     },
-    { debounce: 300 },
+    {
+        debounce: 300,
+        immediate: false,
+    },
 );
 </script>
 

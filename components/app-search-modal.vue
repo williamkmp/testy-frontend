@@ -32,6 +32,7 @@ watchDebounced(
     {
         debounce: 500,
         onTrigger: () => isLoading.value = true,
+        immediate: false,
     },
 );
 

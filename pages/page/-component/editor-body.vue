@@ -19,7 +19,7 @@ const pageData = usePageDataStore();
 const editorBody = useEditorBodyStore();
 
 const draggedBlockId = ref<string>();
-const userCanUpdateBlock = computed(() => pageData.authority !== 'VIEWERS');
+const userCanUpdateBlock = computed(() => pageData.authority !== 'VIEWERS' && pageData.authority !== undefined);
 const focusedBlock = computed({
     get: () => editorBody.focusedBlockIndex,
     set: value => editorBody.focusedBlockIndex = value,

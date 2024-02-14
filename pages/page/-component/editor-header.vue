@@ -7,7 +7,7 @@ const pageData = usePageDataStore();
 const editorHeader = useEditorHeaderStore();
 
 // States & Refs
-const userCanUpdate = computed(() => pageData.authority !== 'VIEWERS');
+const userCanUpdate = computed(() => pageData.authority !== 'VIEWERS' && pageData.authority !== undefined);
 const emojiPickerRef = ref<HTMLDivElement>();
 const isEmojiPickerOpen = ref(false);
 const pageTitle = computed({
@@ -54,6 +54,7 @@ watchDebounced(
     },
     {
         debounce: 500,
+        immediate: false,
     },
 );
 </script>
