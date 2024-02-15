@@ -10,6 +10,7 @@ const block = defineModel<BlockModel>({ required: true });
 // Dependecies
 const path = useApiPath();
 const privateApi = usePrivateApi();
+const notif = useNotification();
 
 // States
 const mouse = useMouse();
@@ -34,6 +35,14 @@ function uploadImage() {
 fileDialog.onChange(async (files: FileList | null) => {
     if (files == null || files[0] == null)
         return;
+    const fileType = files[0].type;
+    if (!fileType.startsWith('image/') || fileType.endsWith('svg')) {
+        notif.error({
+            title: 'Upload Failed',
+            message: 'Image file type not supported',
+        });
+        return;
+    }
     isLoading.value = true;
     const resizedImage = await resizeImage(files[0], 5000);
     const fileUploadResponse: FileUploadResponse = await privateApi.postForm(path.file, {

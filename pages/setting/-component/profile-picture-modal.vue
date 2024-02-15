@@ -29,6 +29,16 @@ function choosePicture() {
     if (!fileInputEl || !fileInputEl.files)
         return;
     const uploadedImage = fileInputEl.files[0];
+    const fileType = uploadedImage.type;
+    if (!fileType.startsWith('image/') || fileType.endsWith('svg')) {
+        userPictureModal.isOpen = false;
+        notif.error({
+            title: 'Upload Failed',
+            message: 'Image file type not supported',
+        });
+        chosenImageSrc.value = undefined;
+        return;
+    }
     chosenImageSrc.value = URL.createObjectURL(uploadedImage);
 }
 
@@ -82,6 +92,15 @@ async function doDelete() {
     }
     userPictureModal.isOpen = false;
     resetModal();
+}
+
+function cropperError() {
+    userPictureModal.isOpen = false;
+    notif.error({
+        title: 'Upload Failed',
+        message: 'Image file type not supported',
+    });
+    chosenImageSrc.value = undefined;
 }
 
 function resetModal() {
@@ -187,6 +206,7 @@ function closeModal() {
                                     width: 200,
                                     height: 200,
                                 }"
+                                :onerror="cropperError"
                             />
                         </div>
 

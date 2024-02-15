@@ -52,6 +52,15 @@ onClickOutside(emojiPickerRef, () => isEmojiPickerOpen.value = false);
 file.onChange((files: FileList | null) => {
     if (files == null)
         return;
+    const file = files[0];
+    const fileType = file.type;
+    if (!fileType.startsWith('image/') || fileType.endsWith('svg')) {
+        notif.error({
+            title: 'Upload Failed',
+            message: 'Image file type not supported',
+        });
+        return;
+    }
     pageData.value.image = files[0];
     pageData.value.imageSrc = URL.createObjectURL(files[0]);
 });

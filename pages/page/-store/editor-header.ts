@@ -2,14 +2,12 @@ import { defineStore } from 'pinia';
 import { usePageDataStore } from './page-data';
 import type { ImageResponse } from '~/types';
 
-/**
- * Derived coomponent store from page-data.ts
- */
 export const useEditorHeaderStore = defineStore('EditorHeader', () => {
     // Dependency
     const pageData = usePageDataStore();
     const path = useApiPath();
     const privateApi = usePrivateApi();
+    const notif = useNotification();
 
     // States
     const hasCoverImage = computed(() => pageData.imageId !== undefined);
@@ -34,8 +32,15 @@ export const useEditorHeaderStore = defineStore('EditorHeader', () => {
     fileDialog.onChange(async (files: FileList | null) => {
         if (files === null)
             return;
-        isUploadingImage.value = true;
         const blob = files[0];
+        if (!blob.type.startsWith('image/') || blob.type.endsWith('svg')) {
+            notif.error({
+                title: 'Upload Failed',
+                message: 'Image file type not supported',
+            });
+            return;
+        }
+        isUploadingImage.value = true;
         if (blob) {
             const resizedBlob = await resizeImage(blob, 3500);
             const response: ImageResponse = await privateApi.postForm(path.image, {
