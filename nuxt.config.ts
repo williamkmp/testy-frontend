@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
     ssr: false,
     devtools: { enabled: false },
-    vue: { defineModel: true },
     experimental: { typedPages: true },
 
     modules: [
@@ -60,8 +59,10 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             REFRESH_TOKEN_KEY: 'TESTY_REFRESHTOKEN_STORAGE_KEY',
-            API_BASE_URL: 'http://localhost:5000/',
-            WS_BASE_URL: 'ws://localhost:5000/ws',
+            API_BASE_URL: 'https://testy.motionsportindonesia.id/',
+            WS_BASE_URL: 'wss://testy.motionsportindonesia.id/ws',
+            // API_BASE_URL: 'http://localhost:5000/',
+            // WS_BASE_URL: 'ws://localhost:5000//ws',
         },
     },
 });
