@@ -7,7 +7,6 @@ const path = useApiPath();
 const privateApi = usePrivateApi();
 const notif = useNotification();
 const createPageModal = useCreatePageModalStore();
-const sideMenu = useSideMenuStore();
 const app = useAppStore();
 
 // Refs
@@ -124,12 +123,6 @@ async function submitPage() {
                 email: invite.email,
                 authority: invite.authority,
             })),
-        });
-
-        sideMenu.addPreview({
-            id: pageResponse.data.id,
-            name: pageResponse.data.title,
-            iconKey: pageResponse.data.iconKey,
         });
 
         await navigateTo(`/page/${pageResponse.data.id}`);
