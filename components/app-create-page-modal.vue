@@ -109,7 +109,7 @@ async function submitPage() {
         let imageResponse: ImageResponse | undefined;
         if (pageData.value.imageSrc && pageData.value.image) {
             imageResponse = await privateApi.postForm(path.image, {
-                image: await resizeImage(pageData.value.image, 3500),
+                image: await resizeImage(pageData.value.image, 9000),
             });
         }
         const pageResponse: PageDataResponse = await privateApi.post(path.page, {
@@ -290,7 +290,6 @@ const btnClass = 'opacity-40 hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-
                                     :open="isEmojiPickerOpen"
                                     class="size-min"
                                     :popper="{ placement: 'bottom' }"
-                                    @update:open="(t) => console.log(t)"
                                 >
                                     <template #default>
                                         <div
