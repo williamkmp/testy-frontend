@@ -1,3 +1,4 @@
+import type { StompSubscription } from '@stomp/stompjs';
 import type { MenuMessagePayloadDto, PageDataResponse, PagePreviewDto, PagePreviewResponse } from '~/types';
 
 export function useColelction(collectionId: string) {
@@ -8,14 +9,15 @@ export function useColelction(collectionId: string) {
 
     const isLoading = ref(true);
     const pages = ref<PagePreviewDto[]>([]);
+    const collectionPreviewSubsribtion = ref<StompSubscription>();
 
     onBeforeMount(async () => {
         isLoading.value = true;
         const response: PagePreviewResponse = await privateApi.get(path.collectionPagePreview({ collectionId }));
         pages.value = response.data;
         isLoading.value = false;
-        stomp.subscribe(`/topic/user/${app.user!.id}/preview`, (payload: MenuMessagePayloadDto, header) => {
-            if (header.sessionId !== app.sessionId && payload.parentId === collectionId) {
+        collectionPreviewSubsribtion.value = await stomp.subscribe(`/topic/collection/${collectionId}/preview`, (payload: MenuMessagePayloadDto, header) => {
+            if (header.sessionId !== app.sessionId) {
                 if (payload.action === 'ADD') {
                     pages.value.unshift({
                         id: payload.id,
@@ -37,6 +39,10 @@ export function useColelction(collectionId: string) {
                 }
             }
         });
+    });
+
+    onUnmounted(() => {
+        collectionPreviewSubsribtion.value?.unsubscribe();
     });
 
     async function addPage() {
