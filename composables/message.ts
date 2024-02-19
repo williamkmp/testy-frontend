@@ -11,6 +11,7 @@ const messageMap: MessageMap = {
     update_success: () => 'Update succes',
     update_fail: () => 'Update failed, please try agaian',
     no_resource: () => 'Resource not found',
+    large_payload: () => 'Flie size too large',
 
     // Client only
     server_no_response: () => `Dev: Server is not responding`,

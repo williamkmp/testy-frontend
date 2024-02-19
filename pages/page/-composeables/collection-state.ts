@@ -16,8 +16,8 @@ export function useColelction(collectionId: string) {
         const response: PagePreviewResponse = await privateApi.get(path.collectionPagePreview({ collectionId }));
         pages.value = response.data;
         isLoading.value = false;
-        collectionPreviewSubsribtion.value = await stomp.subscribe(`/topic/collection/${collectionId}/preview`, (payload: MenuMessagePayloadDto, header) => {
-            if (header.sessionId !== app.sessionId) {
+        collectionPreviewSubsribtion.value = await stomp.subscribe(`/topic/user/${app.user!.id}/preview`, (payload: MenuMessagePayloadDto, header) => {
+            if (header.sessionId !== app.sessionId && payload.parentId === collectionId) {
                 if (payload.action === 'ADD') {
                     pages.value.unshift({
                         id: payload.id,
